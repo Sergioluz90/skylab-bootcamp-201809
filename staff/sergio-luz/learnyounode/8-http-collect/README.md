@@ -1,4 +1,4 @@
- ## HTTP COLLECT (Exercise 8 of 13)
+ # HTTP COLLECT (Exercise 8 of 13)
 
   Write a program that performs an HTTP GET request to a URL provided to you
   as the first command-line argument. Collect all data from the server (not
@@ -80,10 +80,22 @@ http.get(process.argv[2], function (response) {
       * en la primera linea la longitud de los datos
       * en la segunda linea los datos en forma de texto
 
-# diferencias de la solucion
+# Diferencias de la solucion
 
 * importa el modulo[ bufferList bl](https://www.npmjs.com/package/bl): este modulo sirve para acumular los datos recibidos
 
 * en la funcion http.get utiliza un pipe() para conectar esta funcion con una de bl
   * dentro de la funcion bl crea una fucnion que se ejecutará cuando la totalidad de los datos hayan sido recibidos y acumulados
     * hacerlo asi le permite poder controlar errores y poder realizar una unica conversion a string de los datos, optimizando así el codigo
+
+# Solucion alternativa modular mediante Promises
+
+```javascript
+  
+```
+
+* mediante los modulos abstraemos la responsabilidad de qué hacer con la informacion: http.get unicamente devuelve la informacion a traves de un callback de la promise
+  * si ha ido bien se llama a resolve
+    * en el programa se ejecutará la sentencia .then()
+  * en caso de error se llama a reject
+    * en el programa se ejecutará la sentencia .catch()

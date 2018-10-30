@@ -1,4 +1,4 @@
- ## TIME SERVER (Exercise 10 of 13)
+ # TIME SERVER (Exercise 10 of 13)
 
  #### Write a TCP time server!
 
@@ -78,3 +78,15 @@ server.listen(Number(process.argv[2]))
 ```
 
  <!-- ## Description of my code: -->
+
+* En este ejercicio se trabaja mediante sockets y no http. Es decir, se trabaja por protocolo TCP, de bajo nivel. 
+
+* importamos el modulo [net](https://www.npmjs.com/package/net)
+* extraemos el puerto de los argumentos recibidos
+* creamos una funcion returnTime() que nos devolera la hora acutal del sistema
+* creamos una variable llamada server que contiene la funcion para crear una conexion cliente-servidor
+* A continuación mediante server.listen abrimos la conexion indicandole el puerto 
+* Dentro de server se ejecutara la sentencia socket.end()
+  * un socket es una abstraccion en formato de objeto de la conexion establecida
+  * esta sentencia ejecutará la funcion returnTime(), enviará la respuesta recibida y cerrará la conexion 
+    

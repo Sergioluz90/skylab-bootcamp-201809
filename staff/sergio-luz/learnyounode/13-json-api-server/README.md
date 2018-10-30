@@ -1,4 +1,4 @@
- ## HTTP JSON API SERVER (Exercise 13 of 13)
+ # HTTP JSON API SERVER (Exercise 13 of 13)
 
   Write an HTTP server that serves JSON data when it receives a GET request
   to the path '/api/parsetime'. Expect the request to contain a query string

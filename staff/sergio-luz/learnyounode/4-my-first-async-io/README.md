@@ -1,4 +1,4 @@
- ## MY FIRST ASYNC I/O! (Exercise 4 of 13)
+ # MY FIRST ASYNC I/O! (Exercise 4 of 13)
 
   Write a program that uses a single asynchronous filesystem operation to
   read a file and print the number of newlines it contains to the console
