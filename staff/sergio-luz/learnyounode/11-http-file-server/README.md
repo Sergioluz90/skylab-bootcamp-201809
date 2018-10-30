@@ -18,7 +18,7 @@
 const http = require('http')
 const fs = require('fs')
 
-const [, , port, filePath] = process.argv
+const { argv : [, , port, filePath] } = process
 
 const server = http.createServer(function (request, res) {
 
@@ -45,3 +45,21 @@ server.listen(Number(process.argv[2]))
 ```
 
  <!-- ## Description of my code: -->
+
+* importamos el modulo http
+* importamos el modulo fs
+* guardamos el puerto y al path del archivo recibidos mediante destructuring
+* creamos una variable server que contendrá la creacion de un servidor
+  * con server.listen el servidor se pondrá a escuchar en el puerto que le indiquemos
+  * cuando llegue una peticion (sin distinguir su metodo):
+    * mediante el modulo fs se leera el fichero que se encuentre en la ruta indicada y se devolverá su contenido como respuesta.
+      * la devolucion la hace el pipe()
+
+      
+# Diferencias de la solucion
+
+```javascript
+  res.writeHead(200, { 'content-type': 'text/plain' })
+```
+
+* es importante para enviar un header indicandole al cliente que tipo de respuesta le enviamos (texto, json, etc)

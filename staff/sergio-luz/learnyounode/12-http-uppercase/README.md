@@ -48,3 +48,22 @@ server.listen(Number(process.argv[2]))
 ```
 
  <!-- ## Description of my code: -->
+
+ * creamos el package.json
+ * instalamos los paquetes necesarios
+
+ * importamos el modulo [http](https://nodejs.org/api/http.html)
+ * importamos el modulo [map](https://www.npmjs.com/package/through2-map)
+ * guardamos el puerto recibido como argumento mediante destructuring
+ * creamos una variable server que contendrá la creacion de un servidor http
+    * con server.listen el servidor se pondrá a escuchar en el    puerto que le indiquemos
+      * cuando llegue una peticion:
+        * si la peticion no es de metodo "POST" se envia un mensaje solicitando que lo sea
+        * si la peticion es correcta utilizamos un map para cambiar todos los chunk a string en mayusculas y enviarlos como respuesta, uno a uno.
+        * (las pipe() nos permiten conectar las diferentes funciones)
+
+# Solution without through2-map
+
+```javascript
+
+```

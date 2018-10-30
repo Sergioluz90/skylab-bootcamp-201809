@@ -81,7 +81,7 @@ server.listen(Number(process.argv[2]))
 
 * En este ejercicio se trabaja mediante sockets y no http. Es decir, se trabaja por protocolo TCP, de bajo nivel. 
 
-* importamos el modulo [net](https://www.npmjs.com/package/net)
+* importamos el modulo [net](https://nodejs.org/api/net.html)
 * extraemos el puerto de los argumentos recibidos
 * creamos una funcion returnTime() que nos devolera la hora acutal del sistema
 * creamos una variable llamada server que contiene la funcion para crear una conexion cliente-servidor
@@ -90,3 +90,14 @@ server.listen(Number(process.argv[2]))
   * un socket es una abstraccion en formato de objeto de la conexion establecida
   * esta sentencia ejecutará la funcion returnTime(), enviará la respuesta recibida y cerrará la conexion 
     
+# Solucion alternativa mediante Strftime
+
+```javascript
+
+```
+* first of all we need to install Strftime
+  * We crreate a package.json: 
+      >npm i --yes
+  * We install Strftime: 
+      >npm i strftime
+* 

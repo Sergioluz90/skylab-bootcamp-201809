@@ -1,7 +1,7 @@
 const http = require('http')
 const fs = require('fs')
 
-const [, , port, filePath] = process.argv
+const { argv : [, , port, filePath] } = process
 
 const server = http.createServer(function (request, res) {
 

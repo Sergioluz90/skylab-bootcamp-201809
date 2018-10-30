@@ -40,24 +40,25 @@ const [, , port] = process.argv
 
 const server = http.createServer(function (request, res) {
 
-    if (request.method === 'GET')
+    if (request.method === 'GET') {
         res.writeHead(200, { 'Content-Type': 'application/json' })
-    url = url.parse(request.url, true)
+        url = url.parse(request.url, true)
 
-    if (url.pathname === '/api/parsetime') {
-        res.end(JSON.stringify( getParseTime(url)))
+        if (url.pathname === '/api/parsetime') {
+            res.end(JSON.stringify(getParseTime(url)))
 
-    } else if (url.pathname === '/api/unixtime') {
-        res.end(JSON.stringify( getUnixTime(url)))
+        } else if (url.pathname === '/api/unixtime') {
+            res.end(JSON.stringify(getUnixTime(url)))
 
-    } else {
-        res.end('no valid url')
+        } else {
+            res.end('no valid url')
 
+        }
+
+        request.pipe(map(chunk => {
+            return chunk.toString().toUpperCase()
+        })).pipe(res)
     }
-
-    request.pipe(map(chunk => {
-        return chunk.toString().toUpperCase()
-    })).pipe(res)
 })
 
 server.listen(Number(port))
@@ -121,3 +122,27 @@ server.listen(Number(process.argv[2]))
 ```
 
  <!-- ## Description of my code: -->
+
+ * creamos el package.json
+ * instalamos los paquetes necesarios
+
+ * importamos el modulo [http](https://nodejs.org/api/http.html)
+ * importamos el modulo [url](https://www.npmjs.com/package/url)
+ * guardamos el puerto recibido como argumento mediante destructuring
+ * creamos una variable server que contendrá la creacion de un servidor http
+    * con server.listen el servidor se pondrá a escuchar en el    puerto que le indiquemos
+      * cuando llegue una peticion, si es una peticion GET:
+        * Informamos mediante un header que es una api/json
+        * parseamos la url para poderla tratar
+        * dependiendo que tipo de formato solicitado le enviaremos el tiempo en formato parsetime o unixtime
+            *   dicha hora estará transformada a json
+
+# Diferencias con la solucion
+
+```javascript
+    res.writeHead(404)
+    res.end()
+```
+
+* En caso de que la url no sea valida enviará un error 404
+* No importa que tipo de metodo se utilice al llamar al servidor 
