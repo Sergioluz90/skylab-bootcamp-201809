@@ -86,7 +86,7 @@ http.get(process.argv[2], function (response) {
   * Within the bl function creates a fucnion that will execute when all data has been received and accumulated
     * Doing so allows you to control errors and be able to perform a single conversion to string the data, thus optimizing the code
 
-# Solucion alternativa modular mediante Promises
+# Modular alternative solution through Promises
 
 #### http-get.js
 ```javascript
