@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chai": "^4.2.0",
     "express": "^4.16.4",
+    "mocha": "^5.2.0",
     "session-storage": "^1.0.1"
   }
 }
