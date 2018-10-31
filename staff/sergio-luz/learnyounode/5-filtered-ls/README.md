@@ -21,7 +21,7 @@
  #### My Code:
 
 ```javascript
-var fs = require('fs')
+const fs = require('fs')
 const path = require('path')
 
 const[,,dir,ext] = process.argv
@@ -53,5 +53,3 @@ fs.readdir(folder, function (err, files) {
   })
 })
 ```
-
- <!-- ## Description of my code: -->

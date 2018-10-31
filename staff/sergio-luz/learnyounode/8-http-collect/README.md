@@ -52,50 +52,74 @@ http.get(process.argv[2], function (response) {
   }))
 })
 ```
+ ## Description of my code:
 
- <!-- ## Description of my code: -->
+* We import the [http](https://nodejs.org/api/http.html) module
 
-* importamos el modulo http
+* We destructure the parameters received through process:
+  * We know that the third argument will be a url
 
-* destructuramos los parametros recibidos a traves de process:
-  * sabemos que el tercer argumento sera una url
+* We initiate a client-server connection using the function http.get
 
-* iniciamos una conexion cliente-servidor mediante la funcion http.get
-
-  * cada vez que recibamos un paquete de datos (data) se ejecutara la funcion res.on('data):
-    * Esta funcion es una funcion asincrona, por tanto es una función no bloqueante
-    * Acumulara los datos en forma de string en str
-    * Acumulara la longitud de los datos en num
-    * Una forma más correcta de hacerlo sería cambiar el contenido de la funcion por:
+  * Every time we receive a data packet the function res.on('data') will be executed:
+    * This function is an asynchronous function, therefore it is a non-blocking function.
+    * Collect the data in the form of a string in str
+    * Accumulate the length of the data in num
+    * A more correct way to do this would be to change the content of the function to:
       *  
       ```javascript
         data.setEncoding('utf8')
         num += data.length
         str += data
       ```
-      * de esta manera solo transformamos data en un string una unica vez cada vez que recibamos datos
+      * This way we only transform data into a string once every time we receive data.
 
-  * cuando termine la comunicación recibiremos un evento 'end' y se ejecutara la funcion res.on('end):
-    * esta funcion mostrara por pantalla:
-      * en la primera linea la longitud de los datos
-      * en la segunda linea los datos en forma de texto
+  * When the communication ends we will receive an 'end' event and the res.on('end') function will be executed:
+    * This function will display on the screen:
+      * In the first line the length of the data
+      * In the second line the data in text form
 
-# Diferencias de la solucion
+ # Differences with regard to the solution:
+* It imports the module [ bufferList bl](https://www.npmjs.com/package/bl): this module is used to accumulate the received data
 
-* importa el modulo[ bufferList bl](https://www.npmjs.com/package/bl): este modulo sirve para acumular los datos recibidos
-
-* en la funcion http.get utiliza un pipe() para conectar esta funcion con una de bl
-  * dentro de la funcion bl crea una fucnion que se ejecutará cuando la totalidad de los datos hayan sido recibidos y acumulados
-    * hacerlo asi le permite poder controlar errores y poder realizar una unica conversion a string de los datos, optimizando así el codigo
+* iI the http.get function uses a pipe() to connect this function to a bl function
+  * Within the bl function creates a fucnion that will execute when all data has been received and accumulated
+    * Doing so allows you to control errors and be able to perform a single conversion to string the data, thus optimizing the code
 
 # Solucion alternativa modular mediante Promises
 
+#### http-get.js
 ```javascript
-  
+const http = require('http')
+const bl = require('bl')
+
+function httpGet(url) {
+    return new Promise((resolve, reject) => {
+        http.get(url, res => {
+            res.pipe(bl((err, data) => {
+                if (err) return reject(err)
+
+                resolve(data.toString())
+            }))
+        })
+    })
+}
+
+module.exports = httpGet
+```
+#### index.js
+```javascript
+const httpGet = require('./http-get')
+
+const { argv: [, , url] } = process
+
+httpGet(url)
+    .then(content => console.log(`${content.length}\n${content}`))
 ```
 
-* mediante los modulos abstraemos la responsabilidad de qué hacer con la informacion: http.get unicamente devuelve la informacion a traves de un callback de la promise
-  * si ha ido bien se llama a resolve
-    * en el programa se ejecutará la sentencia .then()
-  * en caso de error se llama a reject
-    * en el programa se ejecutará la sentencia .catch()
+* Using modules we abstract responsibility for what to do with the information: http.get returns the information through a callback of the promise
+
+  * If it's going well, it'll call resolve.
+    * The .then() statement will be executed in the program
+  * In case of error it will call reject
+    * The .catch() statement will be executed in the program

@@ -34,4 +34,10 @@ http.get(process.argv[2], function (response) {
 }).on('error', console.error)
 ```
 
- <!-- ## Description of my code: -->
+ ## Differences to be taken into account:
+ * The official solution checks for errors: That's good practice that I recommend.
+* > response.setEncoding('utf8') is used to convert the answer to text
+
+
+
+ 

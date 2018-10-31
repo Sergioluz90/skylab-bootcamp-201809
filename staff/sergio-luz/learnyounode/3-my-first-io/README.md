@@ -13,9 +13,11 @@
  #### My Code:
 
 ```javascript
-var fs = require('fs')
+const fs = require('fs')
 
-let buffer = fs.readFileSync(process.argv[2])
+const [,,file]
+
+let buffer = fs.readFileSync(file)
 
 buffer =buffer.toString()
 
@@ -40,5 +42,12 @@ console.log(lines)
 //
 // fs.readFileSync(process.argv[2], 'utf8').split('\n').length - 1
 ```
+ ## Description of my code:
+* It store the file reading information in a variable called buffer
+* Converts this information into a string
+* Divides information by line breaks
+* Prints the amount of lines we have, subtracting one. This resulting value is the amount of line breaks that create new lines.
 
- <!-- ## Description of my code: -->
+ ## Differences to be taken into account:
+
+I apply the destructuring technique to store the second argument I receive. This allows the code to be more semantic and friendly for another developer.

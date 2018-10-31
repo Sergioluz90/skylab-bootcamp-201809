@@ -48,7 +48,7 @@
 **program.js**
 
 ```javascript
-var mymodule = require ('./mymodule')
+const mymodule = require ('./mymodule')
 
 const[,,dir,ext] = process.argv
 
@@ -62,8 +62,8 @@ mymodule(dir,ext,function(err,list){
 ```
 **mymodule.js**
 ```javascript
-var fs = require('fs')
-var path = require('path')
+const fs = require('fs')
+const path = require('path')
 
 module.exports = function (d_name, extension, callback) { 
     
@@ -77,6 +77,7 @@ module.exports = function (d_name, extension, callback) {
    
       callback(null, list)
     })
+
  }
 ```
 
@@ -119,4 +120,5 @@ module.exports = function (d_name, extension, callback) {
     }
 ```
 
- <!-- ## Description of my code: -->
+ ## Differences to be taken into account:
+ * The official solution checks for errors in program.js: That's good practice that I recommend.

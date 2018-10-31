@@ -12,16 +12,18 @@
  #### My Code:
 
 ```javascript
-var fs = require('fs')
+const fs = require('fs')
+
+const [,, file]
 
 function callback(err, contents) {
     if (err) throw err
 
-    var lines = contents.toString().split('\n').length - 1
+    const lines = contents.toString().split('\n').length - 1
     console.log(lines)
 }
 
-fs.readFile(process.argv[2], 'utf8', callback)
+fs.readFile(file, 'utf8', callback)
 ```
 
 
@@ -41,4 +43,6 @@ fs.readFile(file, function (err, contents) {
 })
 ```
 
- <!-- ## Description of my code: -->
+ ## Differences to be taken into account:
+* Using a callback allows us to control errors 
+* If the function we have it to part allows us a greater abstraction of the code

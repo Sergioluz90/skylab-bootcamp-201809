@@ -13,7 +13,7 @@
 
 // fs.readdir(process.argv[2], 'utf8',callback)
 
-var fs = require('fs')
+const fs = require('fs')
 const path = require('path')
 
 const[,,dir,ext] = process.argv

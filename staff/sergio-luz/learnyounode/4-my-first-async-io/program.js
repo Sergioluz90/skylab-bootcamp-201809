@@ -1,12 +1,14 @@
-var fs = require('fs')
+const fs = require('fs')
+
+const [,, file]
 
 function callback(err, contents) {
     if (err) throw err
 
-    var lines = contents.toString().split('\n').length - 1
+    const lines = contents.toString().split('\n').length - 1
     console.log(lines)
 }
 
-fs.readFile(process.argv[2], 'utf8', callback)
+fs.readFile(file, 'utf8', callback)
 
 

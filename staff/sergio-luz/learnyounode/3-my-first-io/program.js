@@ -1,6 +1,8 @@
-var fs = require('fs')
+const fs = require('fs')
 
-let buffer = fs.readFileSync(process.argv[2])
+const [,,file]
+
+let buffer = fs.readFileSync(file)
 
 buffer =buffer.toString()
 

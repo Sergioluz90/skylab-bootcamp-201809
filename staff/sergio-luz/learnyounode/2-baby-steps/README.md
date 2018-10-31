@@ -10,8 +10,6 @@
 ```javascript
 let sum = 0
 
-debugger
-
 for (let i = 2; i < process.argv.length; i++){
     sum = sum + Number(process.argv[i])
 }
@@ -32,4 +30,8 @@ for (var i = 2; i < process.argv.length; i++) {
 console.log(result)
 ```
 
- <!-- ## Description of my code: -->
+ ## Differences to be taken into account:
+
+ In ES6 is a better practice to use let or const instead of var
+
+ From now on I will use in all the exercises these variables

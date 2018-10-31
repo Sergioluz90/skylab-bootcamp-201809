@@ -77,26 +77,26 @@ for (var i = 0; i < 3; i++) {
   httpGet(i)
 }
 ```
+ ## Description of my code:
 
- <!-- ## Description of my code: -->
+ * To create a package.json:
+    > npm init --yes
 
- * para crear un package.json: npm init --yes
+ * We import the http module
+ * We import the [ bufferList bl](https://www.npmjs.com/package/bl) module: this module serves to accumulate the data received
+ * In the http.get function we use a pipe() to connect this function to a bl function
+ * We apply destructuring to store all the urls we receive as arguments
 
- * importamos el modulo http
- * importamos el modulo[ bufferList bl](https://www.npmjs.com/package/bl): este modulo sirve para acumular los datos recibidos
- * en la funcion http.get utiliza un pipe() para conectar esta funcion con una de bl
- * aplicamos destructuring para almacenar todas las url que recibamos como argumentos
+ * We declare the two variables we will use:
+  * One to store the different data we receive
+  * Another to count how many complete data packages we received
 
- * declaramos las dos variables que utilizaremos:
-  * una para almacenar los diferentes datos que recibamos
-  * otra para contar cuantos paquetes completos de datos recibimos
-
-* hacemos un forEach para ejecutar su contenido para cada url recibida
-  * creamos una conexion http.get para cada url
-    * cada respuesta la conectamos mediante un pipe() con un bl que acumulara todos los datos recibidos. Al finalizar la acumuluación ejecutará la función contenida en bl:
-      * si ha habido error lo mostraremos por pantalla
-      * en caso de que no lo haya habido convertimos los datos a string y los almacenamos, aumentamos el contador y comprobamos si se han completado todas las llamadas
-        * en caso de que se hayan completado todas las llamadas mostramos los datos por pantalla en el orden de llamada mediante un forEach
+* We make a forEach to run its content for each url received
+  * we create a http.get connection for each url
+    * Each answer is connected by a pipe() with a bl that will accumulate all the received data. At the end of the accumulation it will execute the function contained in bl:
+      * If there has been an error it will show it on the screen
+      * In case there has not been one we will convert the data to string and store it, increase the counter and check if all the calls have been completed.
+        * When all calls have been completed we display the data on screen in the order of call using a forEach
 
 
 # Solucion alternativa con After
@@ -111,10 +111,10 @@ const {aegv: [,,...url]} = process
 
 ```
 
-* utilizamos el modulo [After](https://www.npmjs.com/package/after)
-* la funcion after sirve para ejecutar un callback al finalizar el conteo de urls
-  * dentro de dicho callback ejecutamos un console.log para mostrar por pantalla los resultados
-* utilizar la funcion after nos ahorra declarar un contador e ir aumentandolo de manera imperativa
+* We use the [After](https://www.npmjs.com/package/after) module
+* The function after serves to execute a callback at the end of the urls count
+  * Inside this callback we execute a console.log to show on screen the results
+* Using the function after saves us from declaring a counter and increasing it in an imperative way
 
 
 # Solucion alternativa con Async
@@ -130,15 +130,42 @@ async.map(url, (url,callback)=>{
 })
 
 ```
-* utilizamos el modulo [Async](https://www.npmjs.com/package/async)
-* la funcion [map](https://caolan.github.io/async/docs.html) se encarga de acumular los resultados y de ordenarlos, por tanto no necesitamos delcarar las dos variables anteriores. Este map se ejecutará de forma asincrona.
-* al llamar al callback se ejecuta la segunda parte de la funcion map
-  * en dicha funcion comprobamos si ha habido error y en caso de que haya tenido exito mostramos los resultados 
+* We use the [Async](https://www.npmjs.com/package/async) module
+* The [map](https://caolan.github.io/async/docs.html) function is in charge of accumulating the results and sorting them, so we don't need to declare the two previous variables. This map will be executed asynchronously.
+* When calling the callback the second part of the function map is executed
+  * In this function we check if there has been an error and if it has been successful we show the results 
 
 # Solucion alternativa mediante Promises
 
+#### http-get.js
 ```javascript
+const http = require('http')
+const bl = require('bl')
 
+function httpGet(url) {
+    return new Promise((resolve, reject) => {
+        http.get(url, res => {
+            res.pipe(bl((err, data) => {
+                if (err) return reject(err)
+
+                resolve(data.toString())
+            }))
+        })
+    })
+}
+
+module.exports = httpGet
 ```
-* el Promise.all() se espera a que todos las promises terminen.
-  * Crea un resultado que contiene los resultados de cada promise ordenados en el mismo orden que han sido creadas las promises
+#### index.js
+```javascript
+const httpGet = require('./http-get')
+
+const { argv: [, , ...urls] } = process
+
+const promises = urls.map(url => httpGet(url))
+
+Promise.all(promises)
+    .then(results => results.forEach(result => console.log(result)))
+```
+* Promise.all() waits for all promises to end.
+  * Creates a result that contains the results of each promise ordered in the same order that the promises have been created.
