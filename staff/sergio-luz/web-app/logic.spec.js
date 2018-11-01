@@ -10,8 +10,9 @@ const flag = true
 
 describe('logic', () => {
     describe('users', () => {
-        !flag && describe('register', () => {
+        flag && describe('register', () => {
             it('should succeed on correct data', () => {
+                // falta añadir codigo de comprobacion de que el registro ha ido bien
                 try {
                     logic.registerUser('John', 'Doe', `jd-${Math.random()}`, '123')
 
@@ -153,7 +154,7 @@ describe('logic', () => {
                 })
 
                 it('should succeed on correct data', () => {
-
+                // falta añadir codigo de comprobacion de que el login ha ido bien
                     try {
                         logic.login(username, password)
                     } catch (err) {
