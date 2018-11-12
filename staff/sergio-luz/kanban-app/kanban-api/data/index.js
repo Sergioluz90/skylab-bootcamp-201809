@@ -1,6 +1,6 @@
-const mongoose=require('mongoose')
+const mongoose = require('mongoose')
 
-const {Postit, User}=require('./schemas')
+const { Postit, User } = require('./schemas')
 
 module.exports = {
     User: mongoose.model('User', User),

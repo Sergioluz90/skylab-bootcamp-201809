@@ -1,5 +1,10 @@
 const { Schema }=require ('mongoose')
 
+const Postit=new Schema({
+    text:String,
+    status:String
+})
+
 const User= new Schema({
     name: String,
     surname: String,
@@ -8,10 +13,6 @@ const User= new Schema({
     postit: [Postit]
 })
 
-const Postit=new Schema({
-    text:String,
-    status:String
-})
 
 module.exports={
     User,
