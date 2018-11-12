@@ -277,7 +277,7 @@ describe('logic', () => {
             it('should succeed on correct data', () =>
                 logic.listPostits(user.id)
                     .then(postits => {
-                        return Postit.find()
+                        return Postit.find() 
                             .then(_postits => {
                                 expect(_postits.length).to.equal(2)
 

@@ -222,7 +222,7 @@ const logic = {
                         postit.text = text
                         postit.status = status
 
-                        return postit.save()
+                        return postit.nosave()
                     })
                     .then(()=> undefined)
             })
