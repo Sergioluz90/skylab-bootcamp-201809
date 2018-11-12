@@ -1,16 +1,38 @@
-const { Schema }=require ('mongoose')
+const { Schema, SchemaTypes:{ObjectId} }=require ('mongoose')
 
 const Postit=new Schema({
-    text:String,
-    status:String
+    text:{
+        type:String,
+        required:true
+    },
+    status:{
+        type:String,
+        required:true
+    },
+    user:{
+        type:ObjectId,
+        ref:'User',
+        required:true
+    }
 })
 
 const User= new Schema({
-    name: String,
-    surname: String,
-    username:String,
-    password: String,
-    postit: [Postit]
+    name:{
+        type:String,
+        required:true
+    },
+    surname: {
+        type:String,
+        required:true
+    },
+    username:{
+        type:String,
+        required:true
+    },
+    password: {
+        type:String,
+        required:true
+    }
 })
 
 
