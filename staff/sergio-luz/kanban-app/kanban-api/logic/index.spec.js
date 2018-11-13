@@ -15,7 +15,7 @@ const { env: { MONGO_URL_test } } = process
 
 describe('logic', () => {
 
-    before(() => { mongoose.connect(MONGO_URL_test, { useNewUrlParser: true, useCreateIndex: true}) })
+    before(() => { mongoose.connect(MONGO_URL_test, { useNewUrlParser: true, useCreateIndex: true }) })
 
     beforeEach(() => Promise.all([User.deleteMany(), Postit.deleteMany()]))
 
@@ -277,7 +277,7 @@ describe('logic', () => {
             it('should succeed on correct data', () =>
                 logic.listPostits(user.id)
                     .then(postits => {
-                        return Postit.find() 
+                        return Postit.find()
                             .then(_postits => {
                                 expect(_postits.length).to.equal(2)
 
@@ -321,6 +321,7 @@ describe('logic', () => {
 
             it('should succeed on correct data', () =>
                 logic.removePostit(user.id, postit.id)
+                    .then(res => expect(res).to.be.undefined)
                     .then(() => Postit.find())
                     .then(postits => {
 
@@ -342,11 +343,12 @@ describe('logic', () => {
                 newText = `new-text-${Math.random()}`
 
                 return user.save()
-                    .then(()=>postit.save())
+                    .then(() => postit.save())
             })
 
             it('should succeed on correct data', () =>
                 logic.modifyPostit(user.id, postit.id, newText, status)
+                    .then(res => expect(res).to.be.undefined)
                     .then(() => Postit.find())
                     .then(postits => {
                         expect(postits.length).to.equal(1)
