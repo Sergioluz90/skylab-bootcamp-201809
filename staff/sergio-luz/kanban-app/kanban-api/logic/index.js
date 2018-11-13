@@ -16,7 +16,7 @@ const logic = {
         return (async () => {
 
             let user = await User.findOne({ username })
-            
+
             if (user) throw new AlreadyExistsError(`username ${username} already registered`)
 
             user = new User({ name, surname, username, password })
@@ -32,31 +32,38 @@ const logic = {
         if (!username.trim()) throw new ValueError('username is empty or blank')
         if (!password.trim()) throw new ValueError('password is empty or blank')
 
-        return User.findOne({ username })
-            .then(user => {
-                if (!user || user.password !== password) throw new AuthError('invalid username or password')
+        return (async () => {
+            const user = await User.findOne({ username })
 
-                return user.id
-            })
+            if (!user || user.password !== password) throw new AuthError('invalid username or password')
+
+            return user.id
+        })()
+
     },
 
-    retrieveUser(id) {
-        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
+    retrieveUser(_id) {
+        const ID=_id
+        let _user
+        
+        if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
+        
+        if (!_id.trim().length) throw new ValueError('_id is empty or blank')
+        
+        return (async () => {
+            
+            const user = await User.findById(ID)
+            
+            const { id, name, surname, username } = user
+            
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-        if (!id.trim().length) throw new ValueError('id is empty or blank')
+            _user = ({ id, name, surname, username })
+            
+            return _user
+        })()
 
-        return User.findOne({ _id: id })
-            .then(user => {
 
-                if (!user) throw new NotFoundError(`user with id ${id} not found`)
-
-                // const _user=user.lean()
-                const { id, name, surname, username } = user
-
-                const _user = ({ id, name, surname, username })
-
-                return _user
-            })
     },
 
     updateUser(id, name, surname, username, newPassword, password) {
