@@ -15,7 +15,7 @@ const { env: { MONGO_URL_test } } = process
 
 describe('logic', () => {
 
-    before(() => { mongoose.connect(MONGO_URL_test, { useNewUrlParser: true }) })
+    before(() => { mongoose.connect(MONGO_URL_test, { useNewUrlParser: true, useCreateIndex: true}) })
 
     beforeEach(() => Promise.all([User.deleteMany(), Postit.deleteMany()]))
 
