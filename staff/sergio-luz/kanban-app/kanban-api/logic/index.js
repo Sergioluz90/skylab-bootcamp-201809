@@ -13,14 +13,16 @@ const logic = {
         if (!username.trim()) throw new ValueError('username is empty or blank')
         if (!password.trim()) throw new ValueError('password is empty or blank')
 
-        return User.findOne({ username })
-            .then(user => {
-                if (user) throw new AlreadyExistsError(`username ${username} already registered`)
+        return (async () => {
 
-                user = new User({ name, surname, username, password })
+            let user = await User.findOne({ username })
+            
+            if (user) throw new AlreadyExistsError(`username ${username} already registered`)
 
-                return user.save()
-            })
+            user = new User({ name, surname, username, password })
+
+            await user.save()
+        })()
     },
 
     authenticateUser(username, password) {
@@ -224,7 +226,7 @@ const logic = {
 
                         return postit.nosave()
                     })
-                    .then(()=> undefined)
+                    .then(() => undefined)
             })
     }
 }
