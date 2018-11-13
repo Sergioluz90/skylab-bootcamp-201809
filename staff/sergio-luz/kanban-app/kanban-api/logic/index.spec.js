@@ -337,7 +337,7 @@ describe('logic', () => {
         describe('modify', () => {
             let user, postit, newText, status
 
-            beforeEach(() => {
+            beforeEach(async () => {
                 user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
 
                 status = 'DONE'
@@ -346,24 +346,26 @@ describe('logic', () => {
 
                 newText = `new-text-${Math.random()}`
 
-                return user.save()
-                    .then(() => postit.save())
+                await user.save()
+                await postit.save()
             })
 
-            it('should succeed on correct data', () =>
-                logic.modifyPostit(user.id, postit.id, newText, status)
-                    .then(res => expect(res).to.be.undefined)
-                    .then(() => Postit.find())
-                    .then(postits => {
-                        expect(postits.length).to.equal(1)
+            it('should succeed on correct data', async () => {
+                const res = await logic.modifyPostit(user.id, postit.id, newText, status)
 
-                        const [_postit] = postits
+                expect(res).to.be.undefined
 
-                        expect(_postit.text.toString()).to.equal(newText)
-                        expect(_postit.status.toString()).to.equal(postit.status)
-                        expect(_postit.user.toString()).to.equal(user.id)
-                    })
-            )
+                const postits = await Postit.find()
+
+                expect(postits.length).to.equal(1)
+
+                const [_postit] = postits
+
+                expect(_postit.text.toString()).to.equal(newText)
+                expect(_postit.status.toString()).to.equal(postit.status)
+                expect(_postit.user.toString()).to.equal(user.id)
+
+            })
         })
     })
 

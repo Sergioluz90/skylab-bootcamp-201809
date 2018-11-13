@@ -160,12 +160,12 @@ const logic = {
 
             const postits = await Postit.find({ user: user._id }).lean()
 
-            postits.forEach(postit=>{
+            postits.forEach(postit => {
 
                 postit.id = postit._id.toString()
-    
+
                 delete postit._id
-    
+
                 postit.user = postit.user.toString()
             })
 
@@ -225,22 +225,21 @@ const logic = {
 
         if (!status.trim().length) throw new ValueError('text is empty or blank')
 
-        return User.findById(id)
-            .then(user => {
-                if (!user) throw new NotFoundError(`user with id ${id} not found`)
+        return (async () => {
 
-                return Postit.findById(postitId)
-                    .then(postit => {
+            const user = await User.findById(id)
 
-                        if (!postit) throw new NotFoundError(`postit with id ${postitId} not found`)
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-                        postit.text = text
-                        postit.status = status
+            const postit = await Postit.findById(postitId)
 
-                        return postit.nosave()
-                    })
-                    .then(() => undefined)
-            })
+            if (!postit) throw new NotFoundError(`postit with id ${postitId} not found`)
+
+            postit.text = text
+            postit.status = status
+
+            await postit.save()
+        })()
     }
 }
 
