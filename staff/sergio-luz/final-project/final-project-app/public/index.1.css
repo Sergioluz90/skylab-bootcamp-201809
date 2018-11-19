@@ -1,0 +1,239 @@
+
+
+  @import url(http://allfont.es/allfont.css?fonts=chunkfive);
+
+
+body{
+    font-family: 'ChunkFive Roman', arial;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 13px;
+    color: #424242;
+    margin: 0px;
+}
+
+.headerPage {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+
+.head__Nav {
+
+    height: 100px;
+    padding-top: 14px;
+    line-height: 32px;
+    text-align: center;
+    background: #18001fe0;
+
+}
+
+.container{
+    margin: 0px 15vw;
+}
+
+.container__profile{
+    margin: 0px 10vw;
+}
+
+.ul__Nav{
+    display: flex;
+    /* table-layout: fixed; */
+    width: 100%;
+    list-style-type: none;
+    justify-content: space-around;
+    padding: 0px;
+    margin: 0px;
+}
+
+.head__Notify{
+    background: #cfd1d3;
+    line-height: 35px;
+    text-align: center;
+    margin-block-end: 0;
+    margin-block-start: 0;
+}
+
+.logo{
+    background: url(./logo.png) no-repeat;
+    height: 100px;
+    width: 400px;
+    overflow: hidden;
+    text-indent: -1000px;
+    margin: 0px;
+}
+.initial{
+    margin-top: 155px;
+}
+.spacer--20{
+    padding-top: 20px;
+}
+
+.searcher{
+    width: 20vw;
+}
+
+.searcher--panel{
+    width: 15vw;
+    /* height: 500px; */
+    background-color: #18001fe0;
+}
+
+.searcher--options{
+    width: 30vw;
+    /* height: 500px; */
+}
+
+.results{
+    width: 40vw;
+}
+
+.search-bar{
+    width: 80%;
+    margin: 20px;
+}
+
+.ul__filters{
+    display: flex;
+    width: 100%;
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+    flex-wrap: wrap;
+}
+
+.ul__filters li{
+    margin: 5px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.wrapper__images {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.container__image{
+    margin: 1vw;
+    background: black;
+    height: 11vw;
+    width: 11vw;
+}
+
+.container__profile-header{
+    display: flex;
+    flex-direction: row;
+    margin: 0px 15vw;
+}
+
+
+/* 
+
+Generic components 
+
+*/
+
+.component{
+    border: 1px solid rgb(150, 150, 150);
+    border-radius: 1px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.3);
+    background-color: #fff;
+    border-bottom-color: rgba(0, 0, 0, 0);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-image-outset: 0;
+    border-image-repeat: stretch stretch;
+    border-image-slice: 100%;
+    border-image-source: none;
+    border-image-width: 1;
+    border-left-color: rgb(150, 150, 150);
+    border-left-style: none;
+    border-left-width: 0px;
+    border-right-color: rgb(150, 150, 150);
+    border-right-style: none;
+    border-right-width: 0px;
+    border-top-color: rgb(150, 150, 150);
+    border-top-style: none;
+    border-top-width: 0px;
+    box-sizing: border-box;
+}
+
+.component__profile{
+    border: 1px solid rgb(150, 150, 150);
+    border-radius: 1px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.3);
+    background-color: #fff;
+    border-bottom-color: rgba(0, 0, 0, 0);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-image-outset: 0;
+    border-image-repeat: stretch stretch;
+    border-image-slice: 100%;
+    border-image-source: none;
+    border-image-width: 1;
+    border-left-color: rgb(150, 150, 150);
+    border-left-style: none;
+    border-left-width: 0px;
+    border-right-color: rgb(150, 150, 150);
+    border-right-style: none;
+    border-right-width: 0px;
+    border-top-color: rgb(150, 150, 150);
+    border-top-style: none;
+    border-top-width: 0px;
+    box-sizing: border-box;
+    padding-left: 4vw;
+    color: #424242b3
+        /* margin-bottom: 20px; */
+}
+
+.container--row{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 92%;
+    justify-content: space-around;
+}
+
+.container--column{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: space-around;
+}
+
+
+
+/* 
+
+Display options 
+
+*/
+
+.margin--left{
+    margin-left: 20px;
+}
+
+.margin--bottom{
+    margin-bottom: 10px;
+}
+
+.margin--top{
+    padding-top: 3px;
+}
+.center{
+    text-align: center;
+    justify-content: center;
+}
+
+.no-shadow{
+    box-shadow: none;
+}
+
