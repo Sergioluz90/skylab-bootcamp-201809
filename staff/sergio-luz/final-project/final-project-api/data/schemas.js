@@ -30,41 +30,43 @@ const User = sequelize.define('user', {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },
-    age:{
+    age: {
         type: Sequelize.INTEGER
     },
-    gender:{
+    gender: {
         type: Sequelize.STRING,
         defaultValue: 'not defined'
     },
-    height:{
+    height: {
         type: Sequelize.INTEGER
     },
-    weight:{
+    weight: {
         type: Sequelize.INTEGER
     },
-    smoker:{
+    smoker: {
         type: Sequelize.BOOLEAN
     },
-    description:{
+    description: {
         type: Sequelize.STRING
     },
-    receives:{
+    receives: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },
-    moves:{
+    moves: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },
-    city:{
+    city: {
         type: Sequelize.STRING,
         defaultValue: 'not defined'
     },
-    connection:{
-        type: Sequelize.NOW
+    connection: {
+        type: Sequelize.DATE, 
+        allowNull: false, 
+        defaultValue: Sequelize.fn('NOW')
     },
-    visits:{
+    visits: {
         type: Sequelize.INTEGER,
         defaultValue: 0
     }
