@@ -109,6 +109,26 @@ const logic = {
         })()
     },
 
+    retrieveProfile(_id) {
+        const ID = _id
+        let _user
+
+        if (typeof _id !== 'number') throw TypeError(`${_id} is not a number`)
+
+        return (async () => {
+
+            const user = await User.findById(ID)
+
+            const { id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city } = user
+
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            _user = ({ id,name,  username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city  })
+
+            return _user
+        })()
+    },
+
     updateProfile(id, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city) {
 
         if (typeof id !== 'number' || id==null || id==undefined) throw TypeError(`${id} is not a number`)

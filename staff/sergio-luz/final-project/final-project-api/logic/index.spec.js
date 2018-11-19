@@ -110,7 +110,7 @@ describe('logic', () => {
 
             it('should succeed on valid id', async () => {
 
-                _user = await logic.retrieveUser(user.id)
+                _user = await logic.retrieveProfile(user.id)
 
                 expect(_user).not.to.be.instanceof(User)
 
@@ -240,8 +240,43 @@ describe('logic', () => {
             })
         })
 
+        flag && describe('retrieve profile', () => {
+            let user
 
-        flag && describe('update profile', () => {
+            beforeEach(async () => {
+                user = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com' })
+
+                await user.save()
+            })
+
+            it('should succeed on valid id', async () => {
+
+                _user = await logic.retrieveProfile(user.id)
+                
+                expect(_user).to.exist
+                expect(_user).not.to.be.instanceof(User)
+
+
+                expect(_user.id).to.equal(user.id)
+
+                expect(_user.name).to.equal(user.name)
+                expect(_user.email).to.equal(user.email)
+                expect(_user.username).to.equal(user.username)
+
+                expect(_user.skype).to.equal(user.skype)
+                expect(_user.age).to.equal(user.age)
+                expect(_user.gender).to.equal(user.gender)
+                expect(_user.height).to.equal(user.height)
+                expect(_user.weight).to.equal(user.weight)
+                expect(_user.smoker).to.equal(user.smoker)
+                expect(_user.description).to.equal(user.description)
+                expect(_user.receives).to.equal(user.receives)
+                expect(_user.moves).to.equal(user.moves)
+                expect(_user.city).to.equal(user.city)
+            })
+        })
+
+        !flag && describe('update profile', () => {
             let user, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity
 
             beforeEach(async () => {

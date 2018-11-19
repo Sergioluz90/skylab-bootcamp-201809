@@ -31,23 +31,28 @@ const User = sequelize.define('user', {
         defaultValue: false
     },
     age: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        defaultValue: null
     },
     gender: {
         type: Sequelize.STRING,
         defaultValue: 'not defined'
     },
     height: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        defaultValue: null
     },
     weight: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        defaultValue: null
     },
     smoker: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        defaultValue: null
     },
     description: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: null
     },
     receives: {
         type: Sequelize.BOOLEAN,
