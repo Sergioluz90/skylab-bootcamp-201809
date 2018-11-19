@@ -145,18 +145,18 @@ const logic = {
 
                 if (_user[0]) throw new AlreadyExistsError(`username ${username} already exists`)
 
-                name != null && (user.name = name)
-                email!=null && (user.email=email)
-                user.username = username
-                newPassword != null && (user.password = newPassword)
+                // name != null && (user.name = name)
+                // email!=null && (user.email=email)
+                // user.username = username
+                // newPassword != null && (user.password = newPassword)
 
-                await user.save()
+                // await user.save()
             } else {
-                name != null && (user.name = name)
-                email!=null && (user.email=email)
-                newPassword != null && (user.password = newPassword)
+                // name != null && (user.name = name)
+                // email!=null && (user.email=email)
+                // newPassword != null && (user.password = newPassword)
 
-                await user.save()
+                // await user.save()
             }
         })()
     }
