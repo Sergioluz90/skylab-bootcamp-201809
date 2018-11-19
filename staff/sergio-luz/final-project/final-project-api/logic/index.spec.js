@@ -5,10 +5,11 @@ const logic = require('../logic')
 const { expect } = require('chai')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 
+const flag = true;
 
 const { env: { PORT, DATABASE_URL } } = process
 
-const sequelize = new Sequelize(DATABASE_URL, { logging: false })
+const sequelize = new Sequelize(DATABASE_URL + '-test', { logging: false })
 
 describe('logic', () => {
 
@@ -29,7 +30,7 @@ describe('logic', () => {
     })
 
     describe('user', () => {
-        !false && describe('register', () => {
+        !flag && describe('register', () => {
             let name, username, password, email
 
             beforeEach(() => {
@@ -63,7 +64,7 @@ describe('logic', () => {
             })
         })
 
-        !false && describe('authenticate', () => {
+        !flag && describe('authenticate', () => {
             let user
 
             beforeEach(async () => {
@@ -98,7 +99,7 @@ describe('logic', () => {
             // TODO other test cases
         })
 
-        !false && describe('retrieve', () => {
+        !flag && describe('retrieve user', () => {
             let user
 
             beforeEach(async () => {
@@ -125,7 +126,7 @@ describe('logic', () => {
             })
         })
 
-        !false && describe('update', () => {
+        !flag && describe('update user', () => {
             let user
 
             beforeEach(async () => {
@@ -239,6 +240,128 @@ describe('logic', () => {
             })
         })
 
-        
+
+        flag && describe('update profile', () => {
+            let user, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity
+
+            beforeEach(async () => {
+                user = User.build({ name: 'John', username: 'jd', email: 'pacus@maximus.com', password: '123' })
+
+                await user.save()
+            })
+
+            it('should update on correct data and password', async () => {
+                let { id, name, username, email, password } = user
+
+                newEmail = `${'newEmail'}-${Math.random()}`
+                newSkype = `${'newSkype'}-${Math.random()}`
+                newAge = Math.floor(Math.random() * 10)
+                newGender = `${'newGender'}-${Math.random()}`
+                newHeight = Math.floor(Math.random() * 10)
+                newWeight = Math.floor(Math.random() * 10)
+                newSmoker = true
+                newDescription = `${'newDescription'}-${Math.random()}`
+                newReceives = true
+                newMoves = true
+                newCity = `${'newCity'}-${Math.random()}`
+
+                await logic.updateProfile(id, username, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity)
+
+                const users = await User.findAll()
+
+                const _user = users[0]
+
+                expect(_user.dataValues.id).to.equal(id)
+
+                expect(_user.name).to.equal(name)
+                expect(_user.email).to.equal(newEmail)
+                expect(_user.username).to.equal(username)
+                expect(_user.password).to.equal(password)
+
+                expect(_user.skype).to.equal(newSkype)
+                expect(_user.age).to.equal(newAge)
+                expect(_user.gender).to.equal(newGender)
+                expect(_user.height).to.equal(newHeight)
+                expect(_user.weight).to.equal(newWeight)
+                expect(_user.smoker).to.equal(newSmoker)
+                expect(_user.description).to.equal(newDescription)
+                expect(_user.receives).to.equal(newReceives)
+                expect(_user.moves).to.equal(newMoves)
+                expect(_user.city).to.equal(newCity)
+            })
+
+            it('should update on correct id, username and email (other fields null)', async () => {
+                const { id, name, username, email, password } = user
+
+                newEmail = `${'newEmail'}-${Math.random()}`
+
+                await logic.updateProfile(id, username, newEmail, null, null, null, null, null, null, null, null, null, null)
+
+                const users = await User.findAll()
+
+                const _user = users[0]
+
+                expect(_user.dataValues.id).to.equal(id)
+
+                expect(_user.name).to.equal(name)
+                expect(_user.email).to.equal(newEmail)
+                expect(_user.username).to.equal(username)
+                expect(_user.password).to.equal(password)
+
+                expect(_user.skype).to.equal('not defined')
+                expect(_user.age).to.equal(null)
+                expect(_user.gender).to.equal('not defined')
+                expect(_user.height).to.equal(null)
+                expect(_user.weight).to.equal(null)
+                expect(_user.smoker).to.equal(null)
+                expect(_user.description).to.equal(null)
+                expect(_user.receives).to.equal(false)
+                expect(_user.moves).to.equal(false)
+                expect(_user.city).to.equal('not defined')
+            })
+
+            it('should update on correct id, username and skype (other fields null)', async () => {
+                const { id, name, username, email, password } = user
+
+                newSkype = `${'newSkype'}-${Math.random()}`
+
+                await logic.updateProfile(id, username, null, newSkype, null, null, null, null, null, null, null, null, null)
+
+                const users = await User.findAll()
+
+                const _user = users[0]
+
+                expect(_user.dataValues.id).to.equal(id)
+
+                expect(_user.name).to.equal(name)
+                expect(_user.username).to.equal(username)
+                expect(_user.email).to.equal(email)
+                expect(_user.password).to.equal(password)
+
+                expect(_user.skype).to.equal(newSkype)
+
+                expect(_user.age).to.equal(null)
+                expect(_user.gender).to.equal('not defined')
+                expect(_user.height).to.equal(null)
+                expect(_user.weight).to.equal(null)
+                expect(_user.smoker).to.equal(null)
+                expect(_user.description).to.equal(null)
+                expect(_user.receives).to.equal(false)
+                expect(_user.moves).to.equal(false)
+                expect(_user.city).to.equal('not defined')
+            })
+
+            // TODO other combinations of valid updates
+
+            it('should fail on undefined id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateProfile(undefined, username, email)).to.throw(TypeError, 'undefined is not a number')
+            })
+
+            // TODO other test cases
+        })
+
+
     })
 })
