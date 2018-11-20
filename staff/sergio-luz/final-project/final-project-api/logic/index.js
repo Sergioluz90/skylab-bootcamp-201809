@@ -86,14 +86,14 @@ const logic = {
 
         return (async () => {
 
-            const user = await User.findById(id)
+            const user = await User.findById(id,{logging:false})
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
             if (user.password !== password) throw new AuthError('invalid password')
 
             if (username) {
-                const _user = await User.findAll({ where: { username: username } })
+                const _user = await User.findAll({ where: { username: username }, logging:false })
 
                 if (_user[0]) throw new AlreadyExistsError(`username ${username} already exists`)
 
@@ -102,13 +102,14 @@ const logic = {
                 user.username = username
                 newPassword != null && (user.password = newPassword)
 
-                await user.save()
+                await user.save({logging:false})
+                
             } else {
                 name != null && (user.name = name)
                 email != null && (user.email = email)
                 newPassword != null && (user.password = newPassword)
 
-                await user.save()
+                await user.save({logging:false})
             }
         })()
     },

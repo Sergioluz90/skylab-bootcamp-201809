@@ -48,7 +48,7 @@ describe('logic', () => {
 
                 expect(res).to.be.undefined
 
-                const _users = await User.findAll()
+                const _users = await User.findAll({logging:false})
 
                 expect(_users.length).to.equal(1)
 
@@ -198,7 +198,7 @@ describe('logic', () => {
                 expect(id).to.exist
                 expect(id).to.be.a('number')
 
-                const users = await User.findAll()
+                const users = await User.findAll({logging:false})
 
 
                 const [_user] = users
@@ -321,13 +321,13 @@ describe('logic', () => {
             })
         })
 
-        !flag && describe('update user', () => {
+        flag && describe('update user', () => {
             let user
 
             beforeEach(async () => {
-                user = User.build({ name: 'John', username: 'jd', email: 'pacus@maximus.com', password: '123' })
+                user = User.build({ name: 'John', username: 'jd', email: 'pacus@maximus.com', password: '123' }, {logging:false})
 
-                await user.save()
+                await user.save({logging:false})
             })
 
             it('should update on correct data and password', async () => {
@@ -338,9 +338,9 @@ describe('logic', () => {
                 const newUsername = `${username}-${Math.random()}`
                 const newPassword = `${password}-${Math.random()}`
 
-                await logic.updateUser(id, newName, newUsername, newEmail, newPassword, password)
+                await logic.updateUser(id.toString(), newName, newUsername, newEmail, newPassword, password)
 
-                const users = await User.findAll()
+                const users = await User.findAll({logging:false})
 
                 const _user = users[0]
 
@@ -350,7 +350,6 @@ describe('logic', () => {
                 expect(_user.email).to.equal(newEmail)
                 expect(_user.username).to.equal(newUsername)
                 expect(_user.password).to.equal(newPassword)
-
             })
 
             it('should update on correct id, name and password (other fields null)', () => {
@@ -358,8 +357,8 @@ describe('logic', () => {
 
                 const newName = `${name}-${Math.random()}`
 
-                return logic.updateUser(id, newName, null, null, null, password)
-                    .then(() => User.findAll())
+                return logic.updateUser(id.toString(), newName, null, null, null, password)
+                    .then(() => User.findAll({logging:false}))
                     .then(users => {
                         const _user = users[0]
 
@@ -377,8 +376,8 @@ describe('logic', () => {
 
                 const newEmail = `${email}-${Math.random()}`
 
-                return logic.updateUser(id, null, null, newEmail, null, password)
-                    .then(() => User.findAll())
+                return logic.updateUser(id.toString(), null, null, newEmail, null, password)
+                    .then(() => User.findAll({logging:false}))
                     .then(users => {
                         const _user2 = users[0]
 
@@ -391,12 +390,50 @@ describe('logic', () => {
                     })
             })
 
+            it('should update on correct id, username and password (other fields null)', () => {
+                const { id, name, username, email, password } = user
+
+                const newUsername = `${username}-${Math.random()}`
+
+                return logic.updateUser(id.toString(), null, newUsername, null, null, password)
+                    .then(() => User.findAll({logging:false}))
+                    .then(users => {
+                        const _user2 = users[0]
+
+                        expect(_user2.id).to.equal(id)
+
+                        expect(_user2.name).to.equal(name)
+                        expect(_user2.email).to.equal(email)
+                        expect(_user2.username).to.equal(newUsername)
+                        expect(_user2.password).to.equal(password)
+                    })
+            })
+            
+            it('should update on correct id, newPassword and password (other fields null)', () => {
+                const { id, name, username, email, password } = user
+
+                const newPassword = `${password}-${Math.random()}`
+
+                return logic.updateUser(id.toString(), null, null, null, newPassword, password)
+                    .then(() => User.findAll({logging:false}))
+                    .then(users => {
+                        const _user2 = users[0]
+
+                        expect(_user2.id).to.equal(id)
+
+                        expect(_user2.name).to.equal(name)
+                        expect(_user2.email).to.equal(email)
+                        expect(_user2.username).to.equal(username)
+                        expect(_user2.password).to.equal(newPassword)
+                    })
+            })
+
             // TODO other combinations of valid updates
 
             it('should fail on undefined id', () => {
                 const { id, name, email, username, password } = user
 
-                expect(() => logic.updateUser(undefined, name, username, email, password, password)).to.throw(TypeError, 'undefined is not a number')
+                expect(() => logic.updateUser(undefined, name, username, email, password, password)).to.throw(TypeError, 'undefined is not a string')
             })
 
             // TODO other test cases
@@ -408,7 +445,7 @@ describe('logic', () => {
 
                     user2 = User.build({ name: 'John', username: 'jd2', email: 'pacus@', password: '123' })
 
-                    await user2.save()
+                    await user2.save({logging:false})
                 })
 
                 it('should update on correct data and password', () => {
@@ -416,12 +453,12 @@ describe('logic', () => {
 
                     const newUsername = 'jd'
 
-                    return logic.updateUser(id, null, newUsername, null, null, password)
+                    return logic.updateUser(id.toString(), null, newUsername, null, null, password)
                         .then(() => expect(true).to.be.false)
                         .catch(err => {
                             expect(err).to.be.instanceof(AlreadyExistsError)
 
-                            return User.findById(id)
+                            return User.findById(id, {logging:false})
                         })
                         .then(postit => {
                             expect(postit.id).to.equal(id)
@@ -497,7 +534,7 @@ describe('logic', () => {
 
                 await logic.updateProfile(id, username, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity)
 
-                const users = await User.findAll()
+                const users = await User.findAll({logging:false})
 
                 const _user = users[0]
 
@@ -527,7 +564,7 @@ describe('logic', () => {
 
                 await logic.updateProfile(id, username, newEmail, null, null, null, null, null, null, null, null, null, null)
 
-                const users = await User.findAll()
+                const users = await User.findAll({logging:false})
 
                 const _user = users[0]
 
@@ -557,7 +594,7 @@ describe('logic', () => {
 
                 await logic.updateProfile(id, username, null, newSkype, null, null, null, null, null, null, null, null, null)
 
-                const users = await User.findAll()
+                const users = await User.findAll({logging:false})
 
                 const _user = users[0]
 
