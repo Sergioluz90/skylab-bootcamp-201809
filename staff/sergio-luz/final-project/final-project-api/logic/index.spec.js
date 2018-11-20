@@ -273,24 +273,51 @@ describe('logic', () => {
             beforeEach(async () => {
                 user = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com' })
 
-                await user.save()
+                await user.save({logging:false})
             })
 
             it('should succeed on valid id', async () => {
 
-                _user = await logic.retrieveProfile(user.id.toString())
+                _user = await logic.retrieveUser(user.id.toString())
 
                 expect(_user).not.to.be.instanceof(User)
 
-                const { id, name, surname, username, password, postits } = _user
+                const { id, name, username, email, password } = _user
 
                 expect(id).to.exist
                 expect(id).to.equal(user.id)
                 expect(name).to.equal(user.name)
-                expect(surname).to.equal(user.surname)
                 expect(username).to.equal(user.username)
+                expect(email).to.be.equal(user.email)
                 expect(password).to.be.undefined
-                expect(postits).not.to.exist
+            })
+
+            it('should fail on undefined id', () => {
+                expect(() => logic.authenticateUser(undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null id', () => {
+                expect(() => logic.authenticateUser(null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank id', () => {
+                expect(() => logic.authenticateUser('      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number id', () => {
+                expect(() => logic.authenticateUser(123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean id', () => {
+                expect(() => logic.authenticateUser(true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array id', () => {
+                expect(() => logic.authenticateUser(['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object id', () => {
+                expect(() => logic.authenticateUser({ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
             })
         })
 

@@ -51,7 +51,7 @@ const logic = {
         let _user
 
         if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
-        if (!name.trim().length) throw new ValueError('name is empty or blank')
+        if (!_id.trim().length) throw new ValueError('id is empty or blank')
 
         return (async () => {
 
