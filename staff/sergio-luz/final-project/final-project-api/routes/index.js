@@ -32,7 +32,7 @@ router.post('/users', jsonBodyParser, (req, res) => {
 router.post('/auth', jsonBodyParser, (req, res) => {
     routeHandler(() => {
         const { username, password } = req.body
-        
+
         return logic.authenticateUser(username, password)
             .then(id => {
                 const token = jwt.sign({ sub: id }, JWT_SECRET)
@@ -81,7 +81,6 @@ router.get('/users/:id/profile', [bearerTokenParser, jwtVerifier], (req, res) =>
     routeHandler(() => {
         const { params: { id }, sub } = req
 
-        debugger
         if (id !== sub.toString()) throw Error('token sub does not match user id')
 
         return logic.retrieveProfile(id)
@@ -95,25 +94,24 @@ router.get('/users/:id/profile', [bearerTokenParser, jwtVerifier], (req, res) =>
 
 router.patch('/users/:id/profile', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
-        const { params: { id }, sub, body: { username, email, skype, gender, age, height, weight, smoker, description, receives, moves, city } } = req
-
-        debugger
+        const { params: { id }, sub, body: { email, skype, gender, age, height, weight, smoker, description, receives, moves, city, offer, searching } } = req
 
         if (id !== sub.toString()) throw Error('token sub does not match user id')
 
         return logic.updateProfile(sub,
-            username ? username : null,
             email ? email : null,
             skype ? skype : null,
             gender ? gender : null,
-            age ? age: null,
+            age ? age : null,
             height ? height : null,
             weight ? weight : null,
             smoker ? smoker : null,
             description ? description : null,
             receives ? receives : null,
             moves ? moves : null,
-            city ? city : null)
+            city ? city : null,
+            offer ? offer : null,
+            searching ? searching : null)
             .then(() =>
                 res.json({
                     message: 'profile updated'

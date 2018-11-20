@@ -1,4 +1,4 @@
-const { User } = require('../data')
+const { User, Offer, Searching, Blocked } = require('../data')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 
 const logic = {
@@ -119,7 +119,7 @@ const logic = {
 
         if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
         if (!_id.trim().length) throw new ValueError('id is empty or blank')
-        
+
         return (async () => {
 
             const user = await User.findById(ID)
@@ -134,14 +134,13 @@ const logic = {
         })()
     },
 
-    updateProfile(id, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city) {
+    updateProfile(id, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
 
         if (typeof id !== 'number' || id == null || id == undefined) throw TypeError(`${id} is not a number`)
         if (age != null && typeof age !== 'number') throw TypeError(`${age} is not a number`)
         if (height != null && typeof height !== 'number') throw TypeError(`${height} is not a number`)
         if (weight != null && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
 
-        if (username != null && typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (email != null && typeof email !== 'string') throw TypeError(`${email} is not a string`)
         if (skype != null && typeof skype !== 'string') throw TypeError(`${skype} is not a string`)
         if (gender != null && typeof gender !== 'string') throw TypeError(`${gender} is not a string`)
@@ -152,12 +151,16 @@ const logic = {
         if (receives != null && typeof receives !== 'boolean') throw TypeError(`${receives} is not a boolean`)
         if (moves != null && typeof moves !== 'boolean') throw TypeError(`${moves} is not a boolean`)
 
-        if (username != null && !username.trim().length) throw new ValueError('surname is empty or blank')
+        if (offer != null && !(offer instanceof Array)) throw TypeError(`${moves} is not an Array`)
+
         if (email != null && !email.trim().length) throw new ValueError('surname is empty or blank')
         if (skype != null && !skype.trim().length) throw new ValueError('surname is empty or blank')
         if (gender != null && !gender.trim().length) throw new ValueError('surname is empty or blank')
         if (description != null && !description.trim().length) throw new ValueError('surname is empty or blank')
         if (city != null && !city.trim().length) throw new ValueError('surname is empty or blank')
+
+        if (offer != null && !offer.length) throw new ValueError('offer is empty')
+
 
         return (async () => {
             const user = await User.findById(id)
@@ -177,6 +180,43 @@ const logic = {
             city != null && (user.city = city)
 
             await user.save()
+
+            if (offer) {
+                offer.forEach(off => {
+                    Offer.findAll({
+                        where: { user_id: id, lenguage: off }
+                    }).then(_offer => {
+                        if (_offer[0]) {
+                            _offer[0].destroy({ force: true })
+                        } else {
+                            Offer.create({ user_id: id, lenguage: off })
+                        }
+
+                    })
+                })
+            }
+
+            const offers = await Offer.findAll()
+
+            
+            if (searching) {
+                searching.forEach(off => {
+                    Searching.findAll({
+                        where: { user_id: id, lenguage: off }
+                    }).then(_search => {
+                        debugger
+                        if (_search[0]) {
+                            _search[0].destroy({ force: true })
+                        } else {
+                            Searching.create({ user_id: id, lenguage: off })
+                        }
+                    })
+                })
+            }
+
+            const searchings = await Searching.findAll()
+
+            debugger
 
         })()
     }

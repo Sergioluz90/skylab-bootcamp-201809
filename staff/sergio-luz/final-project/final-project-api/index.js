@@ -4,7 +4,7 @@ const express = require('express')
 const router = require('./routes')
 const cors = require('./utils/cors')
 const package = require('./package.json')
-const { User } = require('./data')
+const { User, Offer, Searching, Blocked } = require('./data')
 const Sequelize = require('sequelize');
 const { env: { PORT, DATABASE_URL } } = process
 
@@ -23,6 +23,10 @@ sequelize
 
         app.listen(port, () => console.log(`${package.name} ${package.version} up and running on port ${port}`))
     })
+    .then(()=>User.sync({ force: false }))
+    .then(()=>Offer.sync({ force: false }))
+    .then(()=>Searching.sync({ force: false }))
+    .then(()=>Blocked.sync({ force: false }))
     .catch(err => {
         console.error('Unable to connect to the database:', err);
     })
