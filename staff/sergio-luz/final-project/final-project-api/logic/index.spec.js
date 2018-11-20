@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { Sequelize, models: { User } } = require('final-data')
+const { Sequelize, models: { User , Offer, Searching, Blocked} } = require('final-data')
 const logic = require('../logic')
 const { expect } = require('chai')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
@@ -30,6 +30,7 @@ describe('logic', () => {
         // await User.sync({force:true, logging:false})
         await User.destroy({ where: {}, logging: false })
     })
+
 
     describe('user', () => {
         !flag && describe('register', () => {
@@ -748,14 +749,16 @@ describe('logic', () => {
             let user
 
             beforeEach(async () => {
-                user = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com' })
+                user = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com', skype:'pacusmaximus', available:false, age:38, gender:'male', city:'barcelona'}, {logging:false})
 
-                await user.save()
+                await user.save({logging:false})
             })
 
             it('should succeed on valid id', async () => {
 
-                _user = await logic.retrieveProfile(user.id)
+                _user = await logic.retrieveProfile(user.id.toString())
+                offers= await Offer.findAll({where:{user_id:user.id}, logging:false})
+                searchings= await Searching.findAll({where:{user_id:user.id}, logging:false})
 
                 expect(_user).to.exist
                 expect(_user).not.to.be.instanceof(User)
@@ -777,6 +780,17 @@ describe('logic', () => {
                 expect(_user.receives).to.equal(user.receives)
                 expect(_user.moves).to.equal(user.moves)
                 expect(_user.city).to.equal(user.city)
+
+                expect(_user.offer[0]).to.not.exist
+                expect(_user.offer[0]).to.be.equal(offers[0])
+
+                expect(_user.searching[0]).to.not.exist
+                expect(_user.searching[0]).to.be.equal(searchings[0])
+                // if(_user.offer){
+                //     _user.offer.forEach(offer=>{
+
+                //     })
+                // }
             })
         })
 
@@ -784,13 +798,13 @@ describe('logic', () => {
             let user, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity
 
             beforeEach(async () => {
-                user = User.build({ name: 'John', username: 'jd', email: 'pacus@maximus.com', password: '123' })
+                user = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com', skype:'pacusmaximus', available:false, age:38, gender:'male', city:'barcelona' }, {logging:false})
 
-                await user.save()
+                await user.save({logging:false})
             })
 
             it('should update on correct data and password', async () => {
-                let { id, name, username, email, password } = user
+                let { id, name, username, password, email, skype, available, age, gender, city } = user
 
                 newEmail = `${'newEmail'}-${Math.random()}`
                 newSkype = `${'newSkype'}-${Math.random()}`
@@ -804,9 +818,12 @@ describe('logic', () => {
                 newMoves = true
                 newCity = `${'newCity'}-${Math.random()}`
 
-                await logic.updateProfile(id, username, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity)
+                newOffers=['portuguese', "italian"]
+                newSearching=['portuguese', "italian", 'chinese', 'spanish']
 
-                const users = await User.findAll({ logging: false })
+                await logic.updateProfile(id, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity, newOffers, newSearching)
+
+                const users = await User.findAll({where:{},logging: false })
 
                 const _user = users[0]
 
@@ -827,14 +844,46 @@ describe('logic', () => {
                 expect(_user.receives).to.equal(newReceives)
                 expect(_user.moves).to.equal(newMoves)
                 expect(_user.city).to.equal(newCity)
+
+
+                const offers = await Offer.findAll({where:{user_id:id},logging: false })
+
+                offers.forEach((offer, index)=>{
+                    expect(offer.user_id).to.be.equal(id)
+                    expect(offer.lenguage).to.be.equal(newOffers[index])
+                })
+
+                const demands = await Searching.findAll({where:{user_id:id},logging: false })
+
+                demands.forEach((demand, index)=>{
+                    expect(demand.user_id).to.be.equal(id)
+                    expect(demand.lenguage).to.be.equal(newSearching[index])
+                })
+                
+
+
+
+
+                //  where: {where: Sequelize.and(
+                //             {technician_id: resultsFromAuthentication.technician_id},
+                //             {is_confirmed_by_user: 1},
+                //             Sequelize.or({
+                //                     service_start_time: {
+                //                         gte: curLocalDate
+                //                     }},
+                //             {service_running_status: 1} )
+                //             )
+                //         }
+
+
             })
 
             it('should update on correct id, username and email (other fields null)', async () => {
-                const { id, name, username, email, password } = user
+                const { id, name, username, password, email, skype, age, available, height, weight, smoker, description,gender, receives, moves, city } = user
 
                 newEmail = `${'newEmail'}-${Math.random()}`
 
-                await logic.updateProfile(id, username, newEmail, null, null, null, null, null, null, null, null, null, null)
+                await logic.updateProfile(id, newEmail, null, null, null, null, null, null, null, null, null, null, newOffers, newSearching)
 
                 const users = await User.findAll({ logging: false })
 
@@ -847,24 +896,38 @@ describe('logic', () => {
                 expect(_user.username).to.equal(username)
                 expect(_user.password).to.equal(password)
 
-                expect(_user.skype).to.equal('not defined')
-                expect(_user.age).to.equal(null)
-                expect(_user.gender).to.equal('not defined')
-                expect(_user.height).to.equal(null)
-                expect(_user.weight).to.equal(null)
-                expect(_user.smoker).to.equal(null)
-                expect(_user.description).to.equal(null)
-                expect(_user.receives).to.equal(false)
-                expect(_user.moves).to.equal(false)
-                expect(_user.city).to.equal('not defined')
+                expect(_user.skype).to.equal(skype)
+                expect(_user.age).to.equal(age)
+                expect(_user.gender).to.equal(gender)
+                expect(_user.height).to.equal(height)
+                expect(_user.weight).to.equal(weight)
+                expect(_user.smoker).to.equal(smoker)
+                expect(_user.description).to.equal(description)
+                expect(_user.receives).to.equal(receives)
+                expect(_user.moves).to.equal(moves)
+                expect(_user.city).to.equal(city)
+
+                const offers = await Offer.findAll({where:{user_id:id},logging: false })
+
+                offers.forEach((offer, index)=>{
+                    expect(offer.user_id).to.be.equal(id)
+                    expect(offer.lenguage).to.be.equal(newOffers[index])
+                })
+
+                const demands = await Searching.findAll({where:{user_id:id},logging: false })
+
+                demands.forEach((demand, index)=>{
+                    expect(demand.user_id).to.be.equal(id)
+                    expect(demand.lenguage).to.be.equal(newSearching[index])
+                })
             })
 
             it('should update on correct id, username and skype (other fields null)', async () => {
-                const { id, name, username, email, password } = user
+                const { id, name, username, password, email, skype, age, available, height, weight, smoker, description,gender, receives, moves, city } = user
 
                 newSkype = `${'newSkype'}-${Math.random()}`
 
-                await logic.updateProfile(id, username, null, newSkype, null, null, null, null, null, null, null, null, null)
+                await logic.updateProfile(id, null, newSkype, null, null, null, null, null, null, null, null, null, newOffers, newSearching)
 
                 const users = await User.findAll({ logging: false })
 
@@ -879,15 +942,29 @@ describe('logic', () => {
 
                 expect(_user.skype).to.equal(newSkype)
 
-                expect(_user.age).to.equal(null)
-                expect(_user.gender).to.equal('not defined')
-                expect(_user.height).to.equal(null)
-                expect(_user.weight).to.equal(null)
-                expect(_user.smoker).to.equal(null)
-                expect(_user.description).to.equal(null)
-                expect(_user.receives).to.equal(false)
-                expect(_user.moves).to.equal(false)
-                expect(_user.city).to.equal('not defined')
+                expect(_user.age).to.equal(age)
+                expect(_user.gender).to.equal(gender)
+                expect(_user.height).to.equal(height)
+                expect(_user.weight).to.equal(weight)
+                expect(_user.smoker).to.equal(smoker)
+                expect(_user.description).to.equal(description)
+                expect(_user.receives).to.equal(receives)
+                expect(_user.moves).to.equal(moves)
+                expect(_user.city).to.equal(city)
+
+                const offers = await Offer.findAll({where:{user_id:id},logging: false })
+
+                offers.forEach((offer, index)=>{
+                    expect(offer.user_id).to.be.equal(id)
+                    expect(offer.lenguage).to.be.equal(newOffers[index])
+                })
+
+                const demands = await Searching.findAll({where:{user_id:id},logging: false })
+
+                demands.forEach((demand, index)=>{
+                    expect(demand.user_id).to.be.equal(id)
+                    expect(demand.lenguage).to.be.equal(newSearching[index])
+                })
             })
 
             // TODO other combinations of valid updates

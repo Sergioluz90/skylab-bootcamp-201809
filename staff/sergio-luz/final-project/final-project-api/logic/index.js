@@ -123,19 +123,19 @@ const logic = {
 
         return (async () => {
 
-            const user = await User.findById(ID)
+            const user = await User.findByPk(ID, {logging:false})
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
             const { id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city } = user
 
-            const offers = await Offer.findAll({ where: { user_id: ID } })
+            const offers = await Offer.findAll({ where: { user_id: ID } , logging:false})
             let offer = []
 
             offers.forEach(off => {
                 offer.push(off.lenguage)
             })
 
-            const searchings = await Searching.findAll({ where: { user_id: ID } })
+            const searchings = await Searching.findAll({ where: { user_id: ID }, logging:false })
             let searching = []
 
             searchings.forEach(search => {
@@ -177,7 +177,7 @@ const logic = {
 
 
         return (async () => {
-            const user = await User.findById(id)
+            const user = await User.findById(id, {logging:false})
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -193,44 +193,42 @@ const logic = {
             moves != null && (user.moves = moves)
             city != null && (user.city = city)
 
-            await user.save()
+            await user.save({logging:false})
 
             if (offer) {
                 offer.forEach(off => {
                     Offer.findAll({
-                        where: { user_id: id, lenguage: off }
+                        where: { user_id: id, lenguage: off }, logging:false
                     }).then(_offer => {
                         if (_offer[0]) {
-                            _offer[0].destroy({ force: true })
+                            _offer[0].destroy({ force: true, logging:false })
                         } else {
-                            Offer.create({ user_id: id, lenguage: off })
+                            Offer.create({ user_id: id, lenguage: off},{logging:false})
                         }
 
                     })
                 })
             }
 
-            const offers = await Offer.findAll()
+            // const offers = await Offer.findAll({logging:false})
 
 
             if (searching) {
                 searching.forEach(off => {
                     Searching.findAll({
-                        where: { user_id: id, lenguage: off }
+                        where: { user_id: id, lenguage: off }, logging:false
                     }).then(_search => {
                         debugger
                         if (_search[0]) {
-                            _search[0].destroy({ force: true })
+                            _search[0].destroy({ force: true, logging:false })
                         } else {
-                            Searching.create({ user_id: id, lenguage: off })
+                            Searching.create({ user_id: id, lenguage: off},{logging:false})
                         }
                     })
                 })
             }
 
-            const searchings = await Searching.findAll()
-
-            debugger
+            // const searchings = await Searching.findAll({logging:false})
 
         })()
     }
