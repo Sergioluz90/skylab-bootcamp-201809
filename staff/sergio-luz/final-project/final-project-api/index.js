@@ -23,10 +23,10 @@ sequelize
 
         app.listen(port, () => console.log(`${package.name} ${package.version} up and running on port ${port}`))
     })
-    .then(()=>User.sync({ force: false }))
-    .then(()=>Offer.sync({ force: false }))
-    .then(()=>Searching.sync({ force: false }))
-    .then(()=>Blocked.sync({ force: false }))
+    .then(()=>User.sync({ force: false, logging:false }))
+    .then(()=>Offer.sync({ force: false, logging:false }))
+    .then(()=>Searching.sync({ force: false, logging:false }))
+    .then(()=>Blocked.sync({ force: false, logging:false }))
     .catch(err => {
         console.error('Unable to connect to the database:', err);
     })

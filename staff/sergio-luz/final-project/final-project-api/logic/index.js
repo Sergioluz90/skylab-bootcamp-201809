@@ -123,12 +123,25 @@ const logic = {
         return (async () => {
 
             const user = await User.findById(ID)
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
             const { id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city } = user
 
-            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+            const offers = await Offer.findAll({ where: { user_id: ID } })
+            let offer = []
 
-            _user = ({ id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city })
+            offers.forEach(off => {
+                offer.push(off.lenguage)
+            })
+
+            const searchings = await Searching.findAll({ where: { user_id: ID } })
+            let searching = []
+
+            searchings.forEach(search => {
+                searching.push(search.lenguage)
+            })
+
+            _user = ({ id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching })
 
             return _user
         })()
@@ -198,7 +211,7 @@ const logic = {
 
             const offers = await Offer.findAll()
 
-            
+
             if (searching) {
                 searching.forEach(off => {
                     Searching.findAll({
