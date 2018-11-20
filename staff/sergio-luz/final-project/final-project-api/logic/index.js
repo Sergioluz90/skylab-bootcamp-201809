@@ -35,7 +35,9 @@ const logic = {
         if (!password.trim()) throw new ValueError('password is empty or blank')
 
         return (async () => {
-            const user = await User.findOne({ username })
+            const users = await User.findAll({ where: { username: username } })
+
+            const user = users[0]
 
             if (!user || user.password !== password) throw new AuthError('invalid username or password')
 
@@ -48,7 +50,8 @@ const logic = {
         const ID = _id
         let _user
 
-        if (typeof _id !== 'number') throw TypeError(`${_id} is not a number`)
+        if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
+        if (!name.trim().length) throw new ValueError('name is empty or blank')
 
         return (async () => {
 
@@ -66,13 +69,14 @@ const logic = {
 
     updateUser(id, name, username, email, newPassword, password) {
 
-        if (typeof id !== 'number') throw TypeError(`${id} is not a number`)
+        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
         if (name != null && typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (email != null && typeof email !== 'string') throw TypeError(`${email} is not a string`)
         if (username != null && typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (newPassword != null && typeof newPassword !== 'string') throw TypeError(`${newPassword} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
 
+        if (!id.trim().length) throw new ValueError('id is empty or blank')
         if (name != null && !name.trim().length) throw new ValueError('name is empty or blank')
         if (email != null && !email.trim().length) throw new ValueError('surname is empty or blank')
         if (username != null && !username.trim().length) throw new ValueError('username is empty or blank')
@@ -113,8 +117,9 @@ const logic = {
         const ID = _id
         let _user
 
-        if (typeof _id !== 'number') throw TypeError(`${_id} is not a number`)
-
+        if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
+        if (!_id.trim().length) throw new ValueError('id is empty or blank')
+        
         return (async () => {
 
             const user = await User.findById(ID)
@@ -123,7 +128,7 @@ const logic = {
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            _user = ({ id,name,  username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city  })
+            _user = ({ id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city })
 
             return _user
         })()
@@ -131,10 +136,10 @@ const logic = {
 
     updateProfile(id, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city) {
 
-        if (typeof id !== 'number' || id==null || id==undefined) throw TypeError(`${id} is not a number`)
-        if (age!=null && typeof age !== 'number') throw TypeError(`${age} is not a number`)
-        if (height!=null &&typeof height !== 'number') throw TypeError(`${height} is not a number`)
-        if (weight!=null &&typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
+        if (typeof id !== 'number' || id == null || id == undefined) throw TypeError(`${id} is not a number`)
+        if (age != null && typeof age !== 'number') throw TypeError(`${age} is not a number`)
+        if (height != null && typeof height !== 'number') throw TypeError(`${height} is not a number`)
+        if (weight != null && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
 
         if (username != null && typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (email != null && typeof email !== 'string') throw TypeError(`${email} is not a string`)
@@ -142,7 +147,7 @@ const logic = {
         if (gender != null && typeof gender !== 'string') throw TypeError(`${gender} is not a string`)
         if (description != null && typeof description !== 'string') throw TypeError(`${description} is not a string`)
         if (city != null && typeof city !== 'string') throw TypeError(`${city} is not a string`)
-        
+
         if (smoker != null && typeof smoker !== 'boolean') throw TypeError(`${smoker} is not a boolean`)
         if (receives != null && typeof receives !== 'boolean') throw TypeError(`${receives} is not a boolean`)
         if (moves != null && typeof moves !== 'boolean') throw TypeError(`${moves} is not a boolean`)
@@ -159,17 +164,17 @@ const logic = {
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            email!=null && (user.email=email)
-            skype!=null && (user.skype=skype)
-            age!=null && (user.age=age)
-            gender!=null && (user.gender=gender)
-            height!=null && (user.height=height)
-            weight!=null && (user.weight=weight)
-            smoker!=null && (user.smoker=smoker)
-            description!=null && (user.description=description)
-            receives!=null && (user.receives=receives)
-            moves!=null && (user.moves=moves)
-            city!=null && (user.city=city)
+            email != null && (user.email = email)
+            skype != null && (user.skype = skype)
+            age != null && (user.age = age)
+            gender != null && (user.gender = gender)
+            height != null && (user.height = height)
+            weight != null && (user.weight = weight)
+            smoker != null && (user.smoker = smoker)
+            description != null && (user.description = description)
+            receives != null && (user.receives = receives)
+            moves != null && (user.moves = moves)
+            city != null && (user.city = city)
 
             await user.save()
 

@@ -110,7 +110,7 @@ describe('logic', () => {
 
             it('should succeed on valid id', async () => {
 
-                _user = await logic.retrieveProfile(user.id)
+                _user = await logic.retrieveProfile(user.id.toString())
 
                 expect(_user).not.to.be.instanceof(User)
 
@@ -240,7 +240,7 @@ describe('logic', () => {
             })
         })
 
-        flag && describe('retrieve profile', () => {
+        !flag && describe('retrieve profile', () => {
             let user
 
             beforeEach(async () => {

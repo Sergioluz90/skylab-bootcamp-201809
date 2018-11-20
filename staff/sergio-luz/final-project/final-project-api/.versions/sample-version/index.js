@@ -24,7 +24,6 @@ mongoose.connect(MONGO_URL, { useNewUrlParser: true, useCreateIndex: true })
 
         app.use(multer({ dest: './uploads/' }).any());
 
-
         app.listen(port, () => console.log(`${package.name} ${package.version} up and running on port ${port}`))
     })
     .catch(console.error)

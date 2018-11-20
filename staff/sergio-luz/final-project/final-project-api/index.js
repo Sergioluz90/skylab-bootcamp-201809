@@ -3,23 +3,25 @@ require('dotenv').config()
 const express = require('express')
 const router = require('./routes')
 const cors = require('./utils/cors')
-// const { User } = require('./data')
+const package = require('./package.json')
+const { User } = require('./data')
 const Sequelize = require('sequelize');
 const { env: { PORT, DATABASE_URL } } = process
 
-const sequelize = new Sequelize(DATABASE_URL)
+const sequelize = new Sequelize(DATABASE_URL, )
 
 sequelize
     .authenticate()
     .then(() => {
         const { argv: [, , port = PORT || 3306] } = process
-        console.log('Connection has been established successfully at port '+PORT)
 
         const app = express()
 
         app.use(cors)
 
         app.use('/api', router)
+
+        app.listen(port, () => console.log(`${package.name} ${package.version} up and running on port ${port}`))
     })
     .catch(err => {
         console.error('Unable to connect to the database:', err);
