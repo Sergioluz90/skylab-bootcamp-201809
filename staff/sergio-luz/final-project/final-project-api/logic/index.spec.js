@@ -1,6 +1,6 @@
 require('dotenv').config()
-const { User } = require('../data')
-const Sequelize = require('sequelize');
+
+const { Sequelize, models: { User } } = require('final-data')
 const logic = require('../logic')
 const { expect } = require('chai')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
@@ -48,7 +48,7 @@ describe('logic', () => {
 
                 expect(res).to.be.undefined
 
-                const _users = await User.findAll({logging:false})
+                const _users = await User.findAll({ logging: false })
 
                 expect(_users.length).to.equal(1)
 
@@ -198,7 +198,7 @@ describe('logic', () => {
                 expect(id).to.exist
                 expect(id).to.be.a('number')
 
-                const users = await User.findAll({logging:false})
+                const users = await User.findAll({ logging: false })
 
 
                 const [_user] = users
@@ -273,7 +273,7 @@ describe('logic', () => {
             beforeEach(async () => {
                 user = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com' })
 
-                await user.save({logging:false})
+                await user.save({ logging: false })
             })
 
             it('should succeed on valid id', async () => {
@@ -321,13 +321,13 @@ describe('logic', () => {
             })
         })
 
-        flag && describe('update user', () => {
+        !flag && describe('update user', () => {
             let user
 
             beforeEach(async () => {
-                user = User.build({ name: 'John', username: 'jd', email: 'pacus@maximus.com', password: '123' }, {logging:false})
+                user = User.build({ name: 'John', username: 'jd', email: 'pacus@maximus.com', password: '123' }, { logging: false })
 
-                await user.save({logging:false})
+                await user.save({ logging: false })
             })
 
             it('should update on correct data and password', async () => {
@@ -340,7 +340,7 @@ describe('logic', () => {
 
                 await logic.updateUser(id.toString(), newName, newUsername, newEmail, newPassword, password)
 
-                const users = await User.findAll({logging:false})
+                const users = await User.findAll({ logging: false })
 
                 const _user = users[0]
 
@@ -358,7 +358,7 @@ describe('logic', () => {
                 const newName = `${name}-${Math.random()}`
 
                 return logic.updateUser(id.toString(), newName, null, null, null, password)
-                    .then(() => User.findAll({logging:false}))
+                    .then(() => User.findAll({ logging: false }))
                     .then(users => {
                         const _user = users[0]
 
@@ -377,7 +377,7 @@ describe('logic', () => {
                 const newEmail = `${email}-${Math.random()}`
 
                 return logic.updateUser(id.toString(), null, null, newEmail, null, password)
-                    .then(() => User.findAll({logging:false}))
+                    .then(() => User.findAll({ logging: false }))
                     .then(users => {
                         const _user2 = users[0]
 
@@ -396,7 +396,7 @@ describe('logic', () => {
                 const newUsername = `${username}-${Math.random()}`
 
                 return logic.updateUser(id.toString(), null, newUsername, null, null, password)
-                    .then(() => User.findAll({logging:false}))
+                    .then(() => User.findAll({ logging: false }))
                     .then(users => {
                         const _user2 = users[0]
 
@@ -408,14 +408,14 @@ describe('logic', () => {
                         expect(_user2.password).to.equal(password)
                     })
             })
-            
+
             it('should update on correct id, newPassword and password (other fields null)', () => {
                 const { id, name, username, email, password } = user
 
                 const newPassword = `${password}-${Math.random()}`
 
                 return logic.updateUser(id.toString(), null, null, null, newPassword, password)
-                    .then(() => User.findAll({logging:false}))
+                    .then(() => User.findAll({ logging: false }))
                     .then(users => {
                         const _user2 = users[0]
 
@@ -428,12 +428,284 @@ describe('logic', () => {
                     })
             })
 
-            // TODO other combinations of valid updates
+            // Wrong ID
 
             it('should fail on undefined id', () => {
                 const { id, name, email, username, password } = user
 
                 expect(() => logic.updateUser(undefined, name, username, email, password, password)).to.throw(TypeError, 'undefined is not a string')
+            })
+
+            it('should fail on null id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(null, name, username, email, password, password)).to.throw(TypeError, 'null is not a string')
+            })
+
+            it('should fail on blank id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser('       \n', name, username, email, password, password)).to.throw(ValueError, 'id is empty or blank')
+            })
+
+            it('should fail on number id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(123, name, username, email, password, password)).to.throw(TypeError, '123 is not a string')
+            })
+
+            it('should fail on boolean id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(true, name, username, email, password, password)).to.throw(TypeError, 'true is not a string')
+            })
+
+            it('should fail on array id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser([false, true], name, username, email, password, password)).to.throw(TypeError, 'false,true is not a string')
+            })
+
+            it('should fail on object id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser({ ob: 'j' }, name, username, email, password, password)).to.throw(TypeError, '[object Object] is not a string')
+            })
+
+            // Wrong NAME
+
+            it('should succed on undefined name', () => {
+                const { id, name, email, username, password } = user
+
+                logic.updateUser(id.toString(), undefined, username, email, password, password)
+                    .then(() => expect(true).to.be.true)
+
+            })
+
+            it('should succed on null name', () => {
+                const { id, name, email, username, password } = user
+
+                logic.updateUser(id.toString(), null, username, email, password, password)
+                    .then(() => expect(true).to.be.true)
+                    .catch(err => expect(true).to.be.false)
+            })
+
+            it('should fail on blank name', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), '         \n', username, email, password, password)).to.throw(ValueError, 'name is empty or blank')
+            })
+
+            it('should fail on boolean name', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), true, username, email, password, password)).to.throw(TypeError, 'true is not a string')
+            })
+
+            it('should fail on number name', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), 123, username, email, password, password)).to.throw(TypeError, '123 is not a string')
+            })
+
+            it('should fail on array name', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), [false, 1], username, email, password, password)).to.throw(TypeError, 'false,1 is not a string')
+            })
+
+            it('should fail on object name', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), { ob: 'j' }, username, email, password, password)).to.throw(TypeError, '[object Object] is not a string')
+            })
+
+            // Wrong USERNAME
+
+            it('should succed on undefined username', () => {
+                const { id, name, email, username, password } = user
+
+                logic.updateUser(id.toString(), name, undefined, email, password, password)
+                    .then(() => expect(true).to.be.true)
+
+            })
+
+            it('should succed on null username', () => {
+                const { id, name, email, username, password } = user
+
+                logic.updateUser(id.toString(), name, null, email, password, password)
+                    .then(() => expect(true).to.be.true)
+                    .catch(err => expect(true).to.be.false)
+            })
+
+            it('should fail on blank name', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, '         \n', email, password, password)).to.throw(ValueError, 'username is empty or blank')
+            })
+
+            it('should fail on boolean username', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, true, email, password, password)).to.throw(TypeError, 'true is not a string')
+            })
+
+            it('should fail on number username', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, 123, email, password, password)).to.throw(TypeError, '123 is not a string')
+            })
+
+            it('should fail on array username', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, [false, 1], email, password, password)).to.throw(TypeError, 'false,1 is not a string')
+            })
+
+            it('should fail on object username', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, { ob: 'j' }, email, password, password)).to.throw(TypeError, '[object Object] is not a string')
+            })
+
+            // Wrong EMAIL
+
+            it('should succed on undefined email', () => {
+                const { id, name, email, username, password } = user
+
+                logic.updateUser(id.toString(), name, username, undefined, password, password)
+                    .then(() => expect(true).to.be.true)
+
+            })
+
+            it('should succed on null email', () => {
+                const { id, name, email, username, password } = user
+
+                logic.updateUser(id.toString(), name, username, null, password, password)
+                    .then(() => expect(true).to.be.true)
+                    .catch(err => expect(true).to.be.false)
+            })
+
+            it('should fail on blank email', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, '         \n', password, password)).to.throw(ValueError, 'email is empty or blank')
+            })
+
+            it('should fail on boolean email', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, true, password, password)).to.throw(TypeError, 'true is not a string')
+            })
+
+            it('should fail on number email', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, 123, password, password)).to.throw(TypeError, '123 is not a string')
+            })
+
+            it('should fail on array email', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, [false, 1], password, password)).to.throw(TypeError, 'false,1 is not a string')
+            })
+
+            it('should fail on object email', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, { ob: 'j' }, password, password)).to.throw(TypeError, '[object Object] is not a string')
+            })
+
+               // Wrong NEWPASSWORD
+
+               it('should succed on undefined newPassword', () => {
+                const { id, name, email, username, password } = user
+
+                logic.updateUser(id.toString(), name, username, email, undefined, password, password)
+                    .then(() => expect(true).to.be.true)
+
+            })
+
+            it('should succed on null newPassword', () => {
+                const { id, name, email, username, password } = user
+
+                logic.updateUser(id.toString(), name, username, email, null,  password)
+                    .then(() => expect(true).to.be.true)
+                    .catch(err => expect(true).to.be.false)
+            })
+
+            it('should fail on blank newPassword', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, email, '         \n',  password)).to.throw(ValueError, 'newPassword is empty or blank')
+            })
+
+            it('should fail on boolean newPassword', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, email, true, password)).to.throw(TypeError, 'true is not a string')
+            })
+
+            it('should fail on number newPassword', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, email, 123, password)).to.throw(TypeError, '123 is not a string')
+            })
+
+            it('should fail on array newPassword', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, email, [false, 1],  password)).to.throw(TypeError, 'false,1 is not a string')
+            })
+
+            it('should fail on object newPassword', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, email, { ob: 'j' },  password)).to.throw(TypeError, '[object Object] is not a string')
+            })
+
+            // Wrong PASSWORD
+
+            it('should fail on undefined password', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, email, password, undefined)).to.throw(TypeError, 'undefined is not a string')
+            })
+
+            it('should fail on null password', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, email, password, null)).to.throw(TypeError, 'null is not a string')
+            })
+
+            it('should fail on blank password', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, email, password, '       \n')).to.throw(ValueError, 'password is empty or blank')
+            })
+
+            it('should fail on number password', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, email, password, 123)).to.throw(TypeError, '123 is not a string')
+            })
+
+            it('should fail on boolean password', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, email, password, true)).to.throw(TypeError, 'true is not a string')
+            })
+
+            it('should fail on array password', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, email, password, [false, true])).to.throw(TypeError, 'false,true is not a string')
+            })
+
+            it('should fail on object password', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateUser(id.toString(), name, username, email, password, { ob: 'j' })).to.throw(TypeError, '[object Object] is not a string')
             })
 
             // TODO other test cases
@@ -445,7 +717,7 @@ describe('logic', () => {
 
                     user2 = User.build({ name: 'John', username: 'jd2', email: 'pacus@', password: '123' })
 
-                    await user2.save({logging:false})
+                    await user2.save({ logging: false })
                 })
 
                 it('should update on correct data and password', () => {
@@ -458,7 +730,7 @@ describe('logic', () => {
                         .catch(err => {
                             expect(err).to.be.instanceof(AlreadyExistsError)
 
-                            return User.findById(id, {logging:false})
+                            return User.findById(id, { logging: false })
                         })
                         .then(postit => {
                             expect(postit.id).to.equal(id)
@@ -534,7 +806,7 @@ describe('logic', () => {
 
                 await logic.updateProfile(id, username, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity)
 
-                const users = await User.findAll({logging:false})
+                const users = await User.findAll({ logging: false })
 
                 const _user = users[0]
 
@@ -564,7 +836,7 @@ describe('logic', () => {
 
                 await logic.updateProfile(id, username, newEmail, null, null, null, null, null, null, null, null, null, null)
 
-                const users = await User.findAll({logging:false})
+                const users = await User.findAll({ logging: false })
 
                 const _user = users[0]
 
@@ -594,7 +866,7 @@ describe('logic', () => {
 
                 await logic.updateProfile(id, username, null, newSkype, null, null, null, null, null, null, null, null, null)
 
-                const users = await User.findAll({logging:false})
+                const users = await User.findAll({ logging: false })
 
                 const _user = users[0]
 

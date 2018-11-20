@@ -4,8 +4,8 @@ const express = require('express')
 const router = require('./routes')
 const cors = require('./utils/cors')
 const package = require('./package.json')
-const { User, Offer, Searching, Blocked } = require('./data')
-const Sequelize = require('sequelize');
+const {Sequelize, models:{ User, Offer, Searching, Blocked }} = require('final-data')
+
 const { env: { PORT, DATABASE_URL } } = process
 
 const sequelize = new Sequelize(DATABASE_URL, )

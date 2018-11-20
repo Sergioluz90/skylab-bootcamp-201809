@@ -1,4 +1,4 @@
-const { User, Offer, Searching, Blocked } = require('../data')
+const{ models:{ User, Offer, Searching, Blocked }} = require('final-data')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 
 const logic = {
@@ -78,7 +78,7 @@ const logic = {
 
         if (!id.trim().length) throw new ValueError('id is empty or blank')
         if (name != null && !name.trim().length) throw new ValueError('name is empty or blank')
-        if (email != null && !email.trim().length) throw new ValueError('surname is empty or blank')
+        if (email != null && !email.trim().length) throw new ValueError('email is empty or blank')
         if (username != null && !username.trim().length) throw new ValueError('username is empty or blank')
         if (newPassword != null && !newPassword.trim().length) throw new ValueError('newPassword is empty or blank')
         if (!password.trim().length) throw new ValueError('password is empty or blank')

@@ -4,10 +4,14 @@ const { Offer } = require('./offer-schema')
 const { Searching } = require('./searching-schema')
 const { Blocked } = require('./blocked-schema')
 
+const Sequelize = require('sequelize');
 
 module.exports = {
-    User,
-    Offer,
-    Searching,
-    Blocked
+    Sequelize,
+    models:{
+        User,
+        Offer,
+        Searching,
+        Blocked
+    }
 }
