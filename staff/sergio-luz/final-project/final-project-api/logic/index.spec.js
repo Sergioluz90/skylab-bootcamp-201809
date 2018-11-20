@@ -396,7 +396,5 @@ describe('logic', () => {
 
             // TODO other test cases
         })
-
-
     })
 })

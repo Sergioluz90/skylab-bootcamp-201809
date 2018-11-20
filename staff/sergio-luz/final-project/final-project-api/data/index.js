@@ -1,6 +1,13 @@
 
-const {  User } = require('./schemas')
+const { User } = require('./user-schema')
+const { Offer } = require('./offer-schema')
+const { Searching } = require('./searching-schema')
+const { Blocked } = require('./blocked-schema')
+
 
 module.exports = {
-    User
+    User,
+    Offer,
+    Searching,
+    Blocked
 }
