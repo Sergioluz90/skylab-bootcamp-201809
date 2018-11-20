@@ -26,7 +26,9 @@ describe('logic', () => {
     })
 
     beforeEach(async () => {
-        await User.sync({ force: true, logging: false })
+
+        // await User.sync({force:true, logging:false})
+        await User.destroy({ where: {}, logging: false })
     })
 
     describe('user', () => {
@@ -177,7 +179,7 @@ describe('logic', () => {
 
         })
 
-        flag && describe('authenticate', () => {
+        !flag && describe('authenticate', () => {
             let user
 
             beforeEach(async () => {
@@ -185,7 +187,7 @@ describe('logic', () => {
                     name: 'John', username: 'jd', password: '123', email: 'jd@gmail.com'
                 })
 
-                await user.save()
+                await user.save({ logging: false })
             })
 
             it('should authenticate on correct credentials', async () => {
@@ -206,7 +208,60 @@ describe('logic', () => {
             })
 
             it('should fail on undefined username', () => {
-                expect(() => logic.authenticateUser(undefined, user.password)).to.throw(TypeError, 'undefined is not a string')
+                expect(() => logic.authenticateUser(undefined, user.password).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null username', () => {
+                expect(() => logic.authenticateUser(null, user.password).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank username', () => {
+                expect(() => logic.authenticateUser('      \n', user.password).to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number username', () => {
+                expect(() => logic.authenticateUser(123, user.password).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean username', () => {
+                expect(() => logic.authenticateUser(true, user.password).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array username', () => {
+                expect(() => logic.authenticateUser(['true', 'false'], user.password).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object username', () => {
+                expect(() => logic.authenticateUser({ ob: 'j' }, user.password).to.throw(TypeError, '[object Object] is not a string'))
+            })
+
+
+            it('should fail on undefined password', () => {
+                expect(() => logic.authenticateUser(user.username, undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null password', () => {
+                expect(() => logic.authenticateUser(user.username, null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank password', () => {
+                expect(() => logic.authenticateUser(user.username, '      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number password', () => {
+                expect(() => logic.authenticateUser(user.username, 123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean password', () => {
+                expect(() => logic.authenticateUser(user.username, true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array password', () => {
+                expect(() => logic.authenticateUser(user.username, ['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object password', () => {
+                expect(() => logic.authenticateUser(user.username, { ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
             })
 
             // TODO other test cases
@@ -510,4 +565,6 @@ describe('logic', () => {
             // TODO other test cases
         })
     })
+
+    after(() => sequelize.close())
 })

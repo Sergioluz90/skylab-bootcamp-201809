@@ -35,7 +35,7 @@ const logic = {
         if (!password.trim()) throw new ValueError('password is empty or blank')
 
         return (async () => {
-            const users = await User.findAll({ where: { username: username } })
+            const users = await User.findAll({ where: { username: username }, logging:false })
 
             const user = users[0]
 
