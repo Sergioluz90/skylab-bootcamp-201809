@@ -7,40 +7,40 @@ const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('..
 
 const flag = true;
 
-const { env: { PORT, TEST_DATABASE_URL } } = process
+const { env: { PORT, TEST_DATABASE_URL, TEST_DATABASE_NAME } } = process
 const { argv: [, , port = PORT || 3306] } = process
 
-const sequelize = new Sequelize(TEST_DATABASE_URL, { logging: false })
+const sequelize = new Sequelize(TEST_DATABASE_URL, { logging: !false })
+
 
 describe('logic', () => {
 
-    before(() => {
+    before(() =>
         sequelize
-            .authenticate({ logging: false })
+            .authenticate({ logging: !false })
             .then(() => {
                 console.log('Connection has been established successfully at port ' + PORT)
 
 
-                return sequelize.query('DROP DATABASE test')
+                return sequelize.query(`DROP DATABASE ${TEST_DATABASE_NAME}`)
                     .catch(() => undefined)
                     .finally(() => {
                         console.log('Test database dropped')
 
-                        return sequelize.query('CREATE DATABASE test')
+                        return sequelize.query(`CREATE DATABASE ${TEST_DATABASE_NAME}`)
                     })
             })
             .catch(err => {
                 debugger
                 console.error('Unable to connect to the database:');
             })
-    })
+    )
 
     beforeEach(async () => {
-
-        await User.sync({ force: true, logging: false })
-        await User.destroy({ where: {}, logging: false })
-        await Offer.destroy({ where: {}, logging: false })
-        await Searching.destroy({ where: {}, logging: false })
+        // await User.sync({ force: true, logging: false })
+        await User.destroy({ where: {}, logging: !false })
+        await Offer.destroy({ where: {}, logging: !false })
+        await Searching.destroy({ where: {}, logging: !false })
     })
 
 
@@ -996,19 +996,19 @@ describe('logic', () => {
         flag && describe('search profiles', () => {
 
 
-            beforeEach(async () => {
-                user1 = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
+            // beforeEach(async () => {
+            //     user1 = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
 
-                await user1.save({ logging: false })
+            //     await user1.save({ logging: false })
 
-                user2 = User.build({ name: 'John', username: 'jd2', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
+            //     user2 = User.build({ name: 'John', username: 'jd2', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
 
-                await user2.save({ logging: false })
+            //     await user2.save({ logging: false })
 
-                user3 = User.build({ name: 'John', username: 'jd3', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
+            //     user3 = User.build({ name: 'John', username: 'jd3', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
 
-                await user3.save({ logging: false })
-            })
+            //     await user3.save({ logging: false })
+            // })
 
             it('should succed on correct data: search by username', async () => {
                 const username = 'jd2'
@@ -1066,7 +1066,9 @@ describe('logic', () => {
                 //     }]
                 // }}, { logging: false })
 
-                const users = await User.findAll({
+                let users
+
+                users = await User.findAll({
                     where: {
                         username: username,
                         include: [{
@@ -1076,9 +1078,8 @@ describe('logic', () => {
                                 lenguage: { [Sequelize.Op.or]: offers }
                             }
                         }]
-                }
+                    }
                 }, { logging: !false })
-
 
                 debugger
                 expect(users.length).to.be.equal(users.length)
