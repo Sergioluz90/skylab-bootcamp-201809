@@ -1046,38 +1046,39 @@ describe('logic', () => {
 
                 const result = await logic.search(username, offers, searches)
 
+                debugger
                 expect(result).to.exist
 
-                // const _users = await User.findAll({where: {}, model: {
-                //     username: username,
-                //     include: [{
-                //         model: Offer,
-                //         as: 'userOffers',
-                //         where: {
-                //             lenguage: { [Sequelize.Op.or]: offers }
-                //         }
-                //     },
-                //     {
-                //         model: Searching,
-                //         as: 'userSearchings',
-                //         where: {
-                //             lenguage: { [Sequelize.Op.or]: searches }
-                //         }
-                //     }]
-                // }}, { logging: false })
+                const _users = await User.findAll({where: {}, model: {
+                    username: username,
+                    include: [{
+                        model: Offer,
+                        as: 'userOffers',
+                        where: {
+                            lenguage: { [Sequelize.Op.or]: offers }
+                        }
+                    },
+                    {
+                        model: Searching,
+                        as: 'userSearchings',
+                        where: {
+                            lenguage: { [Sequelize.Op.or]: searches }
+                        }
+                    }]
+                }}, { logging: false })
 
-                const users = await User.findAll({
-                    where: {
-                        username: username,
-                        include: [{
-                            model: Offer,
-                            as: 'userOffers',
-                            where: {
-                                lenguage: { [Sequelize.Op.or]: offers }
-                            }
-                        }]
-                }
-                }, { logging: !false })
+                // const users = await User.findAll({
+                //     where: {
+                //         username: username,
+                //         include: [{
+                //             model: Offer,
+                //             as: 'userOffers',
+                //             where: {
+                //                 lenguage: { [Sequelize.Op.or]: offers }
+                //             }
+                //         }]
+                // }
+                // }, { logging: !false })
 
 
                 debugger
