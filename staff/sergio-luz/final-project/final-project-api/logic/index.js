@@ -1,4 +1,4 @@
-const{ models:{ User, Offer, Searching, Blocked }} = require('final-data')
+const { models: { User, Offer, Searching, Blocked } } = require('final-data')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 
 const logic = {
@@ -35,7 +35,7 @@ const logic = {
         if (!password.trim()) throw new ValueError('password is empty or blank')
 
         return (async () => {
-            const users = await User.findAll({ where: { username: username }, logging:false })
+            const users = await User.findAll({ where: { username: username }, logging: false })
 
             const user = users[0]
 
@@ -86,14 +86,14 @@ const logic = {
 
         return (async () => {
 
-            const user = await User.findById(id,{logging:false})
+            const user = await User.findById(id, { logging: false })
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
             if (user.password !== password) throw new AuthError('invalid password')
 
             if (username) {
-                const _user = await User.findAll({ where: { username: username }, logging:false })
+                const _user = await User.findAll({ where: { username: username }, logging: false })
 
                 if (_user[0]) throw new AlreadyExistsError(`username ${username} already exists`)
 
@@ -102,14 +102,14 @@ const logic = {
                 user.username = username
                 newPassword != null && (user.password = newPassword)
 
-                await user.save({logging:false})
-                
+                await user.save({ logging: false })
+
             } else {
                 name != null && (user.name = name)
                 email != null && (user.email = email)
                 newPassword != null && (user.password = newPassword)
 
-                await user.save({logging:false})
+                await user.save({ logging: false })
             }
         })()
     },
@@ -123,19 +123,19 @@ const logic = {
 
         return (async () => {
 
-            const user = await User.findByPk(ID, {logging:false})
+            const user = await User.findByPk(ID, { logging: false })
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
             const { id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city } = user
 
-            const offers = await Offer.findAll({ where: { user_id: ID } , logging:false})
+            const offers = await Offer.findAll({ where: { user_id: ID }, logging: false })
             let offer = []
 
             offers.forEach(off => {
                 offer.push(off.lenguage)
             })
 
-            const searchings = await Searching.findAll({ where: { user_id: ID }, logging:false })
+            const searchings = await Searching.findAll({ where: { user_id: ID }, logging: false })
             let searching = []
 
             searchings.forEach(search => {
@@ -177,7 +177,7 @@ const logic = {
 
 
         return (async () => {
-            const user = await User.findById(id, {logging:false})
+            const user = await User.findById(id, { logging: false })
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -193,17 +193,17 @@ const logic = {
             moves != null && (user.moves = moves)
             city != null && (user.city = city)
 
-            await user.save({logging:false})
+            await user.save({ logging: false })
 
             if (offer) {
                 offer.forEach(off => {
                     Offer.findAll({
-                        where: { user_id: id, lenguage: off }, logging:false
+                        where: { user_id: id, lenguage: off }, logging: false
                     }).then(_offer => {
                         if (_offer[0]) {
-                            _offer[0].destroy({ force: true, logging:false })
+                            _offer[0].destroy({ force: true, logging: false })
                         } else {
-                            Offer.create({ user_id: id, lenguage: off},{logging:false})
+                            Offer.create({ user_id: id, lenguage: off }, { logging: false })
                         }
 
                     })
@@ -216,19 +216,45 @@ const logic = {
             if (searching) {
                 searching.forEach(off => {
                     Searching.findAll({
-                        where: { user_id: id, lenguage: off }, logging:false
+                        where: { user_id: id, lenguage: off }, logging: false
                     }).then(_search => {
                         debugger
                         if (_search[0]) {
-                            _search[0].destroy({ force: true, logging:false })
+                            _search[0].destroy({ force: true, logging: false })
                         } else {
-                            Searching.create({ user_id: id, lenguage: off},{logging:false})
+                            Searching.create({ user_id: id, lenguage: off }, { logging: false })
                         }
                     })
                 })
             }
 
             // const searchings = await Searching.findAll({logging:false})
+
+        })()
+    },
+
+    search(username) {
+        if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
+
+        if (!username.trim()) throw new ValueError('username is empty or blank')
+
+        return (async () => {
+
+            const users = await User.findAll({
+                where:  {username:{ like: '%'+username + '%'} }
+            })
+
+            debugger
+
+            const [user] = users
+
+            if (!user) throw new NotFoundError(`user with username ${username} not found`)
+
+            const { id, age, gender, description } = user
+
+            const _user = { id, username, age, gender, description }
+
+            return _user
 
         })()
     }
