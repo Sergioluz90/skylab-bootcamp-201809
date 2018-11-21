@@ -29,6 +29,8 @@ describe('logic', () => {
 
         // await User.sync({force:true, logging:false})
         await User.destroy({ where: {}, logging: false })
+        await Offer.destroy({where: {}, logging:false})
+        await Searching.destroy({where: {}, logging:false})
     })
 
 
@@ -794,7 +796,7 @@ describe('logic', () => {
             })
         })
 
-        !flag && describe('update profile', () => {
+        flag && describe('update profile', () => {
             let user, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity
 
             beforeEach(async () => {
@@ -818,6 +820,8 @@ describe('logic', () => {
                 newMoves = true
                 newCity = `${'newCity'}-${Math.random()}`
 
+                debugger
+
                 newOffers = ['portuguese', "italian"]
                 newSearching = ['portuguese', "italian", 'chinese', 'spanish']
 
@@ -825,7 +829,13 @@ describe('logic', () => {
 
                 const users = await User.findAll({ where: {}, logging: false })
 
+                const offers = await Offer.findAll({ where: { user_id: id }, logging: false })
+                
+                const demands = await Searching.findAll({ where: { user_id: id }, logging: false })
+
+
                 const _user = users[0]
+                debugger
 
                 expect(_user.dataValues.id).to.equal(id)
 
@@ -846,14 +856,12 @@ describe('logic', () => {
                 expect(_user.city).to.equal(newCity)
 
 
-                const offers = await Offer.findAll({ where: { user_id: id }, logging: false })
 
                 offers.forEach((offer, index) => {
                     expect(offer.user_id).to.be.equal(id)
                     expect(offer.lenguage).to.be.equal(newOffers[index])
                 })
 
-                const demands = await Searching.findAll({ where: { user_id: id }, logging: false })
 
                 demands.forEach((demand, index) => {
                     expect(demand.user_id).to.be.equal(id)
@@ -978,7 +986,7 @@ describe('logic', () => {
             // TODO other test cases
         })
 
-        flag && describe('search profiles', () => {
+        !flag && describe('search profiles', () => {
 
 
             beforeEach(async () => {

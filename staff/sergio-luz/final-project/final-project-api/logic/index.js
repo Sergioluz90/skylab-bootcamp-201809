@@ -124,6 +124,7 @@ const logic = {
         return (async () => {
 
             const user = await User.findByPk(ID, { logging: false })
+
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
             const { id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city } = user
@@ -195,41 +196,24 @@ const logic = {
 
             await user.save({ logging: false })
 
-            if (offer) {
-                offer.forEach(off => {
-                    Offer.findAll({
+            async function f_updating(updating, model) {
+                
+                for (off of updating) {
+                    const _search = await model.findAll({
                         where: { user_id: id, lenguage: off }, logging: false
-                    }).then(_offer => {
-                        if (_offer[0]) {
-                            _offer[0].destroy({ force: true, logging: false })
-                        } else {
-                            Offer.create({ user_id: id, lenguage: off }, { logging: false })
-                        }
-
                     })
-                })
+                    if (_search[0]) {
+
+                        await _search[0].destroy({ force: true, logging: false })
+                    } else {
+
+                        await model.create({ user_id: id, lenguage: off }, { logging: false })
+                    }
+                }
             }
 
-            // const offers = await Offer.findAll({logging:false})
-
-
-            if (searching) {
-                searching.forEach(off => {
-                    Searching.findAll({
-                        where: { user_id: id, lenguage: off }, logging: false
-                    }).then(_search => {
-                        debugger
-                        if (_search[0]) {
-                            _search[0].destroy({ force: true, logging: false })
-                        } else {
-                            Searching.create({ user_id: id, lenguage: off }, { logging: false })
-                        }
-                    })
-                })
-            }
-
-            // const searchings = await Searching.findAll({logging:false})
-
+            await f_updating(offer, Offer)
+            await f_updating(searching, Searching)
         })()
     },
 
@@ -241,7 +225,8 @@ const logic = {
         return (async () => {
 
             const users = await User.findAll({
-                where:  {username:{ like: '%'+username + '%'} }
+                where: { username: { like: '%' + username + '%' } },
+                logging: false
             })
 
             debugger
