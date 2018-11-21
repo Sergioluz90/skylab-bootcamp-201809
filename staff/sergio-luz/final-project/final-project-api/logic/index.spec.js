@@ -7,9 +7,10 @@ const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('..
 
 const flag = true;
 
-const { env: { PORT, DATABASE_URL_TEST } } = process
+const { env: { PORT, TEST_DATABASE_URL } } = process
+const { argv: [, , port = PORT || 3306] } = process
 
-const sequelize = new Sequelize(DATABASE_URL_TEST, { logging: false })
+const sequelize = new Sequelize(TEST_DATABASE_URL, { logging: false })
 
 describe('logic', () => {
 
@@ -17,17 +18,26 @@ describe('logic', () => {
         sequelize
             .authenticate({ logging: false })
             .then(() => {
-                const { argv: [, , port = PORT || 3306] } = process
                 console.log('Connection has been established successfully at port ' + PORT)
+
+
+                return sequelize.query('DROP DATABASE test')
+                    .catch(() => undefined)
+                    .finally(() => {
+                        console.log('Test database dropped')
+
+                        return sequelize.query('CREATE DATABASE test')
+                    })
             })
             .catch(err => {
+                debugger
                 console.error('Unable to connect to the database:');
             })
     })
 
     beforeEach(async () => {
 
-        await User.sync({force:true, logging:false})
+        await User.sync({ force: true, logging: false })
         await User.destroy({ where: {}, logging: false })
         await Offer.destroy({ where: {}, logging: false })
         await Searching.destroy({ where: {}, logging: false })
@@ -826,7 +836,7 @@ describe('logic', () => {
 
                 await logic.updateProfile(id, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity, newOffers, newSearching)
 
-                const users = await User.findAll({where:{},logging: false})
+                const users = await User.findAll({ where: {}, logging: false })
 
                 const offers = await Offer.findAll({ where: { user_id: id }, logging: false })
 
@@ -1019,27 +1029,58 @@ describe('logic', () => {
                 expect(result.age).to.be.equal(user.age)
                 expect(result.gender).to.be.equal(user.gender)
                 expect(result.description).to.be.equal(user.description)
-                
+
                 expect(JSON.stringify(result.userOffers)).to.be.equal(JSON.stringify([]))
                 expect(JSON.stringify(result.userSearchings)).to.be.equal(JSON.stringify([]))
             })
 
             it('should succed on correct data (when has lenguages): search by username', async () => {
-                Offer.create({user_id:user1.id, lenguage:'spanish'})
-                Searching.create({user_id:user2.id, lenguage:'english'})
-                Searching.create({user_id:user2.id, lenguage:'spanish'})
+                await Offer.create({ user_id: user1.id, lenguage: 'spanish' }, { logging: false })
+                await Searching.create({ user_id: user1.id, lenguage: 'english' }, { logging: false })
+                await Searching.create({ user_id: user2.id, lenguage: 'spanish' }, { logging: false })
 
-                const offers=['spanish']
-                const searches=['english']
+                const offers = ['spanish', '']
+                const searches = ['english']
 
-                const username = 'jd2'
+                const username = 'jd'
 
                 const result = await logic.search(username, offers, searches)
 
                 expect(result).to.exist
 
-                const users = await User.findAll({ where: { username }, logging: false })
+                // const _users = await User.findAll({where: {}, model: {
+                //     username: username,
+                //     include: [{
+                //         model: Offer,
+                //         as: 'userOffers',
+                //         where: {
+                //             lenguage: { [Sequelize.Op.or]: offers }
+                //         }
+                //     },
+                //     {
+                //         model: Searching,
+                //         as: 'userSearchings',
+                //         where: {
+                //             lenguage: { [Sequelize.Op.or]: searches }
+                //         }
+                //     }]
+                // }}, { logging: false })
 
+                const users = await User.findAll({
+                    where: {
+                        username: username,
+                        include: [{
+                            model: Offer,
+                            as: 'userOffers',
+                            where: {
+                                lenguage: { [Sequelize.Op.or]: offers }
+                            }
+                        }]
+                }
+                }, { logging: !false })
+
+
+                debugger
                 expect(users.length).to.be.equal(users.length)
 
                 const [user] = users
@@ -1055,5 +1096,5 @@ describe('logic', () => {
         })
     })
 
-    after(() => sequelize.close())
+    after(() => sequelize.close().then(process.exit))
 })
