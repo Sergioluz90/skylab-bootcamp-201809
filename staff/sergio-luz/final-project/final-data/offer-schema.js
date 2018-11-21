@@ -5,11 +5,11 @@ const sequelize = new Sequelize('mysql://root:26081990@localhost:3306/mysql')
 
 
 const Offer = sequelize.define('offer', {
-    user_id:{
+    user_id: {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    lenguage:{
+    lenguage: {
         type: Sequelize.STRING,
         allowNull: false
     }

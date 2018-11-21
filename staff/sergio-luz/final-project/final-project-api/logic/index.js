@@ -199,9 +199,9 @@ const logic = {
             async function f_updating(updating, model) {
                 
                 for (off of updating) {
-                    const _search = await model.findAll({
-                        where: { user_id: id, lenguage: off }, logging: false
-                    })
+                    
+                    const _search = await model.findAll({subQuery: false, attributes : ['id', 'lenguage'], logging:false})
+                    
                     if (_search[0]) {
 
                         await _search[0].destroy({ force: true, logging: false })
@@ -225,19 +225,25 @@ const logic = {
         return (async () => {
 
             const users = await User.findAll({
-                where: { username: { like: '%' + username + '%' } },
-                logging: false
+                where: { username: { like: '%' + username + '%' }},
+                include: [{
+                    model: Offer,
+                    as: 'userOffers',
+                  },
+                {
+                    model:Searching,
+                    as: 'userSearchings'
+                }],
+                logging: false 
             })
-
-            debugger
 
             const [user] = users
 
             if (!user) throw new NotFoundError(`user with username ${username} not found`)
 
-            const { id, age, gender, description } = user
+            const { id, age, gender, description, userOffers, userSearchings } = user
 
-            const _user = { id, username, age, gender, description }
+            const _user = { id, username, age, gender, description, userOffers, userSearchings }
 
             return _user
 

@@ -27,10 +27,10 @@ describe('logic', () => {
 
     beforeEach(async () => {
 
-        // await User.sync({force:true, logging:false})
+        await User.sync({force:true, logging:false})
         await User.destroy({ where: {}, logging: false })
-        await Offer.destroy({where: {}, logging:false})
-        await Searching.destroy({where: {}, logging:false})
+        await Offer.destroy({ where: {}, logging: false })
+        await Searching.destroy({ where: {}, logging: false })
     })
 
 
@@ -796,7 +796,7 @@ describe('logic', () => {
             })
         })
 
-        flag && describe('update profile', () => {
+        !flag && describe('update profile', () => {
             let user, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity
 
             beforeEach(async () => {
@@ -820,22 +820,19 @@ describe('logic', () => {
                 newMoves = true
                 newCity = `${'newCity'}-${Math.random()}`
 
-                debugger
 
                 newOffers = ['portuguese', "italian"]
                 newSearching = ['portuguese', "italian", 'chinese', 'spanish']
 
                 await logic.updateProfile(id, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity, newOffers, newSearching)
 
-                const users = await User.findAll({ where: {}, logging: false })
+                const users = await User.findAll({where:{},logging: false})
 
                 const offers = await Offer.findAll({ where: { user_id: id }, logging: false })
-                
+
                 const demands = await Searching.findAll({ where: { user_id: id }, logging: false })
 
-
                 const _user = users[0]
-                debugger
 
                 expect(_user.dataValues.id).to.equal(id)
 
@@ -986,7 +983,7 @@ describe('logic', () => {
             // TODO other test cases
         })
 
-        !flag && describe('search profiles', () => {
+        flag && describe('search profiles', () => {
 
 
             beforeEach(async () => {
@@ -1004,17 +1001,48 @@ describe('logic', () => {
             })
 
             it('should succed on correct data: search by username', async () => {
-                const username='jd2'
+                const username = 'jd2'
 
                 const result = await logic.search(username)
-                
+
                 expect(result).to.exist
-                
-                const users = await User.findAll({ where: {username}, logging: false })
-                
+
+                const users = await User.findAll({ where: { username }, logging: false })
+
                 expect(users.length).to.be.equal(users.length)
 
-                const [user]=users
+                const [user] = users
+
+                expect(result).not.to.be.instanceOf(User)
+                expect(result.username).to.be.equal(user.username)
+                expect(result.id).to.be.equal(user.id)
+                expect(result.age).to.be.equal(user.age)
+                expect(result.gender).to.be.equal(user.gender)
+                expect(result.description).to.be.equal(user.description)
+                
+                expect(JSON.stringify(result.userOffers)).to.be.equal(JSON.stringify([]))
+                expect(JSON.stringify(result.userSearchings)).to.be.equal(JSON.stringify([]))
+            })
+
+            it('should succed on correct data (when has lenguages): search by username', async () => {
+                Offer.create({user_id:user1.id, lenguage:'spanish'})
+                Searching.create({user_id:user2.id, lenguage:'english'})
+                Searching.create({user_id:user2.id, lenguage:'spanish'})
+
+                const offers=['spanish']
+                const searches=['english']
+
+                const username = 'jd2'
+
+                const result = await logic.search(username, offers, searches)
+
+                expect(result).to.exist
+
+                const users = await User.findAll({ where: { username }, logging: false })
+
+                expect(users.length).to.be.equal(users.length)
+
+                const [user] = users
 
                 expect(result).not.to.be.instanceOf(User)
                 expect(result.username).to.be.equal(user.username)

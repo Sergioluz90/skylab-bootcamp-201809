@@ -6,15 +6,43 @@ const { Blocked } = require('./blocked-schema')
 
 const Sequelize = require('sequelize');
 
-User.hasMany(Offer, { foreignKey: 'user_id' })
-User.hasMany(Searching, { foreignKey: 'user_id' })
+// const sequelize = new Sequelize('mysql://root:26081990@localhost:3306/mysql')
 
-User.belongsToMany(Offer, {through: 'user_id'})
-User.belongsToMany(Searching, {through: 'user_id'})
+// User.hasMany(Offer, { onDelete: 'CASCADE' })
+// User.hasMany(Searching, { onDelete: 'CASCADE' })
+
+
+
+// const UserOffer = sequelize.define('userOffer', {});
+
+// User.belongsToMany(Offer, { through: UserOffer });
+// Offer.belongsToMany(User, { through: UserOffer });
+
+User.hasMany(Offer, {
+    foreignKey: 'user_id',
+    as: 'userOffers',
+});
+
+Offer.belongsTo(User, {
+    foreignKey: 'user_id',
+    onDelete: 'CASCADE',
+});
+
+User.hasMany(Searching, {
+    foreignKey: 'user_id',
+    as: 'userSearchings',
+});
+
+Searching.belongsTo(User, {
+    foreignKey: 'user_id',
+    onDelete: 'CASCADE',
+});
+
+
 
 module.exports = {
     Sequelize,
-    models:{
+    models: {
         User,
         Offer,
         Searching,
