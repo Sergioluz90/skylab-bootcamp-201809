@@ -13,7 +13,7 @@ require('isomorphic-fetch')
 global.sessionStorage = require('sessionstorage')
 
 const { expect } = require('chai')
-const { before } = require('mocha')
+const { before, after } = require('mocha')
 
 const flag = true
 
@@ -200,7 +200,7 @@ describe('logic', () => {
 
         })
 
-        flag && describe('login', () => {
+        !flag && describe('login', () => {
             let user
 
             !false && beforeEach(async () => {
@@ -216,9 +216,9 @@ describe('logic', () => {
 
                 const data = await logic.loginUser(username, password)
 
-                const {id, token}=data
+                const { id, token } = data
 
-                expect(id).to.exist
+                expect(id).not.to.be.equal(undefined)
                 expect(id).to.be.a('number')
 
                 const users = await User.findAll({ logging: false })
@@ -226,7 +226,7 @@ describe('logic', () => {
 
                 const [_user] = users
 
-                expect(_user).not.to.be.undefined
+                expect(_user).not.to.be.equal(undefined)
                 expect(_user.id).to.equal(id)
             })
 
@@ -289,7 +289,68 @@ describe('logic', () => {
 
             // TODO other test cases
         })
+
+        !flag && describe('retrieve user', () => {
+            let user
+
+            !false && beforeEach(async () => {
+                const username='jd'
+
+                await logic.registerUser('jd',username,'123','jd@')
+
+                await logic.loginUser(username,'123')
+            })
+
+            it('should succeed on valid id', async () => {
+
+                const _user = await logic.retrieveUser()
+
+                expect(_user).not.to.be.instanceof(User)
+
+                const { id, name, username, email, password } = _user
+
+                const users=await User.findAll({where:{username:username}, logging:false})
+
+                expect(users.length).to.be.equal(1)
+                const user=users[0]
+
+                expect(id).not.to.be.equal(undefined)
+                expect(id).to.equal(user.id)
+                expect(name).to.equal(user.name)
+                expect(username).to.equal(user.username)
+                expect(email).to.be.equal(user.email)
+                expect(password).to.be.equal(undefined)
+            })
+
+            it('should fail on undefined id', () => {
+                expect(() => logic.authenticateUser(undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null id', () => {
+                expect(() => logic.authenticateUser(null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank id', () => {
+                expect(() => logic.authenticateUser('      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number id', () => {
+                expect(() => logic.authenticateUser(123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean id', () => {
+                expect(() => logic.authenticateUser(true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array id', () => {
+                expect(() => logic.authenticateUser(['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object id', () => {
+                expect(() => logic.authenticateUser({ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
+            })
+        })
     })
 
-    after(()=>process.exit)
+    after(() => process.exit)
 })

@@ -6,3 +6,5 @@ data/users/**/*.bmp
 data/users/**/*.svg
 !data/users/default/profile.png
 .versions
+/node_modules
+/.samples
