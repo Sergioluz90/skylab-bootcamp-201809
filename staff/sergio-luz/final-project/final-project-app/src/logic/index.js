@@ -98,7 +98,7 @@ const logic = {
         if (newPassword != null && !newPassword.trim().length) throw new ValueError('newPassword is empty or blank')
         if (!password.trim().length) throw new ValueError('password is empty or blank')
 
-        
+
         return fetch(`http://localhost:5000/api/users/${this._userId}`, {
             method: 'PATCH',
             headers: {
@@ -112,7 +112,26 @@ const logic = {
 
                 if (res.error) throw Error(res.error)
 
-                
+                return res.data
+            })
+    },
+
+    retrieveProfile(_id) {
+
+        if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
+        if (!_id.trim().length) throw new ValueError('id is empty or blank')
+
+        return fetch(`http://localhost:5000/api/users/${this._userId}/profile`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${this._token}`
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+
+                if (res.error) throw Error(res.error)
+
                 return res.data
             })
     }
