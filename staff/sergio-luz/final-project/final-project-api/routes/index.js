@@ -101,29 +101,38 @@ router.get('/users/:id/profile', [bearerTokenParser, jwtVerifier], (req, res) =>
 
 router.patch('/users/:id/profile', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
-        const { params: { id }, sub, body: { email, skype, gender, age, height, weight, smoker, description, receives, moves, city, offer, searching } } = req
+        const { params: { id }, sub, body: { email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching } } = req
 
         if (id !== sub.toString()) throw Error('token sub does not match user id')
 
-        return logic.updateProfile(sub,
-            email ? email : null,
-            skype ? skype : null,
-            gender ? gender : null,
-            age ? age : null,
-            height ? height : null,
-            weight ? weight : null,
-            smoker ? smoker : null,
-            description ? description : null,
-            receives ? receives : null,
-            moves ? moves : null,
-            city ? city : null,
-            offer ? offer : null,
-            searching ? searching : null)
-            .then(() =>
-                res.json({
-                    message: 'profile updated'
+            return logic.updateProfile(id,
+                email ? email : null,
+                skype ? skype : null,
+                age ? age : null,
+                gender ? gender : null,
+                height ? height : null,
+                weight ? weight : null,
+                smoker ? smoker : null,
+                description ? description : null,
+                receives ? receives : null,
+                moves ? moves : null,
+                city ? city : null,
+                offer ? offer : null,
+                searching ? searching : null)
+                .then(() =>{
+                    
+                    res.json({
+                        message: 'profile updated'
+                    })
+                }
+                ).catch((err)=>{
+                    
+                    res.json({
+                        
+                        error:`${err} `
+                    })
                 })
-            )
+                
     }, res)
 })
 

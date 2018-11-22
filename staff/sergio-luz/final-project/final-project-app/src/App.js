@@ -6,19 +6,21 @@ import Register from './components/Register'
 import Login from './components/Login'
 import Error from './components/Error'
 import logic from './logic'
+import Home from './components/Home'
+import Header from './components/Header'
 import { throws } from 'assert';
 
 class App extends Component {
 
   state = {
-    register: false,
     login: false,
     error: null
   }
 
-  handleRegisterClick = () => this.props.history.push('/register')
-  handleLoginClick = () => this.props.history.push('/login')
   handleGoBack = () => this.props.history.push('/')
+  handleHomeClick = () => this.props.history.push('/home')
+  handleLoginClick = () => this.props.history.push('/')
+  handleRegisterClick = () => this.props.history.push('/register')
 
 
   OnHandleLogin = () => {
@@ -26,8 +28,6 @@ class App extends Component {
   }
 
   RegisterHandler = (name, username, email, password) => {
-
-    console.log('papi: logic.register')
 
     logic.registerUser(name, username, password, email)
       .then(() => {
@@ -37,28 +37,39 @@ class App extends Component {
       .catch(err => {
         this.setState({ error: err.message })
       })
-
   }
 
   LoginHandler = (username, password) => {
 
-    console.log('papi: logic.login')
+    logic.loginUser(username, password)
+      .then(() => {
+        this.setState({ error: null, login: true })
+        this.handleHomeClick()
+      })
+      .catch(err => {
+        this.setState({ error: err.message })
+      })
   }
 
   render() {
-    const { register, login, error } = this.state
+    const { login, error } = this.state
 
     return <div>
 
 
-      <Route exact path="/" render={() => <section>
-        <button onClick={this.handleRegisterClick}>Register</button> or <button onClick={this.handleLoginClick}>Login</button></section>} />
+      <Route exact path="/" render={() => !logic.loggedIn&& (<section>
+        <button onClick={this.handleRegisterClick}>Register</button> or <button onClick={this.handleLoginClick}>Login</button></section>)} />
 
-      <Route path="/register" render={() => !false ? <Register history={this.props.history} RegisterHandler={this.RegisterHandler} /> : <Redirect to="/" />} />
+      {logic.loggedIn && <Header/>}
 
-      <Route path="/login" render={() => !false ? <Login history={this.props.history} LoginHandler={this.LoginHandler} /> : <Redirect to="/" />} />
+      <Route path="/register" render={() => !logic.loggedIn ? <Register history={this.props.history} RegisterHandler={this.RegisterHandler} /> : <Redirect to="/home" />} />
+
+      <Route exact path="/" render={() => !logic.loggedIn ? <Login history={this.props.history} LoginHandler={this.LoginHandler} /> : <Redirect to="/home" />} />
 
       {error && <Error message={error} />}
+
+      <Route path="/home" render={() => logic.loggedIn ? <Home isLoggedIn={this.state.login} />:<Redirect to="/"/>} />
+
 
       {/* {userId && <section><button onClick={this.handleLogoutClick}>Logout</button></section>} */}
 
@@ -67,9 +78,6 @@ class App extends Component {
 
     </div>
   }
-
-
-
 }
 
 export default withRouter(App)

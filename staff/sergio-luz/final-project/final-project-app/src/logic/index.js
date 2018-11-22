@@ -3,13 +3,17 @@ global.sessionStorage = require('sessionstorage')
 
 
 const logic = {
-    
+
     _user: "",
     _userId: sessionStorage.getItem('userId') || null,
     _token: sessionStorage.getItem('token') || null,
-    
+
+    get loggedIn() {
+        return !!sessionStorage.getItem('userId')
+    },
+
     registerUser(name, username, password, email) {
-        
+
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (typeof email !== 'string') throw TypeError(`${email} is not a string`)
@@ -19,6 +23,7 @@ const logic = {
         if (!username.trim()) throw new ValueError('username is empty or blank')
         if (!email.trim()) throw new ValueError('email is empty or blank')
         if (!password.trim()) throw new ValueError('password is empty or blank')
+
 
         return fetch('http://localhost:5000/api/users', {
             method: 'POST',
@@ -34,6 +39,8 @@ const logic = {
 
                 return res.data
             })
+
+
     },
 
     loginUser(username, password) {
@@ -62,6 +69,7 @@ const logic = {
                 sessionStorage.setItem('userId', id)
                 sessionStorage.setItem('token', token)
 
+                return [id, token]
             })
     },
 
@@ -134,6 +142,57 @@ const logic = {
 
                 return res.data
             })
+    },
+
+    updateProfile(id, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
+
+        if (typeof id !== 'number' || id == null || id == undefined) throw TypeError(`${id} is not a number`)
+        if (age != null && typeof age !== 'number') throw TypeError(`${age} is not a number`)
+        if (height != null && typeof height !== 'number') throw TypeError(`${height} is not a number`)
+        if (weight != null && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
+
+        if (email != null && typeof email !== 'string') throw TypeError(`${email} is not a string`)
+        if (skype != null && typeof skype !== 'string') throw TypeError(`${skype} is not a string`)
+        if (gender != null && typeof gender !== 'string') throw TypeError(`${gender} is not a string`)
+        if (description != null && typeof description !== 'string') throw TypeError(`${description} is not a string`)
+        if (city != null && typeof city !== 'string') throw TypeError(`${city} is not a string`)
+
+        if (smoker != null && typeof smoker !== 'boolean') throw TypeError(`${smoker} is not a boolean`)
+        if (receives != null && typeof receives !== 'boolean') throw TypeError(`${receives} is not a boolean`)
+        if (moves != null && typeof moves !== 'boolean') throw TypeError(`${moves} is not a boolean`)
+
+        if (offer != null && !(offer instanceof Array)) throw TypeError(`${moves} is not an Array`)
+
+        if (email != null && !email.trim().length) throw new ValueError('surname is empty or blank')
+        if (skype != null && !skype.trim().length) throw new ValueError('surname is empty or blank')
+        if (gender != null && !gender.trim().length) throw new ValueError('surname is empty or blank')
+        if (description != null && !description.trim().length) throw new ValueError('surname is empty or blank')
+        if (city != null && !city.trim().length) throw new ValueError('surname is empty or blank')
+
+        if (offer != null && !offer.length) throw new ValueError('offer is empty')
+
+        debugger
+
+        return fetch(`http://localhost:5000/api/users/${this._userId}/profile`, {
+            method: 'PATCH',
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                'Authorization': `Bearer ${this._token}`
+            },
+            body: JSON.stringify({ id, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching })
+        })
+            .then(res => res.json())
+            .then(res => {
+                debugger
+
+                if (res.error) throw Error(res.error)
+
+                return res.data
+            })
+            .catch(err=>{
+                return err.message
+            })
+
     }
 
 }

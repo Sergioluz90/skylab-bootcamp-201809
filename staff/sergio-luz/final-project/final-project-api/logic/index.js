@@ -17,9 +17,9 @@ const logic = {
 
             // Comrpobar si existe ya o no
 
-            const _user=await User.find({where:{username:username}})
+            const _user = await User.find({ where: { username: username } })
 
-            if(_user) throw new AlreadyExistsError('This username already exists')
+            if (_user) throw new AlreadyExistsError('This username already exists')
 
             const user = User.build({
                 username: username,
@@ -101,7 +101,7 @@ const logic = {
             if (username) {
                 const _user = await User.findAll({ where: { username: username }, logging: false })
 
-                if (_user[0]&&_user[0].username!==user.username) throw new AlreadyExistsError(`username ${username} already exists`)
+                if (_user[0] && _user[0].username !== user.username) throw new AlreadyExistsError(`username ${username} already exists`)
 
                 name != null && (user.name = name)
                 email != null && (user.email = email)
@@ -155,9 +155,12 @@ const logic = {
         })()
     },
 
-    updateProfile(id, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
+    updateProfile(id, email, skype, gender, age, height, weight, smoker, description, receives, moves, city, offer, searching) {
 
-        if (typeof id !== 'number' || id == null || id == undefined) throw TypeError(`${id} is not a number`)
+        throw Error('prueba de error')
+        if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
+        if (id != null && !id.trim().length) throw new ValueError('id is empty or blank')
+
         if (age != null && typeof age !== 'number') throw TypeError(`${age} is not a number`)
         if (height != null && typeof height !== 'number') throw TypeError(`${height} is not a number`)
         if (weight != null && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
@@ -174,11 +177,11 @@ const logic = {
 
         if (offer != null && !(offer instanceof Array)) throw TypeError(`${moves} is not an Array`)
 
-        if (email != null && !email.trim().length) throw new ValueError('surname is empty or blank')
-        if (skype != null && !skype.trim().length) throw new ValueError('surname is empty or blank')
-        if (gender != null && !gender.trim().length) throw new ValueError('surname is empty or blank')
-        if (description != null && !description.trim().length) throw new ValueError('surname is empty or blank')
-        if (city != null && !city.trim().length) throw new ValueError('surname is empty or blank')
+        if (email != null && !email.trim().length) throw new ValueError('email is empty or blank')
+        if (skype != null && !skype.trim().length) throw new ValueError('skype is empty or blank')
+        if (gender != null && !gender.trim().length) throw new ValueError('gender is empty or blank')
+        if (description != null && !description.trim().length) throw new ValueError('description is empty or blank')
+        if (city != null && !city.trim().length) throw new ValueError('city is empty or blank')
 
         if (offer != null && !offer.length) throw new ValueError('offer is empty')
 
@@ -204,18 +207,22 @@ const logic = {
 
             async function f_updating(updating, model) {
 
-                for (off of updating) {
+                if (updating) {
 
-                    const _search = await model.findAll({ subQuery: false, attributes: ['id', 'lenguage'], logging: false })
+                    for (off of updating) {
 
-                    if (_search[0]) {
+                        const _search = await model.findAll({ subQuery: false, attributes: ['id', 'lenguage'], logging: false })
 
-                        await _search[0].destroy({ force: true, logging: false })
-                    } else {
+                        if (_search[0]) {
 
-                        await model.create({ user_id: id, lenguage: off }, { logging: false })
+                            await _search[0].destroy({ force: true, logging: false })
+                        } else {
+
+                            await model.create({ user_id: id, lenguage: off }, { logging: false })
+                        }
                     }
                 }
+
             }
 
             await f_updating(offer, Offer)
@@ -232,7 +239,6 @@ const logic = {
         if (searching == null) searching = ['%']
 
         return (async () => {
-            debugger
 
             const users = await User.findAll({
                 where: {
@@ -241,9 +247,9 @@ const logic = {
                             [Sequelize.Op.like]: '%' + username + '%'
                         },
 
-                        
-                        '$userOffers.lenguage$':{[Sequelize.Op.or]:['spanish','chinese']}
-                         
+
+                        '$userOffers.lenguage$': { [Sequelize.Op.or]: ['spanish', 'chinese'] }
+
                     }
 
                 }
@@ -326,7 +332,6 @@ const logic = {
 
             let user_list = []
 
-            debugger
 
             for (user of users) {
 
