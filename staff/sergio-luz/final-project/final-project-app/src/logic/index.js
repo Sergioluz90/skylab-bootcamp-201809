@@ -55,7 +55,7 @@ const logic = {
 
                 if (res.error) throw Error(res.error)
 
-                const {id, token}=res.data
+                const { id, token } = res.data
 
                 this._userId = id
                 this._token = token
@@ -66,7 +66,7 @@ const logic = {
     },
 
     retrieveUser() {
-        
+
         return fetch(`http://localhost:5000/api/users/${this._userId}`, {
             method: 'GET',
             headers: {
@@ -78,6 +78,41 @@ const logic = {
 
                 if (res.error) throw Error(res.error)
 
+                return res.data
+            })
+    },
+
+    updateUser(id, name, username, email, newPassword, password) {
+
+        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
+        if (name != null && typeof name !== 'string') throw TypeError(`${name} is not a string`)
+        if (email != null && typeof email !== 'string') throw TypeError(`${email} is not a string`)
+        if (username != null && typeof username !== 'string') throw TypeError(`${username} is not a string`)
+        if (newPassword != null && typeof newPassword !== 'string') throw TypeError(`${newPassword} is not a string`)
+        if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
+
+        if (!id.trim().length) throw new ValueError('id is empty or blank')
+        if (name != null && !name.trim().length) throw new ValueError('name is empty or blank')
+        if (email != null && !email.trim().length) throw new ValueError('email is empty or blank')
+        if (username != null && !username.trim().length) throw new ValueError('username is empty or blank')
+        if (newPassword != null && !newPassword.trim().length) throw new ValueError('newPassword is empty or blank')
+        if (!password.trim().length) throw new ValueError('password is empty or blank')
+
+        
+        return fetch(`http://localhost:5000/api/users/${this._userId}`, {
+            method: 'PATCH',
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                'Authorization': `Bearer ${this._token}`
+            },
+            body: JSON.stringify({ id, name, username, email, newPassword, password })
+        })
+            .then(res => res.json())
+            .then(res => {
+
+                if (res.error) throw Error(res.error)
+
+                
                 return res.data
             })
     }

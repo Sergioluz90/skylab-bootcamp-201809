@@ -95,7 +95,7 @@ const logic = {
             if (username) {
                 const _user = await User.findAll({ where: { username: username }, logging: false })
 
-                if (_user[0]) throw new AlreadyExistsError(`username ${username} already exists`)
+                if (_user[0]&&_user[0].username!==user.username) throw new AlreadyExistsError(`username ${username} already exists`)
 
                 name != null && (user.name = name)
                 email != null && (user.email = email)

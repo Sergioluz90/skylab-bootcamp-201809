@@ -990,7 +990,7 @@ describe('logic', () => {
             // TODO other test cases
         })
 
-        flag && describe('search profiles', () => {
+        !flag && describe('search profiles', () => {
 
 
             beforeEach(async () => {
