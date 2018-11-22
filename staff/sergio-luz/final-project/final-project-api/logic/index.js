@@ -15,6 +15,12 @@ const logic = {
 
         return (async () => {
 
+            // Comrpobar si existe ya o no
+
+            const _user=await User.find({where:{username:username}})
+
+            if(_user) throw new AlreadyExistsError('This username already exists')
+
             const user = User.build({
                 username: username,
                 name: name,

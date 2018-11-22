@@ -26,6 +26,13 @@ router.post('/users', jsonBodyParser, (req, res) => {
                     message: `${username} successfully registered`
                 })
             })
+            .catch((err)=>{
+                res.status(409)
+
+                res.json({
+                    error: `${err.message} `
+                })
+            })
     }, res)
 })
 

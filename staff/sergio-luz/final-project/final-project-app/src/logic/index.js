@@ -3,13 +3,13 @@ global.sessionStorage = require('sessionstorage')
 
 
 const logic = {
-
-
+    
     _user: "",
     _userId: sessionStorage.getItem('userId') || null,
     _token: sessionStorage.getItem('token') || null,
-
+    
     registerUser(name, username, password, email) {
+        
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (typeof email !== 'string') throw TypeError(`${email} is not a string`)

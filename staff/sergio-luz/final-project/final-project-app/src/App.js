@@ -5,6 +5,8 @@ import './App.css';
 import Register from './components/Register'
 import Login from './components/Login'
 import Error from './components/Error'
+import logic from './logic'
+import { throws } from 'assert';
 
 class App extends Component {
 
@@ -26,6 +28,16 @@ class App extends Component {
   RegisterHandler = (name, username, email, password) => {
 
     console.log('papi: logic.register')
+
+    logic.registerUser(name, username, password, email)
+      .then(() => {
+        this.setState({ error: null })
+        this.handleLoginClick()
+      })
+      .catch(err => {
+        this.setState({ error: err.message })
+      })
+
   }
 
   LoginHandler = (username, password) => {
@@ -40,13 +52,13 @@ class App extends Component {
 
 
       <Route exact path="/" render={() => <section>
-        <button onClick={this.handleRegisterClick}>Register</button> or <button onClick={this.handleLoginClick}>Login</button></section>}/>
+        <button onClick={this.handleRegisterClick}>Register</button> or <button onClick={this.handleLoginClick}>Login</button></section>} />
 
-      <Route path="/register" render={() => !false? <Register history={this.props.history} RegisterHandler={this.RegisterHandler}/> : <Redirect to="/" />} />
+      <Route path="/register" render={() => !false ? <Register history={this.props.history} RegisterHandler={this.RegisterHandler} /> : <Redirect to="/" />} />
 
-      <Route path="/login" render={() => !false ? <Login history={this.props.history} LoginHandler={this.LoginHandler} /> : <Redirect to="/"  />} />
+      <Route path="/login" render={() => !false ? <Login history={this.props.history} LoginHandler={this.LoginHandler} /> : <Redirect to="/" />} />
 
-      {/* {error && <Error message={error} />} */}
+      {error && <Error message={error} />}
 
       {/* {userId && <section><button onClick={this.handleLogoutClick}>Logout</button></section>} */}
 

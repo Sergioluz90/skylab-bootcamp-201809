@@ -10,11 +10,8 @@ class Register extends Component {
     RegisterHandler = event => {
         event.preventDefault()
 
-        const { name, username, email, password } = this.state
-
-        console.log('entra\n=>', name, username, email, password)
-
-        this.props.RegisterHandler(name, username, email, password)
+        const { _name, _username, _email, _password } = this.state
+        this.props.RegisterHandler(_name, _username, _email, _password)
     }
 
     handleInput_Name = event => {
@@ -28,9 +25,9 @@ class Register extends Component {
     handleInput_Email = event => {
         console.log('esta cambiando el Email')
 
-        const email = event.target.value
+        const _email = event.target.value
 
-        this.setState({ email })
+        this.setState({ _email })
     }
 
     handleInput_Username = event => {
