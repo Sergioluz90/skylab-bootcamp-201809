@@ -1,4 +1,4 @@
-const { models: { User, Offer, Searching, Blocked } } = require('final-data')
+const { Sequelize, models: { User, Offer, Searching, Blocked } } = require('final-data')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 
 const logic = {
@@ -197,11 +197,11 @@ const logic = {
             await user.save({ logging: false })
 
             async function f_updating(updating, model) {
-                
+
                 for (off of updating) {
-                    
-                    const _search = await model.findAll({subQuery: false, attributes : ['id', 'lenguage'], logging:false})
-                    
+
+                    const _search = await model.findAll({ subQuery: false, attributes: ['id', 'lenguage'], logging: false })
+
                     if (_search[0]) {
 
                         await _search[0].destroy({ force: true, logging: false })
@@ -217,36 +217,121 @@ const logic = {
         })()
     },
 
-    search(username) {
-        if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
+    search(username, offer, searching) {
+        // if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
 
-        if (!username.trim()) throw new ValueError('username is empty or blank')
+        // if (!username.trim()) throw new ValueError('username is empty or blank')
+
+        if (offer == null) offer = ['%']
+        if (searching == null) searching = ['%']
 
         return (async () => {
+            debugger
 
             const users = await User.findAll({
-                where: { username: { like: '%' + username + '%' }},
+                where: {
+                    [Sequelize.Op.and]: {
+                        username: {
+                            [Sequelize.Op.like]: '%' + username + '%'
+                        },
+
+                        
+                        '$userOffers.lenguage$':{[Sequelize.Op.or]:['spanish','chinese']}
+                         
+                    }
+
+                }
+                ,
                 include: [{
                     model: Offer,
-                    as: 'userOffers',
-                  },
-                {
-                    model:Searching,
+                    as: 'userOffers'
+                }, {
+                    model: Searching,
                     as: 'userSearchings'
-                }],
-                logging: false 
+                }]
+                , logging: true
             })
 
-            const [user] = users
 
-            if (!user) throw new NotFoundError(`user with username ${username} not found`)
+            const users2 = await User.findAll({ where: { username: username } })
 
-            const { id, age, gender, description, userOffers, userSearchings } = user
 
-            const _user = { id, username, age, gender, description, userOffers, userSearchings }
 
-            return _user
+            // FUNCIONA VERSION 1.0.1
 
+            // const users = await User.findAll({
+            //     where: {
+            //         [Sequelize.Op.and]: {
+            //             username: {
+            //                 [Sequelize.Op.like]: '%'+username+'%'
+            //             },
+            //             '$userOffers.lenguage$':offer
+            //         }
+            //     },
+            //     include: [{
+            //         model: Offer,
+            //         as: 'userOffers'
+            //     },{
+            //         model:Searching,
+            //         as:'userSearchings'
+            //     }]
+            //     , logging: true
+            // })
+
+
+            // FUNCIONA: VERSION 1.0.0
+
+            // const users = await User.findAll({
+            //     where: {
+            //         [Sequelize.Op.and]: {
+            //             username: {
+            //                 [Sequelize.Op.like]: '%'+username
+            //             }
+            //         }
+            //     },
+            //     include: [{
+            //         model: Offer,
+            //         as: 'userOffers'
+            //     }]
+            //     , logging: true
+            // })
+
+            //NO FUNCIONA:
+
+            // const users = await User.findAll({ where:{username}
+            //     // [Sequelize.Op.or]: [
+            //     //     where: { username: { like: '%' + username + '%' } },
+            //     //     include: [{
+            //     //         model: Offer,
+            //     //         as: 'userOffers',
+            //     //         where: {
+            //     //             lenguage: { [Sequelize.Op.or]: offer }
+            //     //         }
+            //     //     },
+            //     //     {
+            //     //         model: Searching,
+            //     //         as: 'userSearchings',
+            //     //         where: {
+            //     //             lenguage: { [Sequelize.Op.or]: searching }
+            //     //         }
+            //     //     }]]
+            //     , logging: false
+            // })
+
+            let user_list = []
+
+            debugger
+
+            for (user of users) {
+
+                const { id, age, gender, description, userOffers, userSearchings } = user
+
+                const _user = { id, username, age, gender, description, userOffers, userSearchings }
+
+                user_list.push(_user)
+            }
+
+            return user_list
         })()
     }
 }

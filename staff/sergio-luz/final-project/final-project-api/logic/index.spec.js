@@ -1,54 +1,55 @@
 require('dotenv').config()
 
+// global.Promise = require('bluebird')
+
+const { expect } = require('chai')
 const { Sequelize, models: { User, Offer, Searching, Blocked } } = require('final-data')
 const logic = require('../logic')
-const { expect } = require('chai')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 
 const flag = true;
 
-const { env: { PORT, TEST_DATABASE_URL } } = process
+const { env: { PORT, TEST_DATABASE_URL, TEST_DATABASE_NAME } } = process
 const { argv: [, , port = PORT || 3306] } = process
 
 const sequelize = new Sequelize(TEST_DATABASE_URL, { logging: false })
 
 describe('logic', () => {
-
-    before(() => {
+    before(() =>
         sequelize
             .authenticate({ logging: false })
             .then(() => {
                 console.log('Connection has been established successfully at port ' + PORT)
 
 
-                return sequelize.query('DROP DATABASE test')
+                return sequelize.query(`DROP DATABASE ${TEST_DATABASE_NAME}`, {logging:false})
                     .catch(() => undefined)
                     .finally(() => {
                         console.log('Test database dropped')
 
-                        return sequelize.query('CREATE DATABASE test')
+                        return sequelize.query(`CREATE DATABASE ${TEST_DATABASE_NAME}`, {logging:false})
                     })
+                    .then(res => {  })
             })
             .catch(err => {
-                debugger
-                console.error('Unable to connect to the database:');
+                console.error(`Unable to connect to the database: ${TEST_DATABASE_NAME}`);
             })
-    })
+    )
 
     beforeEach(async () => {
-
-        await User.sync({ force: true, logging: false })
+        // await User.sync({ force: true, logging: false })
         await User.destroy({ where: {}, logging: false })
         await Offer.destroy({ where: {}, logging: false })
         await Searching.destroy({ where: {}, logging: false })
     })
 
+    // beforeEach(() => Promise.all(User.destroy({ where: {}, logging: false }), Offer.destroy({ where: {}, logging: false }), Searching.destroy({ where: {}, logging: true })))
 
     describe('user', () => {
         !flag && describe('register', () => {
             let name, username, password, email
 
-            beforeEach(() => {
+            !false && beforeEach(() => {
                 name = `name-${Math.random()}`
                 username = `username-${Math.random()}`
                 password = `password-${Math.random()}`
@@ -195,7 +196,7 @@ describe('logic', () => {
         !flag && describe('authenticate', () => {
             let user
 
-            beforeEach(async () => {
+            !false && beforeEach(async () => {
                 user = User.build({
                     name: 'John', username: 'jd', password: '123', email: 'jd@gmail.com'
                 })
@@ -283,7 +284,7 @@ describe('logic', () => {
         !flag && describe('retrieve user', () => {
             let user
 
-            beforeEach(async () => {
+            !false && beforeEach(async () => {
                 user = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com' })
 
                 await user.save({ logging: false })
@@ -337,7 +338,7 @@ describe('logic', () => {
         !flag && describe('update user', () => {
             let user
 
-            beforeEach(async () => {
+            !false && beforeEach(async () => {
                 user = User.build({ name: 'John', username: 'jd', email: 'pacus@maximus.com', password: '123' }, { logging: false })
 
                 await user.save({ logging: false })
@@ -500,7 +501,6 @@ describe('logic', () => {
 
                 logic.updateUser(id.toString(), null, username, email, password, password)
                     .then(() => expect(true).to.be.true)
-                    .catch(err => expect(true).to.be.false)
             })
 
             it('should fail on blank name', () => {
@@ -548,7 +548,6 @@ describe('logic', () => {
 
                 logic.updateUser(id.toString(), name, null, email, password, password)
                     .then(() => expect(true).to.be.true)
-                    .catch(err => expect(true).to.be.false)
             })
 
             it('should fail on blank name', () => {
@@ -596,7 +595,6 @@ describe('logic', () => {
 
                 logic.updateUser(id.toString(), name, username, null, password, password)
                     .then(() => expect(true).to.be.true)
-                    .catch(err => expect(true).to.be.false)
             })
 
             it('should fail on blank email', () => {
@@ -644,7 +642,6 @@ describe('logic', () => {
 
                 logic.updateUser(id.toString(), name, username, email, null, password)
                     .then(() => expect(true).to.be.true)
-                    .catch(err => expect(true).to.be.false)
             })
 
             it('should fail on blank newPassword', () => {
@@ -726,7 +723,7 @@ describe('logic', () => {
             describe('with existing user', () => {
                 let user2
 
-                beforeEach(async () => {
+                !false && beforeEach(async () => {
 
                     user2 = User.build({ name: 'John', username: 'jd2', email: 'pacus@', password: '123' })
 
@@ -760,7 +757,7 @@ describe('logic', () => {
         !flag && describe('retrieve profile', () => {
             let user
 
-            beforeEach(async () => {
+            !false && beforeEach(async () => {
                 user = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
 
                 await user.save({ logging: false })
@@ -809,7 +806,7 @@ describe('logic', () => {
         !flag && describe('update profile', () => {
             let user, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity
 
-            beforeEach(async () => {
+            !false && beforeEach(async () => {
                 user = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
 
                 await user.save({ logging: false })
@@ -1016,12 +1013,10 @@ describe('logic', () => {
                 const result = await logic.search(username)
 
                 expect(result).to.exist
+                debugger
 
                 const users = await User.findAll({ where: { username }, logging: false })
-
-                expect(users.length).to.be.equal(users.length)
-
-                const [user] = users
+                const user = users[0]
 
                 expect(result).not.to.be.instanceOf(User)
                 expect(result.username).to.be.equal(user.username)
@@ -1032,25 +1027,30 @@ describe('logic', () => {
 
                 expect(JSON.stringify(result.userOffers)).to.be.equal(JSON.stringify([]))
                 expect(JSON.stringify(result.userSearchings)).to.be.equal(JSON.stringify([]))
+
+                debugger
             })
 
             it('should succed on correct data (when has lenguages): search by username', async () => {
                 await Offer.create({ user_id: user1.id, lenguage: 'spanish' }, { logging: false })
+                
                 await Searching.create({ user_id: user1.id, lenguage: 'english' }, { logging: false })
+                await Searching.create({ user_id: user2.id, lenguage: 'english' }, { logging: false })
                 await Searching.create({ user_id: user2.id, lenguage: 'spanish' }, { logging: false })
-
-                const offers = ['spanish', '']
-                const searches = ['english']
-
+                const offers = ['spanish', 'chinese']
+                const searches = ['english', 'spanish']
                 const username = 'jd'
+
 
                 const result = await logic.search(username, offers, searches)
 
-                debugger
+                
                 expect(result).to.exist
 
-                const _users = await User.findAll({where: {}, model: {
-                    username: username,
+                debugger
+
+                const _users = await User.findAll({
+                    where:{username: { like: '%' + username + '%' }},
                     include: [{
                         model: Offer,
                         as: 'userOffers',
@@ -1065,26 +1065,11 @@ describe('logic', () => {
                             lenguage: { [Sequelize.Op.or]: searches }
                         }
                     }]
-                }}, { logging: false })
-
-                // const users = await User.findAll({
-                //     where: {
-                //         username: username,
-                //         include: [{
-                //             model: Offer,
-                //             as: 'userOffers',
-                //             where: {
-                //                 lenguage: { [Sequelize.Op.or]: offers }
-                //             }
-                //         }]
-                // }
-                // }, { logging: !false })
-
+                ,  logging: false })
 
                 debugger
-                expect(users.length).to.be.equal(users.length)
 
-                const [user] = users
+                const user = users[0]
 
                 expect(result).not.to.be.instanceOf(User)
                 expect(result.username).to.be.equal(user.username)
@@ -1092,6 +1077,9 @@ describe('logic', () => {
                 expect(result.age).to.be.equal(user.age)
                 expect(result.gender).to.be.equal(user.gender)
                 expect(result.description).to.be.equal(user.description)
+
+                expect(result.userOffers.length).to.be.equal(user.userOffers.length)
+                expect(JSON.stringify(result.userOffers)).to.be.equal(JSON.stringify(user.userOffers))
             })
 
         })
