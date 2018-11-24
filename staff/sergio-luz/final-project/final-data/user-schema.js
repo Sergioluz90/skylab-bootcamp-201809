@@ -24,7 +24,7 @@ const User = sequelize.define('user', {
     },
     skype: {
         type: Sequelize.STRING,
-        defaultValue: 'not defined'
+        defaultValue: null
     },
     available: {
         type: Sequelize.BOOLEAN,
@@ -36,7 +36,7 @@ const User = sequelize.define('user', {
     },
     gender: {
         type: Sequelize.STRING,
-        defaultValue: 'not defined'
+        defaultValue: null
     },
     height: {
         type: Sequelize.INTEGER,
@@ -64,7 +64,7 @@ const User = sequelize.define('user', {
     },
     city: {
         type: Sequelize.STRING,
-        defaultValue: 'not defined'
+        defaultValue: null
     },
     connection: {
         type: Sequelize.DATE, 

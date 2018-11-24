@@ -124,7 +124,11 @@ const logic = {
             })
     },
 
-    retrieveProfile(_id) {
+    retrieveProfile(_id, me) {
+
+        if(me==true){
+            _id=this._userId+''
+        }
 
         if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
         if (!_id.trim().length) throw new ValueError('id is empty or blank')

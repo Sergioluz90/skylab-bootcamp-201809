@@ -1,6 +1,6 @@
 
 
-  @import url(http://allfont.es/allfont.css?fonts=chunkfive);
+  /* @import url(http://allfont.es/allfont.css?fonts=chunkfive); */
 
 
 body{
@@ -17,6 +17,9 @@ ul{
     padding-inline-start: 0px;
 }
 
+select{
+    color: #424242b3;
+}
 
 
 
@@ -96,7 +99,7 @@ Generic components
 }
 
 .container{
-    margin: 0px 15vw;
+    margin: 0px 3vw;
 }
 
 /*
@@ -126,8 +129,9 @@ Specific -----------------------------------------------------------------------
 }
 
 .container__profile{
-    margin: 0px 10vw;
+    margin: 0px 5vw;
     padding-top: 10vw;
+    display: flex;
 }
 
 .ul__Nav{
@@ -331,6 +335,51 @@ position: absolute;
     width: 7vw;
 }
 
+.component__profile h2{
+    margin-block-end: 0px;
+}
+
+.profile__data-container{
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.profile__data-container h3{
+    margin-right: 10px;
+}
+
+.profile__data-container p{
+    margin-right: 10px;
+    text-align: center;
+}
+
+.language-tags{
+    margin-right: 10px;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.bttn{
+    width: 100px;
+    height: 30px;
+}
+
+.bttn--save-profile{
+    margin-top: 5vh;
+    background: #6fee6f;
+    border: none;
+    border-radius: 5px;
+    color: green;
+    font-weight: bold;
+}
+
+.profile__username{
+    margin-top: 8px;
+    margin-bottom: -7px;
+}
 
 /* 
 
@@ -360,6 +409,22 @@ Display options
 
 .white-block{
     width: 100%;
-
 }
+
+.active{
+    color: white;
+    background: #003b75
+}
+
+.inactive{
+    color: black;
+    background: #b3b3b3;
+}
+
+.profile__textArea{
+    width: 95%;
+    height: 150px;
+}
+
+
 

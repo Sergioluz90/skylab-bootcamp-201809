@@ -4,45 +4,45 @@ class Home extends Component {
 
     render() {
 
-        return <main class="container initial">
-            <div class="spacer--20"></div>
-            <section class="container--row">
-                <div class="searcher component">
-                    <div class="component searcher__header">
-                        <h3 class="margin--left">Búsqueda</h3>
+        return <main className="container initial">
+            <div className="spacer--20"></div>
+            <section className="container--row">
+                <div className="searcher component">
+                    <div className="component searcher__header">
+                        <h3 className="margin--left">Búsqueda</h3>
                         <a href="#">
-                            <i class="fas fa-grip-horizontal"></i>
+                            <i className="fas fa-grip-horizontal"></i>
                         </a>
 
                     </div>
 
-                    <div class="container--row">
-                        <div class="searcher--panel component no-shadow  ">
+                    <div className="container--row">
+                        <div className="searcher--panel component no-shadow  ">
 
                             <ul>
                                 <li>
                                     <a href="#">
-                                        <i class="fas fa-comments"></i>
+                                        <i className="fas fa-comments"></i>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#">
-                                        <i class="fas fa-user"></i>
+                                        <i className="fas fa-user"></i>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#">
-                                        <i class="fas fa-map-marker-alt"></i>
+                                        <i className="fas fa-map-marker-alt"></i>
                                     </a>
                                 </li>
                             </ul>
                         </div>
-                        <div class="component searcher--options no-shadow">
-                            <div class="center component">
-                                <input type="text" placeholder="Buscar usuario" class=" search-bar component" />
+                        <div className="component searcher--options no-shadow">
+                            <div className="center component">
+                                <input type="text" placeholder="Buscar usuario" className=" search-bar component" />
                             </div>
                             <div>
-                                <div class="margin--left">
+                                <div className="margin--left">
                                     <h4>Estas buscando...</h4>
                                     <input type="checkbox" name="checkbox" /> I have a bike<br />
                                     <input type="checkbox" name="checkbox" /> I have a bike<br />
@@ -51,7 +51,7 @@ class Home extends Component {
                                     <input type="checkbox" name="checkbox" /> I have a bike<br />
                                     <input type="checkbox" name="checkbox" /> I have a bike<br />
                                 </div>
-                                <div class="margin--left">
+                                <div className="margin--left">
                                     <h4>Está buscando...</h4>
                                     <input type="checkbox" name="checkbox" /> I have a bike<br />
                                     <input type="checkbox" name="checkbox" /> I have a bike<br />
@@ -68,55 +68,55 @@ class Home extends Component {
                 </div>
 
 
-                <div class="results component">
-                    <div class="component">
-                        <h3 class="center">Resultados</h3>
+                <div className="results component">
+                    <div className="component">
+                        <h3 className="center">Resultados</h3>
                     </div>
-                    <div class="component ">
-                        <div class="margin--left">
+                    <div className="component ">
+                        <div className="margin--left">
 
-                            <ul class="ul__filters ">
-                                <li class="component margin--left margin-bottom">
+                            <ul className="ul__filters ">
+                                <li className="component margin--left margin-bottom">
                                     <h4>Filtros:</h4>
                                 </li>
-                                <li class="component margin--left  ">
+                                <li className="component margin--left  ">
                                     <a href="#"> x </a>
                                     <p>Filtro</p>
                                 </li>
-                                <li class="component margin--left  ">
+                                <li className="component margin--left  ">
                                     <a href="#"> x </a>
                                     <p>Filtro</p>
                                 </li>
-                                <li class="component margin--left  ">
+                                <li className="component margin--left  ">
                                     <a href="#"> x </a>
                                     <p>Filtro</p>
                                 </li>
 
-                                <li class="component margin--left  ">
+                                <li className="component margin--left  ">
                                     <a href="#"> x </a>
                                     <p>Filtro</p>
                                 </li>
-                                <li class="component margin--left  ">
+                                <li className="component margin--left  ">
                                     <a href="#"> x </a>
                                     <p>Filtro</p>
                                 </li>
-                                <li class="component margin--left  ">
+                                <li className="component margin--left  ">
                                     <a href="#"> x </a>
                                     <p>Filtro</p>
                                 </li>
-                                <li class="component margin--left  ">
+                                <li className="component margin--left  ">
                                     <a href="#"> x </a>
                                     <p>Filtro</p>
                                 </li>
-                                <li class="component margin--left  ">
+                                <li className="component margin--left  ">
                                     <a href="#"> x </a>
                                     <p>Filtro</p>
                                 </li>
-                                <li class="component margin--left  ">
+                                <li className="component margin--left  ">
                                     <a href="#"> x </a>
                                     <p>Filtro</p>
                                 </li>
-                                <li class="component margin--left  ">
+                                <li className="component margin--left  ">
                                     <a href="#"> x </a>
                                     <p>Filtro</p>
                                 </li>
@@ -124,36 +124,36 @@ class Home extends Component {
                         </div>
                     </div>
 
-                    <div class="wrapper__images center">
-                        <div class="search-panel__profile">
-                            <div class="container__image"></div>
-                            <div class="search-panel__profile-info">hola adios muy buenas</div>
-                            <div class="search-panel__profile-text"> Info personal</div>
+                    <div className="wrapper__images center">
+                        <div className="search-panel__profile">
+                            <div className="container__image"></div>
+                            <div className="search-panel__profile-info">hola adios muy buenas</div>
+                            <div className="search-panel__profile-text"> Info personal</div>
                         </div>
-                        <div class="search-panel__profile">
-                            <div class="container__image"></div>
-                            <div class="search-panel__profile-info">hola adios muy buenas</div>
-                            <div class="search-panel__profile-text"> Info personal</div>
+                        <div className="search-panel__profile">
+                            <div className="container__image"></div>
+                            <div className="search-panel__profile-info">hola adios muy buenas</div>
+                            <div className="search-panel__profile-text"> Info personal</div>
                         </div>
-                        <div class="search-panel__profile">
-                            <div class="container__image"></div>
-                            <div class="search-panel__profile-info">hola adios muy buenas</div>
-                            <div class="search-panel__profile-text"> Info personal</div>
+                        <div className="search-panel__profile">
+                            <div className="container__image"></div>
+                            <div className="search-panel__profile-info">hola adios muy buenas</div>
+                            <div className="search-panel__profile-text"> Info personal</div>
                         </div>
-                        <div class="search-panel__profile">
-                            <div class="container__image"></div>
-                            <div class="search-panel__profile-info">hola adios muy buenas</div>
-                            <div class="search-panel__profile-text"> Info personal</div>
+                        <div className="search-panel__profile">
+                            <div className="container__image"></div>
+                            <div className="search-panel__profile-info">hola adios muy buenas</div>
+                            <div className="search-panel__profile-text"> Info personal</div>
                         </div>
-                        <div class="search-panel__profile">
-                            <div class="container__image"></div>
-                            <div class="search-panel__profile-info">hola adios muy buenas</div>
-                            <div class="search-panel__profile-text"> Info personal</div>
+                        <div className="search-panel__profile">
+                            <div className="container__image"></div>
+                            <div className="search-panel__profile-info">hola adios muy buenas</div>
+                            <div className="search-panel__profile-text"> Info personal</div>
                         </div>
-                        <div class="search-panel__profile">
-                            <div class="container__image"></div>
-                            <div class="search-panel__profile-info">hola adios muy buenas</div>
-                            <div class="search-panel__profile-text"> Info personal</div>
+                        <div className="search-panel__profile">
+                            <div className="container__image"></div>
+                            <div className="search-panel__profile-info">hola adios muy buenas</div>
+                            <div className="search-panel__profile-text"> Info personal</div>
                         </div>
                     </div>
 
