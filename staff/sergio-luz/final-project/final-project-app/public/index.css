@@ -18,9 +18,15 @@ ul{
 }
 
 select{
-    color: #424242b3;
+
 }
 
+input{
+
+}
+
+textarea{
+}
 
 
 /* 
@@ -130,7 +136,6 @@ Specific -----------------------------------------------------------------------
 
 .container__profile{
     margin: 0px 5vw;
-    padding-top: 10vw;
     display: flex;
 }
 
@@ -331,8 +336,13 @@ position: absolute;
 .container__image--profile{
     margin: 1vw;
     background: black;
-    height: 7vw;
-    width: 7vw;
+    position: absolute;
+    margin-top: -11vw;
+    margin-left: 3vw;
+    height: 12vw;
+    width: 12vw;
+    box-shadow: 2px 2px 6px rgba(0,0,0,.3);
+
 }
 
 .component__profile h2{
@@ -343,6 +353,7 @@ position: absolute;
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
+    /* width: 50px; */
 }
 
 .profile__data-container h3{
@@ -376,9 +387,41 @@ position: absolute;
     font-weight: bold;
 }
 
+.bttn--block-profile{
+    margin-top: 5vh;
+    background: #b70000;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+}
+
+.bttn--edit-profile{
+    margin-top: 5vh;
+    background: #64b2e6;
+    border: none;
+    border-radius: 5px;
+    color: #003b75;
+}
+    
+
 .profile__username{
-    margin-top: 8px;
-    margin-bottom: -7px;
+    position: absolute;
+    margin-top: -13vw;
+    margin-left: 19vw;
+    color: white;
+}
+
+.profile__username h2{
+    margin: 0vw;
+}
+
+.profile__username input{
+    background: white;
+}
+
+.profile__cover-image{
+    width: 74vw;
+    height: 15vw;
 }
 
 /* 
@@ -424,6 +467,18 @@ Display options
 .profile__textArea{
     width: 95%;
     height: 150px;
+    border:none;
+}
+
+.profile__input{
+    background: #d3d3d342;
+    border: none;
+}
+
+.profile__select{
+    color: #424242b3;
+    background: #d3d3d342;
+    border: none;
 }
 
 

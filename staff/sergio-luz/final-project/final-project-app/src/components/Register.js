@@ -45,22 +45,45 @@ class Register extends Component {
         this.setState({ _password })
     }
 
-    
+
     render() {
-        return <div>
+        return <div className='body__register'>
 
-            <form onSubmit={this.RegisterHandler}>
-                <input onChange={this.handleInput_Name} value={this.state.name} type="text" placeholder="Name"></input>
 
-                <input onChange={this.handleInput_Username} type="text" placeholder="Username"></input>
+            <div className='register__logo'></div>
 
-                <input onChange={this.handleInput_Email} type="text" placeholder="Email"></input>
+            <div className='register__wrapper-cover'>
 
-                <input onChange={this.handleInput_Password} type="password" placeholder="Password"></input>
 
-                <button type='submit'> Register </button>
-            </form>
-            <a className="" href="#" onClick={this.props.onGoBack}>back</a>
+
+                <img className='register__cover-image' src='https://image.freepik.com/free-vector/people-speaking-different-languages-with-flat-design_23-2147864792.jpg' ></img>
+
+                <div className='register__form'>
+                    <div className='register__banner'>
+                        <a className='register__options-banner--active' href='#' > Register</a>
+                        <a className='register__options-banner' href='#' > Login</a>
+
+                    </div>
+
+                    <form className='register__form' onSubmit={this.RegisterHandler}>
+
+                        <input className='register__input' onChange={this.handleInput_Name} value={this.state.name} type='text' placeholder='Name'></input>
+
+                        <input className='register__input' onChange={this.handleInput_Username} type='text' placeholder='Username'></input>
+
+                        <input className='register__input' onChange={this.handleInput_Email} type='text' placeholder='Email'></input>
+
+                        <input className='register__input' onChange={this.handleInput_Password} type='text' placeholder='Your City'></input>
+
+                        <input className='register__input' onChange={this.handleInput_Password} type='password' placeholder='Password'></input>
+
+
+                        <button className='bttn-send--register' type='submit'> Register </button>
+                        <a className='' href='#' onClick={this.props.onGoBack}> {'<='} back</a>
+                    </form>
+                </div>
+
+            </div>
 
         </div>
     }

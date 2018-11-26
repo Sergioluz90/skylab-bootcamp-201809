@@ -151,6 +151,13 @@ class EditProfile extends Component {
     this.setState({ new_info: _new_info })
   }
 
+  handleCityChange = event => {
+    const _new_info = this.state.new_info
+    _new_info.city = event.target.value
+
+    this.setState({ new_info: _new_info })
+  }
+
 
   onSearchingClickHandler = this.onSearchingClickHandler.bind(this)
   onSearchingClickHandler(event) {
@@ -203,21 +210,26 @@ class EditProfile extends Component {
 
     if (this.props.user_info) {
       return <main className='initial'>
-        <section className='component profile--fixed'>
-          <div className='container__profile-header'>
-            <div className='container__image--profile'></div>
-            <div className='margin--left'>
-              <h2>{user_info && user_info.username}</h2>
-              <p>Online</p>
-            </div>
-
-          </div>
-        </section>
-
+        
         <section className='container__profile'>
           <div className='container'>
             <div className='container--column '>
+
               <div className='spacer--20'></div>
+
+              <section>
+                <img class="profile__cover-image" src="https://image.freepik.com/free-photo/wall-wallpaper-concrete-colored-painted-textured-concept_53876-31799.jpg"></img>
+
+                <div className='container__image--profile'></div>
+                <div className='profile__username'>
+                  <h2>{user_info && user_info.username}</h2>
+                  {user_info && <div className='profile__data-container'>
+                  <h3>City:</h3>
+                  <input className='profile__input' onChange={this.handleCityChange} placeholder={user_info.city} />
+                </div>}
+                </div>
+              </section>
+
 
               {user_info && <div className='component__profile margin--bottom'>
                 <h2>Looking for..</h2>
@@ -245,27 +257,33 @@ class EditProfile extends Component {
                 </div>
               </div>}
 
+
+
+
+
+
               <div className='component__profile margin--bottom'>
+
                 <h2>Profile</h2>
 
                 {user_info && <div className='profile__data-container'>
                   <h3>Name:</h3>
-                  <input onChange={this.handleNameChange} placeholder={user_info.name} />
+                  <input className='profile__input' onChange={this.handleNameChange} placeholder={user_info.name} />
                 </div>}
 
                 {user_info && <div className='profile__data-container'>
                   <h3>Email:</h3>
-                  <input onChange={this.handleEmailChange} placeholder={user_info.email} />
+                  <input className='profile__input' onChange={this.handleEmailChange} placeholder={user_info.email} />
                 </div>}
 
                 {user_info && <div className='profile__data-container'>
                   <h3>Skype:</h3>
-                  <input onChange={this.handleSkypeChange} placeholder={user_info.skype} />
+                  <input className='profile__input' onChange={this.handleSkypeChange} placeholder={user_info.skype} />
                 </div>}
 
                 {user_info && <div className='profile__data-container'>
                   <h3>Gender:</h3>
-                  <select onChange={this.handleGenderChange}>
+                  <select className='profile__select' onChange={this.handleGenderChange}>
                     {user_info.gender ? <option defaultValue={user_info.gender}></option> : <option>Select your gender:</option>}
 
                     <option key={0} value='Male'>Male</option>
@@ -275,7 +293,7 @@ class EditProfile extends Component {
 
                 {user_info && <div className='profile__data-container'>
                   <h3>Age:</h3>
-                  <select onChange={this.handleAgeChange}>
+                  <select className='profile__select' onChange={this.handleAgeChange}>
                     {user_info.age ? <option defaultValue={user_info.age}></option> : <option>Select your age:</option>}
                     {
                       listAges && listAges.map((age, index) => {
@@ -287,7 +305,7 @@ class EditProfile extends Component {
 
                 {user_info && <div className='profile__data-container'>
                   <h3>Height:</h3>
-                  <select onChange={this.handleHeightChange}>
+                  <select className='profile__select' onChange={this.handleHeightChange}>
                     {user_info.height ? <option defaultValue={user_info.height}></option> : <option>Select your height:</option>}
                     {
                       listHeight && listHeight.map((height, index) => {
@@ -299,7 +317,7 @@ class EditProfile extends Component {
 
                 {user_info && <div className='profile__data-container'>
                   <h3>Weight:</h3>
-                  <select onChange={this.handleWeightChange}>
+                  <select className='profile__select' onChange={this.handleWeightChange}>
                     {user_info.weight ? <option defaultValue={user_info.weight}></option> : <option>Select your weight:</option>}
                     {
                       listWeight && listWeight.map((weight, index) => {
@@ -311,7 +329,7 @@ class EditProfile extends Component {
 
                 {user_info && <div className='profile__data-container'>
                   <h3>Smoker:</h3>
-                  <select onChange={this.handleSmokerChange}>
+                  <select className='profile__select' onChange={this.handleSmokerChange}>
                     {user_info.smoker ? <option defaultValue={user_info.smoker}></option> : <option value='null'>Do you smoke?</option>}
 
                     <option key={0} value='true'>yes</option>
@@ -324,7 +342,7 @@ class EditProfile extends Component {
               {user_info && <div className='component__profile margin--bottom'>
                 <h2>About me</h2>
                 <div>
-                  <textarea onChange={this.handleDescriptionChange} placeholder='Write a description to allow other people to know more about you' className='profile__textArea'></textarea>
+                  <textarea className='profile__textarea' onChange={this.handleDescriptionChange} placeholder='Write a description to allow other people to know more about you' className='profile__textArea'></textarea>
                   <p>{user_info.description}</p>
                 </div>
 
@@ -351,7 +369,7 @@ class EditProfile extends Component {
                         active = true
 
 
-                      return active ? <p key={index} className='component__profile language-tags active' onClick={this.onOfferClickHandler}>{language}</p> : <p key={index}className='component__profile language-tags inactive' onClick={this.onOfferClickHandler}>{language}</p>
+                      return active ? <p key={index} className='component__profile language-tags active' onClick={this.onOfferClickHandler}>{language}</p> : <p key={index} className='component__profile language-tags inactive' onClick={this.onOfferClickHandler}>{language}</p>
                     })}
                 </div>
               </div>}

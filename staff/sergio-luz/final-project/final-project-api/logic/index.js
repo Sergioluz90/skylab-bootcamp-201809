@@ -231,111 +231,50 @@ const logic = {
     },
 
     search(username, offer, searching) {
-        // if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
 
-        // if (!username.trim()) throw new ValueError('username is empty or blank')
-
-        if (offer == null) offer = ['%']
-        if (searching == null) searching = ['%']
+        let obj = {
+            where: { username: { like: '%' + username + '%' } },
+            include: [{
+                model: Offer,
+                as: 'userOffers',
+                where: {
+                    lenguage: { [Sequelize.Op.or]: offer }
+                }
+            },
+            {
+                model: Searching,
+                as: 'userSearchings',
+                where: {
+                    lenguage: { [Sequelize.Op.or]: searching }
+                }
+            }]
+            , logging: false
+        }
 
         return (async () => {
 
-            const users = await User.findAll({
-                where: {
-                    [Sequelize.Op.and]: {
-                        username: {
-                            [Sequelize.Op.like]: '%' + username + '%'
-                        },
+            let query
+            if(offer==null){
+                query = obj.include.filter(item => item.model !== Offer)
+                obj.include=query
+            }
+ 
+            if(searching==null){
+                query = obj.include.filter(item => item.model !== Searching)
+                obj.include=query
+            }
 
-
-                        '$userOffers.lenguage$': { [Sequelize.Op.or]: ['spanish', 'chinese'] }
-
-                    }
-
-                }
-                ,
-                include: [{
-                    model: Offer,
-                    as: 'userOffers'
-                }, {
-                    model: Searching,
-                    as: 'userSearchings'
-                }]
-                , logging: true
-            })
-
-
-            const users2 = await User.findAll({ where: { username: username } })
-
-
-
-            // FUNCIONA VERSION 1.0.1
-
-            // const users = await User.findAll({
-            //     where: {
-            //         [Sequelize.Op.and]: {
-            //             username: {
-            //                 [Sequelize.Op.like]: '%'+username+'%'
-            //             },
-            //             '$userOffers.lenguage$':offer
-            //         }
-            //     },
-            //     include: [{
-            //         model: Offer,
-            //         as: 'userOffers'
-            //     },{
-            //         model:Searching,
-            //         as:'userSearchings'
-            //     }]
-            //     , logging: true
-            // })
-
-
-            // FUNCIONA: VERSION 1.0.0
-
-            // const users = await User.findAll({
-            //     where: {
-            //         [Sequelize.Op.and]: {
-            //             username: {
-            //                 [Sequelize.Op.like]: '%'+username
-            //             }
-            //         }
-            //     },
-            //     include: [{
-            //         model: Offer,
-            //         as: 'userOffers'
-            //     }]
-            //     , logging: true
-            // })
-
-            //NO FUNCIONA:
-
-            // const users = await User.findAll({ where:{username}
-            //     // [Sequelize.Op.or]: [
-            //     //     where: { username: { like: '%' + username + '%' } },
-            //     //     include: [{
-            //     //         model: Offer,
-            //     //         as: 'userOffers',
-            //     //         where: {
-            //     //             lenguage: { [Sequelize.Op.or]: offer }
-            //     //         }
-            //     //     },
-            //     //     {
-            //     //         model: Searching,
-            //     //         as: 'userSearchings',
-            //     //         where: {
-            //     //             lenguage: { [Sequelize.Op.or]: searching }
-            //     //         }
-            //     //     }]]
-            //     , logging: false
-            // })
+            const users = await User.findAll(obj)
 
             let user_list = []
 
 
             for (user of users) {
 
-                const { id, age, gender, description, userOffers, userSearchings } = user
+                let { id, age, gender, description, userOffers, userSearchings } = user
+
+                if(userOffers==undefined) userOffers=[]
+                if(userSearchings==undefined) userSearchings=[]
 
                 const _user = { id, username, age, gender, description, userOffers, userSearchings }
 

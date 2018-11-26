@@ -19,25 +19,27 @@ class Profile extends Component {
 
     render() {
 
-        const {user_info}=this.state
+        const { user_info } = this.state
 
         if (this.props.user_info) {
             return <main className="initial">
-                <section className="component profile--fixed">
-                    <div className="container__profile-header">
-                        <div className="container__image--profile"></div>
-                        <div className="margin--left">
-                            <h2>{user_info && user_info.username}</h2>
-                            <p>Online</p>
-                        </div>
-
-                    </div>
-                </section>
 
                 <section className="container__profile">
                     <div className="container">
                         <div className="container--column ">
                             <div className="spacer--20"></div>
+
+                            <div>
+                                <img class="profile__cover-image" src="https://image.freepik.com/free-photo/wall-wallpaper-concrete-colored-painted-textured-concept_53876-31799.jpg"></img>
+
+                                <div className='container__image--profile'></div>
+                                <div className='profile__username'>
+                                    <h2>{user_info && user_info.username}</h2>
+                                    {user_info && !!user_info.city && <div className='profile__data-container'>
+                                    <p>City: {user_info.city}</p>
+                                </div>}
+                                </div>
+                            </div>
 
                             {user_info && !!user_info.searching[0] && (<div className="component__profile margin--bottom">
                                 <h2>Looking for..</h2>
@@ -103,6 +105,7 @@ class Profile extends Component {
                             </div>}
                         </div>
                     </div>
+                    <button className='bttn bttn--block-profile'>Block</button>
                 </section>
             </main>
 

@@ -990,7 +990,7 @@ describe('logic', () => {
             // TODO other test cases
         })
 
-        !flag && describe('search profiles', () => {
+        flag && describe('search profiles', () => {
 
 
             beforeEach(async () => {
@@ -1010,12 +1010,16 @@ describe('logic', () => {
             it('should succed on correct data: search by username', async () => {
                 const username = 'jd2'
 
-                const result = await logic.search(username)
+                const results = await logic.search(username)
+
+                const result=results[0]
 
                 expect(result).to.exist
-                debugger
 
-                const users = await User.findAll({ where: { username }, logging: false })
+                const obj={ where: { username }, logging: false }
+
+                const users = await User.findAll(obj)
+                
                 const user = users[0]
 
                 expect(result).not.to.be.instanceOf(User)
@@ -1028,7 +1032,6 @@ describe('logic', () => {
                 expect(JSON.stringify(result.userOffers)).to.be.equal(JSON.stringify([]))
                 expect(JSON.stringify(result.userSearchings)).to.be.equal(JSON.stringify([]))
 
-                debugger
             })
 
             it('should succed on correct data (when has lenguages): search by username', async () => {
@@ -1042,14 +1045,13 @@ describe('logic', () => {
                 const username = 'jd'
 
 
-                const result = await logic.search(username, offers, searches)
+                const results = await logic.search(username, offers, searches)
 
-                
+                const result=results[0]
+
                 expect(result).to.exist
 
-                debugger
-
-                const _users = await User.findAll({
+                const obj={
                     where:{username: { like: '%' + username + '%' }},
                     include: [{
                         model: Offer,
@@ -1065,14 +1067,17 @@ describe('logic', () => {
                             lenguage: { [Sequelize.Op.or]: searches }
                         }
                     }]
-                ,  logging: false })
+                ,  logging: false }
 
-                debugger
+                const users = await User.findAll(obj)
+
 
                 const user = users[0]
-
+                
+                debugger
                 expect(result).not.to.be.instanceOf(User)
                 expect(result.username).to.be.equal(user.username)
+
                 expect(result.id).to.be.equal(user.id)
                 expect(result.age).to.be.equal(user.age)
                 expect(result.gender).to.be.equal(user.gender)
