@@ -2,6 +2,38 @@ import React, { Component } from 'react'
 
 class Home extends Component {
 
+    state = {
+        checkboxes: [],
+        languages:[
+            'spanish',
+            'english',
+            'chinese (mandarin)',
+            'hindi',
+            'arabic',
+            'portuguese',
+            'bengali',
+            'russian',
+            'french',
+            'german',
+            'italian',
+            'catalan'
+          ]
+    }
+
+    handleCheckboxChange = event => {
+        let _checkboxes = this.state.checkboxes
+
+        let active = _checkboxes.includes(event.target.value)
+
+        if (active) {
+            _checkboxes = _checkboxes.filter(item => item !== event.target.value)
+        }else{
+            _checkboxes.push(event.target.value)
+        }
+
+        this.setState({ checkboxes: _checkboxes })
+    }
+
     render() {
 
         return <main className="container initial">
@@ -43,22 +75,18 @@ class Home extends Component {
                             </div>
                             <div>
                                 <div className="margin--left">
-                                    <h4>Estas buscando...</h4>
-                                    <input type="checkbox" name="checkbox" /> I have a bike<br />
-                                    <input type="checkbox" name="checkbox" /> I have a bike<br />
-                                    <input type="checkbox" name="checkbox" /> I have a bike<br />
-                                    <input type="checkbox" name="checkbox" /> I have a bike<br />
-                                    <input type="checkbox" name="checkbox" /> I have a bike<br />
-                                    <input type="checkbox" name="checkbox" /> I have a bike<br />
+                                    <h4>You are looking for...</h4>
+                                    {this.state.languages.map(item=>{
+                                        return <div> <input type="checkbox" value={item} onChange={this.handleCheckboxChange} /> {item}<br /> </div>
+                                    })}
+                                   
                                 </div>
                                 <div className="margin--left">
-                                    <h4>Está buscando...</h4>
-                                    <input type="checkbox" name="checkbox" /> I have a bike<br />
-                                    <input type="checkbox" name="checkbox" /> I have a bike<br />
-                                    <input type="checkbox" name="checkbox" /> I have a bike<br />
-                                    <input type="checkbox" name="checkbox" /> I have a bike<br />
-                                    <input type="checkbox" name="checkbox" /> I have a bike<br />
-                                    <input type="checkbox" name="checkbox" /> I have a bike<br />
+                                    <h4>They are looking for...</h4>
+                                    {this.state.languages.map(item=>{
+                                        return <div> <input type="checkbox" value={item} onChange={this.handleCheckboxChange} /> {item}<br /> </div>
+                                    })}
+                                    
                                 </div>
 
                             </div>
