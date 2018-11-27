@@ -2,20 +2,22 @@ const { Sequelize, models: { User, Offer, Searching, Blocked } } = require('fina
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 
 const logic = {
-    registerUser(name, username, password, email) {
+    registerUser(name, username, password, email, city) {
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
         if (typeof email !== 'string') throw TypeError(`${email} is not a string`)
+        if (typeof city !== 'string') throw TypeError(`${city} is not a string`)
+
 
         if (!name.trim()) throw new ValueError('name is empty or blank')
         if (!username.trim()) throw new ValueError('username is empty or blank')
         if (!password.trim()) throw new ValueError('password is empty or blank')
         if (!email.trim()) throw new ValueError('email is empty or blank')
+        if (!city.trim()) throw new ValueError('city is empty or blank')
+
 
         return (async () => {
-
-            // Comrpobar si existe ya o no
 
             const _user = await User.find({ where: { username: username } })
 
@@ -25,11 +27,11 @@ const logic = {
                 username: username,
                 name: name,
                 password: password,
-                email: email
+                email: email,
+                city: city
             }, { logging: false })
 
             await user.save()
-
         })()
     },
 
@@ -230,16 +232,10 @@ const logic = {
 
     search(query, sub) {
 
-        // first of all we exclude our user profile
-
         let objects = []
-
-
-
         const res = query.split('&')
 
         res.forEach(elem => {
-
             if (res !== '') {
                 let res = elem.split('=')
                 let type = res[0]
@@ -252,25 +248,23 @@ const logic = {
         let username = '', offer, searching
 
         objects.forEach(obj => {
-
             if (obj.type === 'q')
                 username = obj.src
-            if (obj.type === 'offer') {
 
+            if (obj.type === 'offer') {
                 offer = obj.src.split('+')
             }
-            if (obj.type === 'searching') {
 
+            if (obj.type === 'searching') {
                 searching = obj.src.split('+')
             }
         })
 
-
         let obj = {
-            where: { 
+            where: {
                 username: { like: '%' + username + '%' },
-                id: {[Sequelize.Op.not]:[sub]}
-         },
+                id: { [Sequelize.Op.not]: [sub] }
+            },
             include: [{
                 model: Offer,
                 as: 'userOffers',
@@ -304,14 +298,10 @@ const logic = {
             if (username === '')
                 delete obj.where.username
 
-
             const users = await User.findAll(obj)
-
             let user_list = []
 
-
             for (user of users) {
-
                 let { id, username, age, gender, description, userOffers, userSearchings } = user
 
                 if (userOffers == undefined) userOffers = []
@@ -321,8 +311,6 @@ const logic = {
 
                 user_list.push(_user)
             }
-            debugger
-
             return user_list
         })()
     }

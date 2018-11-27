@@ -16,9 +16,9 @@ const { env: { JWT_SECRET } } = process
 router.post('/users', jsonBodyParser, (req, res) => {
     routeHandler(() => {
 
-        const { name, username, password, email } = req.body
+        const { name, username,city , email ,password} = req.body
 
-        return logic.registerUser(name, username, password, email)
+        return logic.registerUser(name, username, password, email, city)
             .then(() => {
                 res.status(201)
 
@@ -91,7 +91,7 @@ router.get('/users/:id/profile', [bearerTokenParser, jwtVerifier], (req, res) =>
     routeHandler(() => {
         const { params: { id }, sub } = req
 
-        if (id !== sub.toString()) throw Error('token sub does not match user id')
+        // if (id !== sub.toString()) throw Error('token sub does not match user id')
 
         return logic.retrieveProfile(id)
             .then(user =>

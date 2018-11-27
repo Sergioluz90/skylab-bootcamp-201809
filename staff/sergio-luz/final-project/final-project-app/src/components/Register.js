@@ -4,13 +4,16 @@ import React, { Component } from 'react'
 
 class Register extends Component {
 
-    state = { _name: '', _username: '', _email: '', _password: '' }
+    state = { _name: '', _username: '', _email: '', _password: '', _city: '' }
+
+
+    handleLoginClick = () => this.props.history.push('/')
 
     RegisterHandler = event => {
         event.preventDefault()
 
-        const { _name, _username, _email, _password } = this.state
-        this.props.RegisterHandler(_name, _username, _email, _password)
+        const { _name, _username, _email, _password, _city } = this.state
+        this.props.RegisterHandler(_name, _username, _email, _password, _city)
     }
 
     handleInput_Name = event => {
@@ -45,6 +48,14 @@ class Register extends Component {
         this.setState({ _password })
     }
 
+    handleInput_City = event => {
+        console.log('esta cambiando el city')
+
+        const _city = event.target.value
+
+        this.setState({ _city })
+    }
+
 
     render() {
         return <div className='body__register'>
@@ -60,8 +71,8 @@ class Register extends Component {
 
                 <div className='register__form'>
                     <div className='register__banner'>
-                        <a className='register__options-banner--active' href='#' > Register</a>
-                        <a className='register__options-banner' href='#' > Login</a>
+                        <a className='register__options-banner--active' href='#/register' > Register</a>
+                        <a className='register__options-banner' href='#/' > Login</a>
 
                     </div>
 
@@ -75,11 +86,10 @@ class Register extends Component {
 
                         <input className='register__input' onChange={this.handleInput_Password} type='text' placeholder='Your City'></input>
 
-                        <input className='register__input' onChange={this.handleInput_Password} type='password' placeholder='Password'></input>
+                        <input className='register__input' onChange={this.handleInput_City} type='password' placeholder='Password'></input>
 
 
-                        <button className='bttn-send--register' type='submit'> Register </button>
-                        <a className='' href='#' onClick={this.props.onGoBack}> {'<='} back</a>
+                        <button className='btn-send--register' type='submit'> Register </button>
                     </form>
                 </div>
 

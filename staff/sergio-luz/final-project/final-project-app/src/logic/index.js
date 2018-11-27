@@ -1,4 +1,4 @@
-const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
+// const { AlreadyExistsError, AuthError, NotFoundError, Error } = require('../errors')
 global.sessionStorage = require('sessionstorage')
 
 
@@ -12,21 +12,25 @@ const logic = {
         return !!sessionStorage.getItem('userId')
     },
 
-    get myId(){
+    get myId() {
         return sessionStorage.getItem('userId')
     },
 
-    registerUser(name, username, password, email) {
+    registerUser(name, username, city, email, password) {
 
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (typeof email !== 'string') throw TypeError(`${email} is not a string`)
+        if (typeof city !== 'string') throw TypeError(`${city} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
 
-        if (!name.trim()) throw new ValueError('name is empty or blank')
-        if (!username.trim()) throw new ValueError('username is empty or blank')
-        if (!email.trim()) throw new ValueError('email is empty or blank')
-        if (!password.trim()) throw new ValueError('password is empty or blank')
+
+        if (!name.trim()) throw new Error('name is empty or blank')
+        if (!username.trim()) throw new Error('username is empty or blank')
+        if (!email.trim()) throw new Error('email is empty or blank')
+        if (!city.trim()) throw new Error('city is empty or blank')
+        if (!password.trim()) throw new Error('password is empty or blank')
+
 
 
         return fetch('http://localhost:5000/api/users', {
@@ -34,7 +38,7 @@ const logic = {
             headers: {
                 "Content-Type": "application/json; charset=utf-8"
             },
-            body: JSON.stringify({ name, username, password, email })
+            body: JSON.stringify({ name, username, password, email, city })
         })
             .then(res => res.json())
             .then(res => {
@@ -51,8 +55,8 @@ const logic = {
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
 
-        if (!username.trim()) throw new ValueError('username is empty or blank')
-        if (!password.trim()) throw new ValueError('password is empty or blank')
+        if (!username.trim()) throw new Error('username is empty or blank')
+        if (!password.trim()) throw new Error('password is empty or blank')
 
         return fetch('http://localhost:5000/api/auth', {
             method: 'POST',
@@ -103,12 +107,12 @@ const logic = {
         if (newPassword != null && typeof newPassword !== 'string') throw TypeError(`${newPassword} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
 
-        if (!id.trim().length) throw new ValueError('id is empty or blank')
-        if (name != null && !name.trim().length) throw new ValueError('name is empty or blank')
-        if (email != null && !email.trim().length) throw new ValueError('email is empty or blank')
-        if (username != null && !username.trim().length) throw new ValueError('username is empty or blank')
-        if (newPassword != null && !newPassword.trim().length) throw new ValueError('newPassword is empty or blank')
-        if (!password.trim().length) throw new ValueError('password is empty or blank')
+        if (!id.trim().length) throw new Error('id is empty or blank')
+        if (name != null && !name.trim().length) throw new Error('name is empty or blank')
+        if (email != null && !email.trim().length) throw new Error('email is empty or blank')
+        if (username != null && !username.trim().length) throw new Error('username is empty or blank')
+        if (newPassword != null && !newPassword.trim().length) throw new Error('newPassword is empty or blank')
+        if (!password.trim().length) throw new Error('password is empty or blank')
 
 
         return fetch(`http://localhost:5000/api/users/${this._userId}`, {
@@ -128,16 +132,12 @@ const logic = {
             })
     },
 
-    retrieveProfile(_id, me) {
-
-        if (me == true) {
-            _id = this._userId + ''
-        }
+    retrieveProfile(_id) {
 
         if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
-        if (!_id.trim().length) throw new ValueError('id is empty or blank')
+        if (!_id.trim().length) throw new Error('id is empty or blank')
 
-        return fetch(`http://localhost:5000/api/users/${this._userId}/profile`, {
+        return fetch(`http://localhost:5000/api/users/${_id}/profile`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${this._token}`
@@ -171,13 +171,13 @@ const logic = {
 
         if (offer != null && !(offer instanceof Array)) throw TypeError(`${moves} is not an Array`)
 
-        if (email != null && !email.trim().length) throw new ValueError('surname is empty or blank')
-        if (skype != null && !skype.trim().length) throw new ValueError('surname is empty or blank')
-        if (gender != null && !gender.trim().length) throw new ValueError('surname is empty or blank')
-        if (description != null && !description.trim().length) throw new ValueError('surname is empty or blank')
-        if (city != null && !city.trim().length) throw new ValueError('surname is empty or blank')
+        if (email != null && !email.trim().length) throw new Error('surname is empty or blank')
+        if (skype != null && !skype.trim().length) throw new Error('surname is empty or blank')
+        if (gender != null && !gender.trim().length) throw new Error('surname is empty or blank')
+        if (description != null && !description.trim().length) throw new Error('surname is empty or blank')
+        if (city != null && !city.trim().length) throw new Error('surname is empty or blank')
 
-        if (offer != null && !offer.length) throw new ValueError('offer is empty')
+        if (offer != null && !offer.length) throw new Error('offer is empty')
 
 
         return fetch(`http://localhost:5000/api/users/${this._userId}/profile`, {
@@ -203,7 +203,7 @@ const logic = {
 
     search(query) {
         if (typeof query !== 'string') throw TypeError(`${query} is not a string`)
-        
+
 
         return fetch(`http://localhost:5000/api/users/${this._userId}/search/${query}`, {
             method: 'GET',
@@ -215,7 +215,7 @@ const logic = {
             .then(res => res.json())
             .then(res => {
 
-                
+
                 if (res.error) throw Error(res.error)
 
                 return res.data

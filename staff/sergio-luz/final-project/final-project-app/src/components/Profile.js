@@ -9,7 +9,7 @@ class Profile extends Component {
     componentDidMount() {
 
         this.setState({ user_info: this.props.user_info })
-        this.props.retrieveUserInfo()
+        this.props.retrieveUserInfo(this.props.id)
     }
 
     componentWillReceiveProps(props) {
