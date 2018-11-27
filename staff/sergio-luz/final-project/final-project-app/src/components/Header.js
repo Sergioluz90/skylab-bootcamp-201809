@@ -1,8 +1,15 @@
 import React, { Component } from 'react'
+import logic from '../logic'
+import { throws } from 'assert';
 
 class Header extends Component {
 
-    handleEditProfileClick=()=>this.props.history.push('/profile/edit')
+    handleEditProfileClick=()=>this.props.history.push(`/profile/${logic.myId}/edit`)
+
+    handleGoHomeClick=()=>{
+        console.log(this.props.history)
+        if(!(this.props.history.location.pathname==='/home/search'))
+            this.props.history.push('/home/search')}
 
 
     render() {
@@ -12,7 +19,7 @@ class Header extends Component {
                 <div className="container">
                     <ul className="ul__Nav">
                         <li>
-                            <h1 className="logo">Logo</h1>
+                            <h1 className="logo" onClick={this.handleGoHomeClick}>Logo</h1>
                         </li>
 
                     </ul>

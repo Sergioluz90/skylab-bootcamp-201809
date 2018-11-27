@@ -218,7 +218,7 @@ class EditProfile extends Component {
               <div className='spacer--20'></div>
 
               <section>
-                <img class="profile__cover-image" src="https://image.freepik.com/free-photo/wall-wallpaper-concrete-colored-painted-textured-concept_53876-31799.jpg"></img>
+                <img className="profile__cover-image" src="https://image.freepik.com/free-photo/wall-wallpaper-concrete-colored-painted-textured-concept_53876-31799.jpg"></img>
 
                 <div className='container__image--profile'></div>
                 <div className='profile__username'>

@@ -4,16 +4,16 @@ const express = require('express')
 const router = require('./routes')
 const cors = require('./utils/cors')
 const package = require('./package.json')
-const {Sequelize, models:{ User, Offer, Searching, Blocked }} = require('final-data')
+const { Sequelize, models: { User, Offer, Searching, Blocked } } = require('final-data')
 
-const { env: { PORT, DATABASE_URL } } = process
+const { env: { PORT, DATABASE_URL, DATABASE_NAME } } = process
 
-const sequelize = new Sequelize(DATABASE_URL, )
+const sequelize = new Sequelize(DATABASE_URL)
 
 sequelize
-    .authenticate()
+    .authenticate({ logging: false })
     .then(() => {
-        const { argv: [, , port = PORT || 3306] } = process
+        console.log('Connection has been established successfully at port ' + PORT)
 
         const app = express()
 
@@ -21,15 +21,45 @@ sequelize
 
         app.use('/api', router)
 
-        app.listen(port, () => console.log(`${package.name} ${package.version} up and running on port ${port}`))
+        // sequelize.getQueryInterface().showAllSchemas().then((tableObj) => {
+        //     console.log('// Tables in database','==========================');
+        //     console.log(tableObj);
+        // })
+        // debugger
+
+        return app.listen(PORT, () => console.log(`${package.name} ${package.version} up and running on port ${PORT}`))
+
     })
-    .then(()=>User.sync({ force: false, logging:false }))
-    .then(()=>Offer.sync({ force: false, logging:false }))
-    .then(()=>Searching.sync({ force: false, logging:false }))
-    .then(()=>Blocked.sync({ force: false, logging:false }))
+
+
+
+    // }).then(()=>{
+
+    //     // return sequelize.query(`DROP DATABASE ${DATABASE_NAME}`, { logging: false })
+    //     //     .catch(() => undefined)
+    //     //     .finally(() => {
+    //     //         console.log('Database dropped')
+
+    //     //         return sequelize.query(`CREATE DATABASE ${DATABASE_NAME}`, { logging: false })
+    //     //     })
+    //     //     .then(res => { })
+    // })
     .catch(err => {
-        console.error('Unable to connect to the database:', err);
+        console.error(`Unable to connect to the database: ${DATABASE_NAME}`);
     })
+    // .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 0"))
+    // .then(() => Searching.sync())
+    // .then(() => Offer.sync({ force: false, logging: false }))
+    // .then(() => User.sync({ force: false, logging: false }))
+    // .then(() => Blocked.sync({ force: false, logging: false }))
+    // .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 1"))
+    // .catch(err => {
+    //     console.error('Unable to connect to the database:', err);
+    // })
+    // .then(() => {
+    //     // const app = express()
+
+    // })
 
 
 

@@ -12,6 +12,10 @@ const logic = {
         return !!sessionStorage.getItem('userId')
     },
 
+    get myId(){
+        return sessionStorage.getItem('userId')
+    },
+
     registerUser(name, username, password, email) {
 
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
@@ -126,8 +130,8 @@ const logic = {
 
     retrieveProfile(_id, me) {
 
-        if(me==true){
-            _id=this._userId+''
+        if (me == true) {
+            _id = this._userId + ''
         }
 
         if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
@@ -175,7 +179,6 @@ const logic = {
 
         if (offer != null && !offer.length) throw new ValueError('offer is empty')
 
-        debugger
 
         return fetch(`http://localhost:5000/api/users/${this._userId}/profile`, {
             method: 'PATCH',
@@ -187,17 +190,42 @@ const logic = {
         })
             .then(res => res.json())
             .then(res => {
-                debugger
 
                 if (res.error) throw Error(res.error)
 
                 return res.data
             })
-            .catch(err=>{
+            .catch(err => {
+                return err.message
+            })
+
+    },
+
+    search(query) {
+        if (typeof query !== 'string') throw TypeError(`${query} is not a string`)
+        
+
+        return fetch(`http://localhost:5000/api/users/${this._userId}/search/${query}`, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                'Authorization': `Bearer ${this._token}`
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+
+                
+                if (res.error) throw Error(res.error)
+
+                return res.data
+            })
+            .catch(err => {
                 return err.message
             })
 
     }
+
 
 }
 

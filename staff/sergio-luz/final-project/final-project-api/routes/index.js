@@ -55,6 +55,7 @@ router.post('/auth', jsonBodyParser, (req, res) => {
 })
 
 router.get('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
+    debugger
     routeHandler(() => {
         const { params: { id }, sub } = req
 
@@ -70,6 +71,7 @@ router.get('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
 })
 
 router.patch('/users/:id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+    
     routeHandler(() => {
         const { params: { id }, sub, body: { name, email, username, newPassword, password } } = req
 
@@ -85,6 +87,7 @@ router.patch('/users/:id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (re
 })
 
 router.get('/users/:id/profile', [bearerTokenParser, jwtVerifier], (req, res) => {
+    
     routeHandler(() => {
         const { params: { id }, sub } = req
 
@@ -123,6 +126,30 @@ router.patch('/users/:id/profile', [bearerTokenParser, jwtVerifier, jsonBodyPars
                     
                     res.json({
                         message: 'profile updated'
+                    })
+                }
+                ).catch((err)=>{
+                    
+                    res.json({
+                        
+                        error:`${err} `
+                    })
+                })
+                
+    }, res)
+})
+
+router.get('/users/:id/search/:query', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+    routeHandler(() => {
+        const { params: { id, query }, sub } = req
+
+        if (id !== sub.toString()) throw Error('token sub does not match user id')
+
+            return logic.search(query, sub)
+                .then((info) =>{
+                    
+                    res.json({
+                        data: info
                     })
                 }
                 ).catch((err)=>{

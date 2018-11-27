@@ -157,7 +157,6 @@ const logic = {
 
     updateProfile(id, email, skype, gender, age, height, weight, smoker, description, receives, moves, city, offer, searching) {
 
-        throw Error('prueba de error')
         if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
         if (id != null && !id.trim().length) throw new ValueError('id is empty or blank')
 
@@ -222,7 +221,6 @@ const logic = {
                         }
                     }
                 }
-
             }
 
             await f_updating(offer, Offer)
@@ -230,10 +228,49 @@ const logic = {
         })()
     },
 
-    search(username, offer, searching) {
+    search(query, sub) {
+
+        // first of all we exclude our user profile
+
+        let objects = []
+
+
+
+        const res = query.split('&')
+
+        res.forEach(elem => {
+
+            if (res !== '') {
+                let res = elem.split('=')
+                let type = res[0]
+                let src = res[1]
+                let obj = { type: type, src: src }
+                objects.push(obj)
+            }
+        })
+
+        let username = '', offer, searching
+
+        objects.forEach(obj => {
+
+            if (obj.type === 'q')
+                username = obj.src
+            if (obj.type === 'offer') {
+
+                offer = obj.src.split('+')
+            }
+            if (obj.type === 'searching') {
+
+                searching = obj.src.split('+')
+            }
+        })
+
 
         let obj = {
-            where: { username: { like: '%' + username + '%' } },
+            where: { 
+                username: { like: '%' + username + '%' },
+                id: {[Sequelize.Op.not]:[sub]}
+         },
             include: [{
                 model: Offer,
                 as: 'userOffers',
@@ -254,15 +291,19 @@ const logic = {
         return (async () => {
 
             let query
-            if(offer==null){
+            if (offer == null) {
                 query = obj.include.filter(item => item.model !== Offer)
-                obj.include=query
+                obj.include = query
             }
- 
-            if(searching==null){
+
+            if (searching == null) {
                 query = obj.include.filter(item => item.model !== Searching)
-                obj.include=query
+                obj.include = query
             }
+
+            if (username === '')
+                delete obj.where.username
+
 
             const users = await User.findAll(obj)
 
@@ -271,15 +312,16 @@ const logic = {
 
             for (user of users) {
 
-                let { id, age, gender, description, userOffers, userSearchings } = user
+                let { id, username, age, gender, description, userOffers, userSearchings } = user
 
-                if(userOffers==undefined) userOffers=[]
-                if(userSearchings==undefined) userSearchings=[]
+                if (userOffers == undefined) userOffers = []
+                if (userSearchings == undefined) userSearchings = []
 
                 const _user = { id, username, age, gender, description, userOffers, userSearchings }
 
                 user_list.push(_user)
             }
+            debugger
 
             return user_list
         })()

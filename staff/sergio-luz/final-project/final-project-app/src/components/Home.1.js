@@ -199,6 +199,58 @@ class Home extends Component {
                     <div className="component">
                         <h3 className="center">Resultados</h3>
                     </div>
+                    <div className="component ">
+                        <div className="margin--left">
+
+                            <ul className="ul__filters ">
+
+                                {(offer_checkboxes.length > 0) && this.handleRenderFilterType('Looking for:', offer_checkboxes)}
+                                {(searching_checkboxes.length > 0) && this.handleRenderFilterType('Searching:', searching_checkboxes)}
+
+                                <li className="component margin--left margin-bottom">
+                                    <h4>Filtros:</h4>
+                                </li>
+
+                                <li className="component margin--left  ">
+                                    <a href="#"> x </a>
+                                    <p>Filtro</p>
+                                </li>
+                                <li className="component margin--left  ">
+                                    <a href="#"> x </a>
+                                    <p>Filtro</p>
+                                </li>
+
+                                <li className="component margin--left  ">
+                                    <a href="#"> x </a>
+                                    <p>Filtro</p>
+                                </li>
+                                <li className="component margin--left  ">
+                                    <a href="#"> x </a>
+                                    <p>Filtro</p>
+                                </li>
+                                <li className="component margin--left  ">
+                                    <a href="#"> x </a>
+                                    <p>Filtro</p>
+                                </li>
+                                <li className="component margin--left  ">
+                                    <a href="#"> x </a>
+                                    <p>Filtro</p>
+                                </li>
+                                <li className="component margin--left  ">
+                                    <a href="#"> x </a>
+                                    <p>Filtro</p>
+                                </li>
+                                <li className="component margin--left  ">
+                                    <a href="#"> x </a>
+                                    <p>Filtro</p>
+                                </li>
+                                <li className="component margin--left  ">
+                                    <a href="#"> x </a>
+                                    <p>Filtro</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
                     <div className="wrapper__images center">
 
