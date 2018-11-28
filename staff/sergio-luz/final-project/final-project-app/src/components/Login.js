@@ -44,8 +44,8 @@ class Login extends Component {
 
                 <div className='login__form'>
                     <div className='login__banner'>
-                        <a className='login__options-banner--active' href='#/register' > Register</a>
-                        <a className='login__options-banner' href='#/' > Login</a>
+                        <a className='login__options-banner' href='#/register' > Register</a>
+                        <a className='login__options-banner--active' href='#/' > Login</a>
 
                     </div>
 

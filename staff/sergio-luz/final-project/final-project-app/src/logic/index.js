@@ -81,6 +81,15 @@ const logic = {
             })
     },
 
+    logout() {
+        this._user = ''
+        this._userId = ''
+        this._token = ''
+
+        sessionStorage.removeItem('userId')
+        sessionStorage.removeItem('token')
+    },
+
     retrieveUser() {
 
         return fetch(`http://localhost:5000/api/users/${this._userId}`, {

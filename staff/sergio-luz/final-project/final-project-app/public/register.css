@@ -19,7 +19,7 @@
 }
 
 .register__cover-image{
-    width: 50vw;
+    width: 40vw;
     box-shadow: 2px 2px 6px rgba(0,0,0,.3);
 }
 
@@ -38,7 +38,7 @@
     box-sizing: border-box;
     flex-direction: column;
     align-items: unset;
-    height: 50vw;
+    height: 40vw;
     justify-content: space-evenly;
     background: white;
     padding: 3vw;
@@ -50,9 +50,9 @@
     text-indent: -1000px;
     margin: 0px;
     position: absolute;
-    margin-top: -23vw;
-    margin-left: 15vw;
-    height: 9vw;
+    margin-top: -18vw;
+    margin-left: 12vw;
+    height: 8.5vw;
     width: 40vw;
     background-size: 37vw;
     background-color: white;

@@ -22,6 +22,10 @@ class Header extends Component {
         if (!(this.props.history.location.pathname === '/home/search'))
             this.props.history.push('/home/search')
     }
+    handleLogoutSession=()=>{
+        logic.logout()
+        this.props.history.push(`/`)
+    }
 
     handleCollapsible = () => {
         this.state.opened_collapsible ? this.setState({ opened_collapsible: false }) : this.setState({ opened_collapsible: true })
@@ -45,6 +49,7 @@ class Header extends Component {
 
                 <div>
                     <img onClick={this.handleCollapsible} className="profile-image__Nav" src="./nobody_m.original.jpg" alt="" />
+
                     {opened_collapsible && <CollapsibleProfile
                         user_info={user_info}
                         handleCollapsible={this.handleCollapsible}
