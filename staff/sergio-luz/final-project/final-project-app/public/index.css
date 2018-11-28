@@ -95,6 +95,8 @@ Generic components
     width: 100%;
     height: 92%;
     justify-content: space-between;
+    min-height: 100%;
+
 }
 
 .container--column{
@@ -176,6 +178,7 @@ Specific -----------------------------------------------------------------------
     top: 0;
     margin-top: 10px;
     margin-right: 25px;
+    cursor: pointer;
 }
 
 .head__Notify{
@@ -205,12 +208,13 @@ Specific -----------------------------------------------------------------------
 
 .searcher{
     /* width: 20vw; */
-    height: 100%;
+    /* height: 100%; */
 }
 
 .searcher__header{
     display: flex;
     align-items: center;
+    height: 47.5px;
 }
 
 .searcher__header a{
@@ -481,6 +485,7 @@ Display options
     color: #424242b3;
     background: #d3d3d342;
     border: none;
+    max-width: 90%;
 }
 
 

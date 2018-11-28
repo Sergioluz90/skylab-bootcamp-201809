@@ -5,32 +5,72 @@ import UserCard from './UserCard';
 class Home extends Component {
 
     state = {
+        search_show_options: true,
+        search_options: 'lenguages',
         query: '',
         offer_checkboxes: [],
         searching_checkboxes: [],
-        languages: [
-            'spanish',
-            'english',
-            'chinese (mandarin)',
-            'hindi',
-            'arabic',
-            'portuguese',
-            'bengali',
-            'russian',
-            'french',
-            'german',
-            'italian',
-            'catalan'
-        ],
+        selected_gender: null,
+        min_age: null,
+        max_age: null,
+        smoker: null,
+        default_info: {
+            listAges: [],
+            listHeight: [],
+            listWeight: [],
+            languages: [
+                'spanish',
+                'english',
+                'chinese (mandarin)',
+                'hindi',
+                'arabic',
+                'portuguese',
+                'bengali',
+                'russian',
+                'french',
+                'german',
+                'italian',
+                'catalan'
+            ]
+        },
         users: null
     }
 
     componentDidMount = () => {
-        logic.search('all')
-            .then((res) => {
-                this.setState({ users: res })
-            })
-            .catch(err => { debugger })
+
+        // debugger
+        // logic.search('all')
+        //     .then((res) => {
+        //         this.setState({ users: res })
+        //     })
+        //     .catch(err => { debugger })
+
+        this.setupDefaultOptions()
+        this.handleSearch()
+    }
+
+    setupDefaultOptions = () => {
+        let default_info = this.state.default_info
+        let list = []
+        for (let i = 18; i < 100; i++) {
+            list.push(i)
+        }
+        default_info.listAges = list
+
+        list = []
+        for (let i = 150; i < 220; i += 5) {
+            list.push(i)
+        }
+        default_info.listHeight = list
+
+
+        list = []
+        for (let i = 44; i < 120; i += 2) {
+            list.push(i)
+        }
+        default_info.listWeight = list
+        this.setState({ default_info })
+
     }
 
     handleOfferCheckboxChange = event => {
@@ -89,121 +129,242 @@ class Home extends Component {
             })
         }
 
+        if (this.state.selected_gender) {
+            query += '&' + 'gender' + '=' + this.state.selected_gender
+        }
+
+        if (this.state.min_age) {
+            query += '&' + 'minAge' + '=' + this.state.min_age
+        }
+
+        if (this.state.max_age) {
+            query += '&' + 'maxAge' + '=' + this.state.max_age
+        }
+
+        if (this.state.smoker !== null) {
+            query += '&' + 'smoker' + '=' + this.state.smoker
+        }
+
         this.setState({ query })
         if (query != '') this.props.history.push(`${query}`)
-
         let _query = query.match(/[?](.*)/)[1]
-
         if (_query === '') _query = 'all'
-
 
         logic.search(_query)
             .then((res) => {
-
                 this.setState({ users: res })
             })
             .catch(err => { debugger })
     }
 
     handleRenderFilterType = (type, filters) => {
-
         return (<div className='ul__filters'>
-            <li className="component margin--left margin-bottom">
+            <li className='component margin--left margin-bottom'>
                 <h4>{type}</h4>
             </li>
 
             {filters.map((elem, index) => {
-                return <li className="component margin--left  ">
-                    <a href="#"> x </a>
+                return <li className='component margin--left  '>
+                    <a href='#'> x </a>
                     <p>{elem}</p>
                 </li>
             })}
         </div>
         )
-
     }
 
-    // componentWillReceiveProps(newProps) {
-    //     
-    //     if (newProps.history !== this.props.history) {
-    //         logic.search(this.state.query)
-    //             .then(() => {  })
-    //     }
-    // }
+    handleShowSearchOptions = (event) => {
+        event.preventDefault()
+        const flag = this.state.search_show_options
+        this.setState({ search_show_options: !flag })
+    }
+
+    handleOptionSearch = (event) => {
+        event.preventDefault()
+        this.setState({ search_options: event.target.attributes.value.value, search_show_options: true })
+    }
+
+    handleGenderChange = (event) => {
+        let info = event.target.value
+        if (info.includes('select') || info.includes('matter')) info = null
+        this.setState({ selected_gender: info }, () => {
+
+            this.handleSearch()
+        })
+    }
+
+    handleMinAgeChange = (event) => {
+        let info = event.target.value
+        if (info.includes('age')) info = null
+        this.setState({ min_age: info }, () => {
+
+            this.handleSearch()
+        })
+    }
+
+    handleMaxAgeChange = (event) => {
+        let info = event.target.value
+        if (info.includes('age')) info = null
+        this.setState({ max_age: info }, () => {
+            this.handleSearch()
+        })
+    }
+
+    handleSmokerChange = event => {
+        let info = event.target.value
+        if (info === 'Not important' || info.includes('matter')) info = null
+        this.setState({ smoker: info }, () => {
+
+            this.handleSearch()
+        })
+    }
 
     render() {
 
-        const { users, offer_checkboxes, searching_checkboxes } = this.state
+        const { users, offer_checkboxes, searching_checkboxes, search_options, search_show_options, selected_gender, min_age, max_age, smoker } = this.state
+        const { listAges, languages } = this.state.default_info
 
-        return <main className="container initial">
-            <div className="spacer--20"></div>
-            <section className="container--row">
-                <div className="searcher component">
-                    <div className="component searcher__header">
-                        <h3 className="margin--left">Búsqueda</h3>
-                        <a href="#">
-                            <i className="fas fa-grip-horizontal"></i>
+        console.log('render')
+
+        return <main className='container initial'>
+            <div className='spacer--20'></div>
+            <section className='container--row'>
+                <div className='searcher component'>
+                    <div className='component searcher__header'>
+                        {(search_show_options) && <h3 className='margin--left'>Búsqueda</h3>}
+                        <a href='#'>
+                            <i className='fas fa-grip-horizontal' onClick={this.handleShowSearchOptions}></i>
                         </a>
 
                     </div>
 
-                    <div className="container--row">
-                        <div className="searcher--panel component no-shadow  ">
+                    <div className='container--row'>
+
+
+                        <div className='searcher--panel component no-shadow  '>
 
                             <ul>
                                 <li>
-                                    <a href="#">
-                                        <i className="fas fa-comments"></i>
+                                    <a href='#'>
+                                        <i className='fas fa-comments' value='lenguages' onClick={this.handleOptionSearch}></i>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#">
-                                        <i className="fas fa-user"></i>
+                                    <a href='#'>
+                                        <i className='fas fa-user' value='people' onClick={this.handleOptionSearch}></i>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#">
-                                        <i className="fas fa-map-marker-alt"></i>
+                                    <a href='#'>
+                                        <i className='fas fa-map-marker-alt' value='location' onClick={this.handleOptionSearch}></i>
                                     </a>
                                 </li>
                             </ul>
                         </div>
-                        <div className="component searcher--options no-shadow">
-                            <div className="center component">
-                                <input type="text" placeholder="Buscar usuario" className=" search-bar component" />
+
+
+                        {(search_show_options) && <div className='component searcher--options no-shadow'>
+                            <h3 className='margin--left'>Username:</h3>
+                            <div className='center component'>
+                                <input type='text' placeholder='Buscar usuario' className=' search-bar component' />
                             </div>
-                            <div>
-                                <div className="margin--left">
+
+                            {(search_options === 'lenguages') && <div>
+                                <div className='margin--left'>
                                     <h4>You are looking for...</h4>
-                                    {this.state.languages.map((item, index) => {
-                                        return <div key={index}> <input type="checkbox" value={item} onChange={this.handleOfferCheckboxChange} /> {item}<br /> </div>
+                                    {this.state.default_info.languages.map((item, index) => {
+                                        if (offer_checkboxes.includes(item))
+                                            return <div key={index}> <input checked='true' type='checkbox' value={item} onChange={this.handleOfferCheckboxChange} /> {item}<br /> </div>
+                                        else
+                                            return <div key={index}> <input type='checkbox' value={item} onChange={this.handleOfferCheckboxChange} /> {item}<br /> </div>
+
                                     })}
 
                                 </div>
-                                <div className="margin--left">
+                                <div className='margin--left'>
                                     <h4>They are looking for...</h4>
-                                    {this.state.languages.map((item, index) => {
-                                        return <div key={index}> <input type="checkbox" value={item} onChange={this.handleSearchingCheckboxChange} /> {item}<br /> </div>
+                                    {this.state.default_info.languages.map((item, index) => {
+                                        if (searching_checkboxes.includes(item))
+                                            return <div key={index}> <input checked='true' type='checkbox' value={item} onChange={this.handleSearchingCheckboxChange} /> {item}<br /> </div>
+                                        else
+                                            return <div key={index}> <input type='checkbox' value={item} onChange={this.handleSearchingCheckboxChange} /> {item}<br /> </div>
                                     })}
 
                                 </div>
 
-                            </div>
-                        </div>
+                            </div>}
+
+                            {(search_options === 'people') && <div>
+                                <div className='margin--left'>
+
+                                    <h3>Gender:</h3>
+                                    <select className='profile__select' onChange={this.handleGenderChange}>
+                                        {selected_gender ? <option value={selected_gender}>Selected: {selected_gender}</option> : <option value={null}> Select gender:</option>}
+                                        {selected_gender && <option value={null}>It doesn't matter!</option>}
+
+                                        <option key={0} value='Male'>Male</option>
+                                        <option key={1} value='Female'>Female</option>
+                                    </select>
+
+                                    <h3>Age:</h3>
+                                    <div>
+                                        <select className='profile__select' onChange={this.handleMinAgeChange}>
+                                            {min_age ? <option value={min_age}>Selected: {min_age}</option> : <option value={null}> Minimum age:</option>}
+                                            {min_age && <option value={null}> No min age</option>}
+                                            {listAges && listAges.map((age, index) => {
+                                                if (max_age == null || max_age >= age)
+                                                    return <option key={index} value={age}>{age}</option>
+                                                else
+                                                    return
+                                            })}
+                                        </select>
+                                        <br></br>
+                                        <select className='profile__select' onChange={this.handleMaxAgeChange}>
+                                            {max_age ? <option value={max_age}>Selected:{max_age}</option> : <option value={null}> Maximum age:</option>}
+                                            {max_age && <option value={null}> No max age</option>}
+                                            {listAges && listAges.map((age, index) => {
+                                                if (min_age == null || min_age <= age)
+                                                    return <option key={index} value={age}>{age}</option>
+                                                else
+                                                    return
+                                            })}
+                                        </select>
+                                    </div>
+
+                                    <h3>Smoker:</h3>
+                                    <select className='profile__select' onChange={this.handleSmokerChange}>
+                                        {smoker ? <option value={smoker}>Selected: {smoker}</option> : <option value='null'>Not important</option>}
+                                        {smoker && <option value={null}> It doesn't matter</option>}
+                                        <option key={0} value='true'>yes</option>
+                                        <option key={1} value='false'>no</option>
+                                    </select>
+                                </div>
+                            </div>}
+
+                            {(search_options === 'location') &&
+                                <div >
+                                    <h3 className='margin--left'>City:</h3>
+
+                                    <input type='text' placeholder='Search by city' className=' search-bar component' />
+
+
+                                </div>}
+
+                        </div>}
                     </div>
 
                 </div>
 
 
-                <div className="results component">
-                    <div className="component">
-                        <h3 className="center">Resultados</h3>
+                <div className='results component'>
+                    <div className='component'>
+                        <h3 className='center'>Resultados</h3>
                     </div>
 
-                    <div className="wrapper__images center">
+                    <div className='wrapper__images center'>
 
                         {users && users.map((elem, index) => {
-                            return <div key={index} className="search-panel__profile">
+                            return <div key={index} className='search-panel__profile'>
                                 <UserCard elem={elem}></UserCard>
                             </div>
                         })}

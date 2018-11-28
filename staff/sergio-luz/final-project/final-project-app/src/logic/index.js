@@ -204,7 +204,6 @@ const logic = {
     search(query) {
         if (typeof query !== 'string') throw TypeError(`${query} is not a string`)
 
-
         return fetch(`http://localhost:5000/api/users/${this._userId}/search/${query}`, {
             method: 'GET',
             headers: {

@@ -1,18 +1,36 @@
 import React, { Component } from 'react'
 import logic from '../logic'
 import { throws } from 'assert';
+import CollapsibleProfile from './CollapsibleProfile';
 
 class Header extends Component {
 
-    handleEditProfileClick=()=>this.props.history.push(`/profile/${logic.myId}/edit`)
+    state = {
+        opened_collapsible: false
+    }
 
-    handleGoHomeClick=()=>{
+    handleViewProfileClick = () => {
+        this.props.history.push(`/profile/${logic.myId}`)
+        this.handleCollapsible()
+    }
+    handleEditProfileClick = () => {
+        this.props.history.push(`/profile/${logic.myId}/edit`)
+        this.handleCollapsible()
+    }
+    handleGoHomeClick = () => {
         console.log(this.props.history)
-        if(!(this.props.history.location.pathname==='/home/search'))
-            this.props.history.push('/home/search')}
+        if (!(this.props.history.location.pathname === '/home/search'))
+            this.props.history.push('/home/search')
+    }
+
+    handleCollapsible = () => {
+        this.state.opened_collapsible ? this.setState({ opened_collapsible: false }) : this.setState({ opened_collapsible: true })
+    }
 
 
     render() {
+        const { user_info } = this.props
+        const { opened_collapsible } = this.state
 
         return (<header className="headerPage">
             <nav className="head__Nav">
@@ -26,7 +44,14 @@ class Header extends Component {
                 </div>
 
                 <div>
-                    <img onClick={this.handleEditProfileClick} className="profile-image__Nav" src="./nobody_m.original.jpg" alt="" />
+                    <img onClick={this.handleCollapsible} className="profile-image__Nav" src="./nobody_m.original.jpg" alt="" />
+                    {opened_collapsible && <CollapsibleProfile
+                        user_info={user_info}
+                        handleCollapsible={this.handleCollapsible}
+                        handleViewProfileClick={this.handleViewProfileClick}
+                        handleEditProfileClick={this.handleEditProfileClick}
+                        handleLogoutSession={this.handleLogoutSession}
+                    />}
                 </div>
             </nav>
 

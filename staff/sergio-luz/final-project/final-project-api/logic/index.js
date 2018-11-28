@@ -245,25 +245,35 @@ const logic = {
             }
         })
 
-        let username = '', offer, searching
+        let username = '', offer, searching, minAge = 0, maxAge = 100, gender, smoker
 
         objects.forEach(obj => {
-            if (obj.type === 'q')
-                username = obj.src
-
-            if (obj.type === 'offer') {
-                offer = obj.src.split('+')
-            }
-
-            if (obj.type === 'searching') {
-                searching = obj.src.split('+')
+            if (obj.type === 'q') username = obj.src
+            if (obj.type === 'offer') { offer = obj.src.split('+') }
+            if (obj.type === 'searching') { searching = obj.src.split('+') }
+            if (obj.type === 'gender') gender = obj.src
+            if (obj.type === 'minAge') minAge = Number(obj.src)
+            if (obj.type === 'maxAge') maxAge = Number(obj.src)
+            if (obj.type === 'smoker') {
+                if (obj.src === 'true') smoker = true
+                else smoker = false
             }
         })
+
+        debugger
 
         let obj = {
             where: {
                 username: { like: '%' + username + '%' },
-                id: { [Sequelize.Op.not]: [sub] }
+                id: { [Sequelize.Op.not]: [sub] },
+                age: {
+                    [Sequelize.Op.or]: [
+                        { [Sequelize.Op.between]: [minAge, maxAge] },
+                        { like: null }
+                    ]
+                },
+                gender: gender,
+                smoker: smoker
             },
             include: [{
                 model: Offer,
@@ -282,6 +292,8 @@ const logic = {
             , logging: false
         }
 
+        debugger
+
         return (async () => {
 
             let query
@@ -295,10 +307,16 @@ const logic = {
                 obj.include = query
             }
 
-            if (username === '')
-                delete obj.where.username
+            if (username === '') delete obj.where.username
+            if (gender == null) delete obj.where.gender
+            if (smoker == null) delete obj.where.smoker
+            if (minAge === 0 && maxAge === 100) delete obj.where.age
+
+            debugger
 
             const users = await User.findAll(obj)
+
+            debugger
             let user_list = []
 
             for (user of users) {

@@ -74,7 +74,7 @@ class App extends Component {
       {/* <Route exact path="/" render={() => !logic.loggedIn && (<section>
         <button onClick={this.handleRegisterClick}>Register</button> or <button onClick={this.handleLoginClick}>Login</button></section>)} /> */}
 
-      {logic.loggedIn && <Header history={this.props.history} />}
+      {logic.loggedIn && <Header history={this.props.history} user_info={user_info} />}
 
       <Route path="/register" render={() => !logic.loggedIn ? <Register history={this.props.history} RegisterHandler={this.RegisterHandler} /> : <Redirect to="/home" />} />
 
@@ -83,7 +83,7 @@ class App extends Component {
       {error && <Error message={error} handleAcceptError={this.handleAcceptError} />}
       <Switch>
 
-        <Route path="/home" render={() => logic.loggedIn ? <Home history={this.props.history} isLoggedIn={this.state.login} /> : <Redirect to="/" />} />
+        <Route exact path="/home" render={() => logic.loggedIn ? <Home history={this.props.history} isLoggedIn={this.state.login} /> : <Redirect to="/" />} />
 
         <Route path="/home/:query" render={(props) => logic.loggedIn ? <Home query={props.match.params.query} history={this.props.history} isLoggedIn={this.state.login} /> : <Redirect to="/" />} />
 
