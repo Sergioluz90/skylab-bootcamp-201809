@@ -161,13 +161,22 @@ const logic = {
             })
     },
 
-    updateProfile(id, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
+    updateProfile(id, name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
+
+        if (age != null) age = Number(age)
+        if (height != null) height = Number(height)
+        if (weight != null) weight = Number(weight)
+
+        if (smoker != null) smoker.includes('true') ? smoker = true : smoker = false
+        if (moves != null) moves.includes('true') ? moves = true : moves = false
+        if (receives != null) receives.includes('true') ? receives = true : receives = false
 
         if (typeof id !== 'number' || id == null || id == undefined) throw TypeError(`${id} is not a number`)
         if (age != null && typeof age !== 'number') throw TypeError(`${age} is not a number`)
         if (height != null && typeof height !== 'number') throw TypeError(`${height} is not a number`)
         if (weight != null && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
 
+        if (name != null && typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (email != null && typeof email !== 'string') throw TypeError(`${email} is not a string`)
         if (skype != null && typeof skype !== 'string') throw TypeError(`${skype} is not a string`)
         if (gender != null && typeof gender !== 'string') throw TypeError(`${gender} is not a string`)
@@ -179,27 +188,30 @@ const logic = {
         if (moves != null && typeof moves !== 'boolean') throw TypeError(`${moves} is not a boolean`)
 
         if (offer != null && !(offer instanceof Array)) throw TypeError(`${moves} is not an Array`)
+        if (searching != null && !(searching instanceof Array)) throw TypeError(`${moves} is not an Array`)
 
+        if (name != null && !name.trim().length) throw new Error('surname is empty or blank')
         if (email != null && !email.trim().length) throw new Error('surname is empty or blank')
         if (skype != null && !skype.trim().length) throw new Error('surname is empty or blank')
         if (gender != null && !gender.trim().length) throw new Error('surname is empty or blank')
         if (description != null && !description.trim().length) throw new Error('surname is empty or blank')
         if (city != null && !city.trim().length) throw new Error('surname is empty or blank')
 
-        if (offer != null && !offer.length) throw new Error('offer is empty')
+        // if (offer != null && !offer.length) throw new Error('offer is empty')
 
-
+        debugger
         return fetch(`http://localhost:5000/api/users/${this._userId}/profile`, {
             method: 'PATCH',
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
                 'Authorization': `Bearer ${this._token}`
             },
-            body: JSON.stringify({ id, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching })
+            body: JSON.stringify({ id, name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching })
         })
             .then(res => res.json())
             .then(res => {
 
+                debugger
                 if (res.error) throw Error(res.error)
 
                 return res.data
@@ -232,6 +244,23 @@ const logic = {
                 return err.message
             })
 
+    },
+
+    uploadImage(file) {
+        let avatar = new FormData()
+
+        avatar.append('image', file)
+
+        return fetch(`http://localhost:5000/api/users/${this._userId}/profile/image`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${this._token}`
+            },
+            body: avatar
+        })
+            .catch(err => { debugger })
+            .then(res => res.json())
+            .then(res => res.data)
     }
 
 

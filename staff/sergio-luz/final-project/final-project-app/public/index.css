@@ -341,7 +341,7 @@ position: absolute;
 }
 .container__image--profile{
     margin: 1vw;
-    background: black;
+    background: #00243f;
     position: absolute;
     margin-top: -11vw;
     margin-left: 3vw;

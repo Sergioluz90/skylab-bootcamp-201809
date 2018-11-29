@@ -24,8 +24,8 @@ class App extends Component {
 
   RegisterHandler = (name, username, email, password, city) => {
 
-    try{
-      
+    try {
+
       logic.registerUser(name, username, password, email, city)
         .then(() => {
           this.setState({ error: null })
@@ -34,7 +34,7 @@ class App extends Component {
         .catch(err => {
           this.setState({ error: err.message })
         })
-    }catch(err){
+    } catch (err) {
       this.setState({ error: err.message })
     }
   }
@@ -53,17 +53,19 @@ class App extends Component {
 
   retrieveUserInfo = (id) => {
 
-    if(!id) id=logic.myId
+    if (!id) id = logic.myId
 
     logic.retrieveProfile(id)
       .then(user => {
-        this.setState({ user_info: user })
+
+        this.setState({ user_info: user }, () => {
+        })
       })
   }
 
 
-  handleAcceptError=()=>{
-    this.setState({error:null})
+  handleAcceptError = () => {
+    this.setState({ error: null })
   }
 
   render() {

@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const bearerTokenParser = require('../utils/bearer-token-parser')
 const jwtVerifier = require('./jwt-verifier')
 const routeHandler = require('./route-handler')
+const Busboy = require('busboy')
 
 const jsonBodyParser = bodyParser.json()
 
@@ -16,7 +17,7 @@ const { env: { JWT_SECRET } } = process
 router.post('/users', jsonBodyParser, (req, res) => {
     routeHandler(() => {
 
-        const { name, username,city , email ,password} = req.body
+        const { name, username, city, email, password } = req.body
 
         return logic.registerUser(name, username, password, email, city)
             .then(() => {
@@ -26,7 +27,7 @@ router.post('/users', jsonBodyParser, (req, res) => {
                     message: `${username} successfully registered`
                 })
             })
-            .catch((err)=>{
+            .catch((err) => {
                 res.status(409)
 
                 res.json({
@@ -71,7 +72,7 @@ router.get('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
 })
 
 router.patch('/users/:id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-    
+
     routeHandler(() => {
         const { params: { id }, sub, body: { name, email, username, newPassword, password } } = req
 
@@ -87,7 +88,7 @@ router.patch('/users/:id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (re
 })
 
 router.get('/users/:id/profile', [bearerTokenParser, jwtVerifier], (req, res) => {
-    
+
     routeHandler(() => {
         const { params: { id }, sub } = req
 
@@ -104,38 +105,40 @@ router.get('/users/:id/profile', [bearerTokenParser, jwtVerifier], (req, res) =>
 
 router.patch('/users/:id/profile', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
-        const { params: { id }, sub, body: { email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching } } = req
+        const { params: { id }, sub, body: { name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching } } = req
 
+        debugger
         if (id !== sub.toString()) throw Error('token sub does not match user id')
 
-            return logic.updateProfile(id,
-                email ? email : null,
-                skype ? skype : null,
-                age ? age : null,
-                gender ? gender : null,
-                height ? height : null,
-                weight ? weight : null,
-                smoker ? smoker : null,
-                description ? description : null,
-                receives ? receives : null,
-                moves ? moves : null,
-                city ? city : null,
-                offer ? offer : null,
-                searching ? searching : null)
-                .then(() =>{
-                    
-                    res.json({
-                        message: 'profile updated'
-                    })
-                }
-                ).catch((err)=>{
-                    
-                    res.json({
-                        
-                        error:`${err} `
-                    })
+        return logic.updateProfile(id,
+            (name!=null) ? name:null,
+            (email!=null) ? email : null,
+            (skype!=null) ? skype : null,
+            (age!=null) ? age : null,
+            (gender!=null) ? gender : null,
+            (height!=null) ? height : null,
+            (weight!=null) ? weight : null,
+            (smoker!=null) ? smoker : null,
+            (description!=null) ? description : null,
+            (receives!=null) ? receives : null,
+            (moves!=null) ? moves : null,
+            (city!=null) ? city : null,
+            (offer!=null) ? offer : null,
+            (searching!=null) ? searching : null)
+            .then(() => {
+
+                res.json({
+                    message: 'profile updated'
                 })
-                
+            }
+            ).catch((err) => {
+
+                res.json({
+
+                    error: `${err} `
+                })
+            })
+
     }, res)
 })
 
@@ -145,21 +148,61 @@ router.get('/users/:id/search/:query', [bearerTokenParser, jwtVerifier, jsonBody
 
         if (id !== sub.toString()) throw Error('token sub does not match user id')
 
-            return logic.search(query, sub)
-                .then((info) =>{
-                    
-                    res.json({
-                        data: info
-                    })
-                }
-                ).catch((err)=>{
-                    
-                    res.json({
-                        
-                        error:`${err} `
-                    })
+        return logic.search(query, sub)
+            .then((info) => {
+
+                res.json({
+                    data: info
                 })
+            }
+            ).catch((err) => {
+
+                res.json({
+
+                    error: `${err} `
+                })
+            })
+
+    }, res)
+})
+
+router.post('/users/:id/profile/image', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { params: { id }, sub } = req
+
+        if (id !== sub.toString()) throw Error('token sub does not match user id')
+
+        debugger
+
+        return new Promise(async (resolve, reject) => {
+            const busboy = new Busboy({ headers: req.headers })
+
+            
+            await busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+                debugger
+
+                logic.insertProfileImage(file, id)
+                .then(()=>{
+                    resolve()
+                })
+
+            })
+
+            busboy.on('finish', () => {
                 
+                debugger
+                // resolve()
+                
+            })
+
+            busboy.on('error', err => reject(err))
+
+            req.pipe(busboy)
+
+        })
+            .then(() => res.json({
+                message: 'photo uploaded'
+            }))
     }, res)
 })
 

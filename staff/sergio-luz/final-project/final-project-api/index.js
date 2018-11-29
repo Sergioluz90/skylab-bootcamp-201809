@@ -33,25 +33,25 @@ sequelize
 
 
 
-    // }).then(()=>{
+    // .then(()=>{
 
-    //     // return sequelize.query(`DROP DATABASE ${DATABASE_NAME}`, { logging: false })
-    //     //     .catch(() => undefined)
-    //     //     .finally(() => {
-    //     //         console.log('Database dropped')
+    //     return sequelize.query(`DROP DATABASE ${DATABASE_NAME}`, { logging: false })
+    //         .catch(() => undefined)
+    //         .finally(() => {
+    //             console.log('Database dropped')
 
-    //     //         return sequelize.query(`CREATE DATABASE ${DATABASE_NAME}`, { logging: false })
-    //     //     })
-    //     //     .then(res => { })
+    //             return sequelize.query(`CREATE DATABASE ${DATABASE_NAME}`, { logging: false })
+    //         })
+    //         .then(res => { })
     // })
     .catch(err => {
         console.error(`Unable to connect to the database: ${DATABASE_NAME}`);
     })
     // .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 0"))
     // .then(() => Searching.sync())
-    // .then(() => Offer.sync({ force: false, logging: false }))
-    // .then(() => User.sync({ force: false, logging: false }))
-    // .then(() => Blocked.sync({ force: false, logging: false }))
+    // .then(() => Offer.sync({ force: !false, logging: false }))
+    // .then(() => User.sync({ force: !false, logging: false }))
+    // .then(() => Blocked.sync({ force: !false, logging: false }))
     // .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 1"))
     // .catch(err => {
     //     console.error('Unable to connect to the database:', err);

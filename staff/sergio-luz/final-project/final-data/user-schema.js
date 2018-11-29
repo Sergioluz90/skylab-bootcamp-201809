@@ -66,6 +66,10 @@ const User = sequelize.define('user', {
         type: Sequelize.STRING,
         defaultValue: null
     },
+    profileImage:{
+        type:Sequelize.STRING,
+        defaultValue:null
+    },
     connection: {
         type: Sequelize.DATE, 
         allowNull: false, 

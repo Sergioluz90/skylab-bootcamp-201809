@@ -1,5 +1,13 @@
 const { Sequelize, models: { User, Offer, Searching, Blocked } } = require('final-data')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
+const { env: { CLOUDINARY_CONFIG_NAME, CLOUDINARY_CONFIG_KEY, CLOUDINARY_CONFIG_API_SECRET } } = process
+
+const cloudinary = require('cloudinary')
+cloudinary.config({
+    cloud_name: CLOUDINARY_CONFIG_NAME,
+    api_key: CLOUDINARY_CONFIG_KEY,
+    api_secret: CLOUDINARY_CONFIG_API_SECRET
+})
 
 const logic = {
     registerUser(name, username, password, email, city) {
@@ -36,6 +44,7 @@ const logic = {
     },
 
     authenticateUser(username, password) {
+
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
 
@@ -135,7 +144,7 @@ const logic = {
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            const { id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city } = user
+            const { id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, profileImage } = user
 
             const offers = await Offer.findAll({ where: { user_id: ID }, logging: false })
             let offer = []
@@ -151,13 +160,15 @@ const logic = {
                 searching.push(search.lenguage)
             })
 
-            _user = ({ id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching })
+            _user = ({ id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching, profileImage })
 
             return _user
         })()
     },
 
-    updateProfile(id, email, skype, gender, age, height, weight, smoker, description, receives, moves, city, offer, searching) {
+    updateProfile(id, name, email, skype,age, gender , height, weight, smoker, description, receives, moves, city, offer, searching) {
+
+        debugger
 
         if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
         if (id != null && !id.trim().length) throw new ValueError('id is empty or blank')
@@ -166,6 +177,7 @@ const logic = {
         if (height != null && typeof height !== 'number') throw TypeError(`${height} is not a number`)
         if (weight != null && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
 
+        if (name != null && typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (email != null && typeof email !== 'string') throw TypeError(`${email} is not a string`)
         if (skype != null && typeof skype !== 'string') throw TypeError(`${skype} is not a string`)
         if (gender != null && typeof gender !== 'string') throw TypeError(`${gender} is not a string`)
@@ -177,21 +189,24 @@ const logic = {
         if (moves != null && typeof moves !== 'boolean') throw TypeError(`${moves} is not a boolean`)
 
         if (offer != null && !(offer instanceof Array)) throw TypeError(`${moves} is not an Array`)
+        if (searching != null && !(searching instanceof Array)) throw TypeError(`${moves} is not an Array`)
 
+        if (name != null && !name.trim().length) throw new ValueError('name is empty or blank')
         if (email != null && !email.trim().length) throw new ValueError('email is empty or blank')
         if (skype != null && !skype.trim().length) throw new ValueError('skype is empty or blank')
         if (gender != null && !gender.trim().length) throw new ValueError('gender is empty or blank')
         if (description != null && !description.trim().length) throw new ValueError('description is empty or blank')
         if (city != null && !city.trim().length) throw new ValueError('city is empty or blank')
 
-        if (offer != null && !offer.length) throw new ValueError('offer is empty')
-
+        if (offer != null && !offer.length) offer = null
+        if (searching != null && !searching.length) searching = null
 
         return (async () => {
             const user = await User.findById(id, { logging: false })
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
+            name != null && (user.name = name)
             email != null && (user.email = email)
             skype != null && (user.skype = skype)
             age != null && (user.age = age)
@@ -204,6 +219,7 @@ const logic = {
             moves != null && (user.moves = moves)
             city != null && (user.city = city)
 
+            debugger
             await user.save({ logging: false })
 
             async function f_updating(updating, model) {
@@ -212,8 +228,9 @@ const logic = {
 
                     for (off of updating) {
 
-                        const _search = await model.findAll({ subQuery: false, attributes: ['id', 'lenguage'], logging: false })
+                        const _search = await model.findAll({where:{lenguage:off} ,subQuery: false, attributes: ['id', 'lenguage'], logging: false })
 
+                        debugger
                         if (_search[0]) {
 
                             await _search[0].destroy({ force: true, logging: false })
@@ -331,7 +348,32 @@ const logic = {
             }
             return user_list
         })()
-    }
+    },
+
+    insertProfileImage(file, user_id) {
+
+
+        return (async () => {
+            let user = await User.find({ id: user_id })
+
+            if (!user) throw new NotFoundError(`User does not exist`)
+
+            const result = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream((result, error) => {
+                    if (error) return reject(error)
+
+                    resolve(result)
+                })
+
+                file.pipe(stream)
+            })
+
+            user.profileImage = result.url
+
+            await user.save()
+
+        })()
+    },
 }
 
 module.exports = logic
