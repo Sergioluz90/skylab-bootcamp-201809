@@ -173,20 +173,20 @@ const logic = {
         if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
         if (id != null && !id.trim().length) throw new ValueError('id is empty or blank')
 
-        if (age != null && age != 'delete'  && age != 'delete' && typeof age !== 'number') throw TypeError(`${age} is not a number`)
-        if (height != null && height != 'delete'  && typeof height !== 'number') throw TypeError(`${height} is not a number`)
-        if (weight != null && weight != 'delete'  && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
+        if (age != null && age != 'delete' && age != 'delete' && typeof age !== 'number') throw TypeError(`${age} is not a number`)
+        if (height != null && height != 'delete' && typeof height !== 'number') throw TypeError(`${height} is not a number`)
+        if (weight != null && weight != 'delete' && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
 
         if (name != null && typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (email != null && typeof email !== 'string') throw TypeError(`${email} is not a string`)
-        if (skype != null && skype != 'delete'  && typeof skype !== 'string') throw TypeError(`${skype} is not a string`)
-        if (gender != null && gender != 'delete'  && typeof gender !== 'string') throw TypeError(`${gender} is not a string`)
-        if (description != null&& description != 'delete'  && typeof description !== 'string') throw TypeError(`${description} is not a string`)
+        if (skype != null && skype != 'delete' && typeof skype !== 'string') throw TypeError(`${skype} is not a string`)
+        if (gender != null && gender != 'delete' && typeof gender !== 'string') throw TypeError(`${gender} is not a string`)
+        if (description != null && description != 'delete' && typeof description !== 'string') throw TypeError(`${description} is not a string`)
         if (city != null && typeof city !== 'string') throw TypeError(`${city} is not a string`)
 
-        if (smoker != null && smoker != 'delete'  && typeof smoker !== 'boolean') throw TypeError(`${smoker} is not a boolean`)
-        if (receives != null && receives != 'delete'  && typeof receives !== 'boolean') throw TypeError(`${receives} is not a boolean`)
-        if (moves != null && moves != 'delete'  && typeof moves !== 'boolean') throw TypeError(`${moves} is not a boolean`)
+        if (smoker != null && smoker != 'delete' && typeof smoker !== 'boolean') throw TypeError(`${smoker} is not a boolean`)
+        if (receives != null && receives != 'delete' && typeof receives !== 'boolean') throw TypeError(`${receives} is not a boolean`)
+        if (moves != null && moves != 'delete' && typeof moves !== 'boolean') throw TypeError(`${moves} is not a boolean`)
 
         if (offer != null && !(offer instanceof Array)) throw TypeError(`${moves} is not an Array`)
         if (searching != null && !(searching instanceof Array)) throw TypeError(`${moves} is not an Array`)
@@ -214,7 +214,7 @@ const logic = {
             height != null && ((height !== 'delete') ? user.height = height : user.height = null)
             weight != null && ((weight !== 'delete') ? user.weight = weight : user.weight = null)
             smoker != null && ((smoker !== 'delete') ? user.smoker = smoker : user.smoker = null)
-            description != null &&((description !== 'delete') ? user.description = description : user.description = null)
+            description != null && ((description !== 'delete') ? user.description = description : user.description = null)
             receives != null && (user.receives = receives)
             moves != null && (user.moves = moves)
             city != null && (user.city = city)
@@ -265,12 +265,13 @@ const logic = {
         let username = '', offer, searching, minAge = 0, maxAge = 100, gender, smoker
 
         objects.forEach(obj => {
-            if (obj.type === 'q') username = obj.src
+            if (obj.type === 'username') username = obj.src
             if (obj.type === 'offer') { offer = obj.src.split('+') }
             if (obj.type === 'searching') { searching = obj.src.split('+') }
             if (obj.type === 'gender') gender = obj.src
             if (obj.type === 'minAge') minAge = Number(obj.src)
             if (obj.type === 'maxAge') maxAge = Number(obj.src)
+            if (obj.type === 'city') city = obj.src
             if (obj.type === 'smoker') {
                 if (obj.src === 'true') smoker = true
                 else smoker = false
@@ -290,7 +291,8 @@ const logic = {
                     ]
                 },
                 gender: gender,
-                smoker: smoker
+                smoker: smoker,
+                city: { like: '%' + city + '%' }
             },
             include: [{
                 model: Offer,

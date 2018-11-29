@@ -180,7 +180,7 @@ const logic = {
         if (email != null && typeof email !== 'string') throw TypeError(`${email} is not a string`)
         if (skype != null && typeof skype !== 'string') throw TypeError(`${skype} is not a string`)
         if (gender != null && typeof gender !== 'string') throw TypeError(`${gender} is not a string`)
-        if (description != null&& description != 'delete'  && typeof description !== 'string') throw TypeError(`${description} is not a string`)
+        if (description != null && description != 'delete' && typeof description !== 'string') throw TypeError(`${description} is not a string`)
         if (city != null && typeof city !== 'string') throw TypeError(`${city} is not a string`)
 
         if (smoker != null && smoker != 'delete' && typeof smoker !== 'boolean') throw TypeError(`${smoker} is not a boolean`)
@@ -194,12 +194,9 @@ const logic = {
         if (email != null && !email.trim().length) throw new Error('surname is empty or blank')
         if (skype != null && !skype.trim().length) throw new Error('surname is empty or blank')
         if (gender != null && !gender.trim().length) throw new Error('surname is empty or blank')
-        if (description != null && !description.trim().length) description=null
+        if (description != null && !description.trim().length) description = null
         if (city != null && !city.trim().length) throw new Error('surname is empty or blank')
 
-        // if (offer != null && !offer.length) throw new Error('offer is empty')
-
-        debugger
         return fetch(`http://localhost:5000/api/users/${this._userId}/profile`, {
             method: 'PATCH',
             headers: {
@@ -211,7 +208,6 @@ const logic = {
             .then(res => res.json())
             .then(res => {
 
-                debugger
                 if (res.error) throw Error(res.error)
 
                 return res.data
@@ -234,8 +230,6 @@ const logic = {
         })
             .then(res => res.json())
             .then(res => {
-
-
                 if (res.error) throw Error(res.error)
 
                 return res.data
