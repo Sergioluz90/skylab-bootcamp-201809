@@ -13,3 +13,8 @@
     padding: 0;
     width: 100%;
 }
+
+.description_options{
+    display: flex;
+    flex-direction: column;
+}

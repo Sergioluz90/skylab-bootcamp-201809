@@ -162,7 +162,9 @@ class EditProfile extends Component {
   }
 
   handleUploadImage = event => {
-    logic.uploadImage(event.target.files[0])
+    let image
+    event? image=event.target.files[0] : image=this.state.user_info.profileImage
+    logic.uploadImage(image)
       .then(() => {
 
         this.props.retrieveUserInfo()
@@ -172,18 +174,40 @@ class EditProfile extends Component {
   handleDeleteImage = () => {
     let user = this.state.user_info
     user.profileImage = null
-    this.setState({ user_info: user })
+    this.setState({ user_info: user }, ()=>{
+      this.handleUploadImage()
+    })
   }
 
   handleUpdateProfile = (event) => {
     event.preventDefault()
     const { new_info, user_info } = this.state
-debugger
-    logic.updateProfile(user_info.id,new_info.name, new_info.email, new_info.skype, new_info.age, new_info.gender, new_info.height, new_info.weight, new_info.smoker, new_info.description, new_info.receives, new_info.moves, new_info.city, new_info.offer, new_info.searching)
+
+    logic.updateProfile(user_info.id, new_info.name, new_info.email, new_info.skype, new_info.age, new_info.gender, new_info.height, new_info.weight, new_info.smoker, new_info.description, new_info.receives, new_info.moves, new_info.city, new_info.offer, new_info.searching)
       .then(() => {
-        
+
         this.props.retrieveUserInfo()
       })
+  }
+
+  handleDeleteSkype = (event) => {
+    event.preventDefault()
+    let info = this.state.new_info
+
+    if (event.target.checked) {
+      info.skype = 'delete'
+      this.setState({ new_info: info })
+    }
+  }
+
+  handleDeleteDescription=event=>{
+    event.preventDefault()
+
+    let info=this.state.new_info
+    if (event.target.checked) {
+      info.description = 'delete'
+      this.setState({ new_info: info })
+    }
   }
 
   onSearchingClickHandler = this.onSearchingClickHandler.bind(this)
@@ -255,7 +279,7 @@ debugger
 
                 <div className='container__image--profile'>
                   <div className='profile__image-box'>
-                   {user_info && <img src={user_info.profileImage ? user_info.profileImage : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg'} alt="Image did not load..."
+                    {user_info && <img src={user_info.profileImage ? user_info.profileImage : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg'} alt="Image did not load..."
                       className='profile__image'
                     />}
                   </div>
@@ -317,13 +341,15 @@ debugger
 
                 {user_info && <div className='profile__data-container'>
                   <h3>Skype:</h3>
-                  <input className='profile__input' onChange={this.handleSkypeChange} placeholder={user_info.skype} />
+                  <input className='profile__input' onChange={this.handleSkypeChange} placeholder={user_info.skype ? user_info.skype : 'type your skype'} />
+                  <input type='checkbox' value='delete skype' onChange={this.handleDeleteSkype} /> Delete skype <br />
                 </div>}
 
                 {user_info && <div className='profile__data-container'>
                   <h3>Gender:</h3>
                   <select className='profile__select' onChange={this.handleGenderChange}>
-                    {user_info.gender ? <option defaultValue={user_info.gender}></option> : <option>Select your gender:</option>}
+                  {user_info.gender ? <option value={user_info.gender}>{user_info.gender}</option> : <option value={null}>Select your gender:</option>}
+                    {user_info.gender && <option value={'delete'}>Don't show gender</option>}
 
                     <option key={0} value='Male'>Male</option>
                     <option key={1} value='Female'>Female</option>
@@ -333,11 +359,11 @@ debugger
                 {user_info && <div className='profile__data-container'>
                   <h3>Age:</h3>
                   <select className='profile__select' onChange={this.handleAgeChange}>
-                    {user_info.age ? <option defaultValue={user_info.age}></option> : <option>Select your age:</option>}
-                    {
-                      listAges && listAges.map((age, index) => {
-                        return <option key={index} value={age}>{age}</option>
-                      })
+                    {user_info.age ? <option value={user_info.age}>{user_info.age}</option> : <option value={null}>Select your age:</option>}
+                    {user_info.age && <option value={'delete'}>Don't show age</option>}
+                    {listAges && listAges.map((age, index) => {
+                      return <option key={index} value={age}>{age}</option>
+                    })
                     }
                   </select>
                 </div>}
@@ -345,11 +371,11 @@ debugger
                 {user_info && <div className='profile__data-container'>
                   <h3>Height:</h3>
                   <select className='profile__select' onChange={this.handleHeightChange}>
-                    {user_info.height ? <option defaultValue={user_info.height}></option> : <option>Select your height:</option>}
-                    {
-                      listHeight && listHeight.map((height, index) => {
-                        return <option key={index} value={height}>{height} cm</option>
-                      })
+                    {user_info.height ? <option value={user_info.height}>{user_info.height} cm</option> : <option value={null}>Select your height:</option>}
+                    {user_info.height && <option value={'delete'}>Don't show height</option>}
+                    {listHeight && listHeight.map((height, index) => {
+                      return <option key={index} value={height}>{height} cm</option>
+                    })
                     }
                   </select>
                 </div>}
@@ -357,9 +383,9 @@ debugger
                 {user_info && <div className='profile__data-container'>
                   <h3>Weight:</h3>
                   <select className='profile__select' onChange={this.handleWeightChange}>
-                    {user_info.weight ? <option defaultValue={user_info.weight}></option> : <option>Select your weight:</option>}
-                    {
-                      listWeight && listWeight.map((weight, index) => {
+                  {user_info.weight ? <option value={user_info.weight}>{user_info.weight} kg</option> : <option value={null}>Select your weight:</option>}
+                    {user_info.weight && <option value={'delete'}>Don't show weight</option>}
+                    {listWeight && listWeight.map((weight, index) => {
                         return <option key={index} value={weight}>{weight} kg</option>
                       })
                     }
@@ -369,7 +395,8 @@ debugger
                 {user_info && <div className='profile__data-container'>
                   <h3>Smoker:</h3>
                   <select className='profile__select' onChange={this.handleSmokerChange}>
-                    {user_info.smoker ? <option defaultValue={user_info.smoker}></option> : <option value='null'>Do you smoke?</option>}
+                    {user_info.smoker ? <option defaultValue={user_info.smoker}>{user_info.smoker ? 'yes':'no'}</option> : <option value='null'>Do you smoke?</option>}
+                    {user_info.smoker && <option value={'delete'}>Don't show </option>}
 
                     <option key={0} value='true'>yes</option>
                     <option key={1} value='false'>no</option>
@@ -380,9 +407,9 @@ debugger
 
               {user_info && <div className='component__profile margin--bottom'>
                 <h2>About me</h2>
-                <div>
-                  <textarea className='profile__textarea' onChange={this.handleDescriptionChange} placeholder='Write a description to allow other people to know more about you' className='profile__textArea'></textarea>
-                  <p>{user_info.description}</p>
+                <div className='description__options'>
+                  <textarea className='profile__textarea' onChange={this.handleDescriptionChange} placeholder={user_info.description ? user_info.description:'Write a description to allow other people to know more about you'} className='profile__textArea'></textarea>
+                  <div><input type='checkbox' value='delete description' onChange={this.handleDeleteDescription} /> Delete description <br /></div>
                 </div>
 
               </div>}
@@ -406,7 +433,6 @@ debugger
                         active = false
                       else
                         active = true
-
 
                       return active ? <p key={index} className='component__profile language-tags active' onClick={this.onOfferClickHandler}>{language}</p> : <p key={index} className='component__profile language-tags inactive' onClick={this.onOfferClickHandler}>{language}</p>
                     })}

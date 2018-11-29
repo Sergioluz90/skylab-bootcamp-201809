@@ -163,29 +163,29 @@ const logic = {
 
     updateProfile(id, name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
 
-        if (age != null) age = Number(age)
-        if (height != null) height = Number(height)
-        if (weight != null) weight = Number(weight)
+        if (age != null && age != 'delete') age = Number(age)
+        if (height != null && height != 'delete') height = Number(height)
+        if (weight != null && weight != 'delete') weight = Number(weight)
 
-        if (smoker != null) smoker.includes('true') ? smoker = true : smoker = false
-        if (moves != null) moves.includes('true') ? moves = true : moves = false
-        if (receives != null) receives.includes('true') ? receives = true : receives = false
+        if (smoker != null && smoker != 'delete') smoker.includes('true') ? smoker = true : smoker = false
+        if (moves != null && moves != 'delete') moves.includes('true') ? moves = true : moves = false
+        if (receives != null && receives != 'delete') receives.includes('true') ? receives = true : receives = false
 
         if (typeof id !== 'number' || id == null || id == undefined) throw TypeError(`${id} is not a number`)
-        if (age != null && typeof age !== 'number') throw TypeError(`${age} is not a number`)
-        if (height != null && typeof height !== 'number') throw TypeError(`${height} is not a number`)
-        if (weight != null && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
+        if (age != null && age != 'delete' && typeof age !== 'number') throw TypeError(`${age} is not a number`)
+        if (height != null && height != 'delete' && typeof height !== 'number') throw TypeError(`${height} is not a number`)
+        if (weight != null && weight != 'delete' && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
 
         if (name != null && typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (email != null && typeof email !== 'string') throw TypeError(`${email} is not a string`)
         if (skype != null && typeof skype !== 'string') throw TypeError(`${skype} is not a string`)
         if (gender != null && typeof gender !== 'string') throw TypeError(`${gender} is not a string`)
-        if (description != null && typeof description !== 'string') throw TypeError(`${description} is not a string`)
+        if (description != null&& description != 'delete'  && typeof description !== 'string') throw TypeError(`${description} is not a string`)
         if (city != null && typeof city !== 'string') throw TypeError(`${city} is not a string`)
 
-        if (smoker != null && typeof smoker !== 'boolean') throw TypeError(`${smoker} is not a boolean`)
-        if (receives != null && typeof receives !== 'boolean') throw TypeError(`${receives} is not a boolean`)
-        if (moves != null && typeof moves !== 'boolean') throw TypeError(`${moves} is not a boolean`)
+        if (smoker != null && smoker != 'delete' && typeof smoker !== 'boolean') throw TypeError(`${smoker} is not a boolean`)
+        if (receives != null && receives != 'delete' && typeof receives !== 'boolean') throw TypeError(`${receives} is not a boolean`)
+        if (moves != null && moves != 'delete' && typeof moves !== 'boolean') throw TypeError(`${moves} is not a boolean`)
 
         if (offer != null && !(offer instanceof Array)) throw TypeError(`${moves} is not an Array`)
         if (searching != null && !(searching instanceof Array)) throw TypeError(`${moves} is not an Array`)
@@ -194,7 +194,7 @@ const logic = {
         if (email != null && !email.trim().length) throw new Error('surname is empty or blank')
         if (skype != null && !skype.trim().length) throw new Error('surname is empty or blank')
         if (gender != null && !gender.trim().length) throw new Error('surname is empty or blank')
-        if (description != null && !description.trim().length) throw new Error('surname is empty or blank')
+        if (description != null && !description.trim().length) description=null
         if (city != null && !city.trim().length) throw new Error('surname is empty or blank')
 
         // if (offer != null && !offer.length) throw new Error('offer is empty')

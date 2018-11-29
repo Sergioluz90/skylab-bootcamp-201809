@@ -166,27 +166,27 @@ const logic = {
         })()
     },
 
-    updateProfile(id, name, email, skype,age, gender , height, weight, smoker, description, receives, moves, city, offer, searching) {
+    updateProfile(id, name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
 
         debugger
 
         if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
         if (id != null && !id.trim().length) throw new ValueError('id is empty or blank')
 
-        if (age != null && typeof age !== 'number') throw TypeError(`${age} is not a number`)
-        if (height != null && typeof height !== 'number') throw TypeError(`${height} is not a number`)
-        if (weight != null && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
+        if (age != null && age != 'delete'  && age != 'delete' && typeof age !== 'number') throw TypeError(`${age} is not a number`)
+        if (height != null && height != 'delete'  && typeof height !== 'number') throw TypeError(`${height} is not a number`)
+        if (weight != null && weight != 'delete'  && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
 
         if (name != null && typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (email != null && typeof email !== 'string') throw TypeError(`${email} is not a string`)
-        if (skype != null && typeof skype !== 'string') throw TypeError(`${skype} is not a string`)
-        if (gender != null && typeof gender !== 'string') throw TypeError(`${gender} is not a string`)
-        if (description != null && typeof description !== 'string') throw TypeError(`${description} is not a string`)
+        if (skype != null && skype != 'delete'  && typeof skype !== 'string') throw TypeError(`${skype} is not a string`)
+        if (gender != null && gender != 'delete'  && typeof gender !== 'string') throw TypeError(`${gender} is not a string`)
+        if (description != null&& description != 'delete'  && typeof description !== 'string') throw TypeError(`${description} is not a string`)
         if (city != null && typeof city !== 'string') throw TypeError(`${city} is not a string`)
 
-        if (smoker != null && typeof smoker !== 'boolean') throw TypeError(`${smoker} is not a boolean`)
-        if (receives != null && typeof receives !== 'boolean') throw TypeError(`${receives} is not a boolean`)
-        if (moves != null && typeof moves !== 'boolean') throw TypeError(`${moves} is not a boolean`)
+        if (smoker != null && smoker != 'delete'  && typeof smoker !== 'boolean') throw TypeError(`${smoker} is not a boolean`)
+        if (receives != null && receives != 'delete'  && typeof receives !== 'boolean') throw TypeError(`${receives} is not a boolean`)
+        if (moves != null && moves != 'delete'  && typeof moves !== 'boolean') throw TypeError(`${moves} is not a boolean`)
 
         if (offer != null && !(offer instanceof Array)) throw TypeError(`${moves} is not an Array`)
         if (searching != null && !(searching instanceof Array)) throw TypeError(`${moves} is not an Array`)
@@ -208,13 +208,13 @@ const logic = {
 
             name != null && (user.name = name)
             email != null && (user.email = email)
-            skype != null && (user.skype = skype)
-            age != null && (user.age = age)
-            gender != null && (user.gender = gender)
-            height != null && (user.height = height)
-            weight != null && (user.weight = weight)
-            smoker != null && (user.smoker = smoker)
-            description != null && (user.description = description)
+            skype != null && ((skype !== 'delete') ? user.skype = skype : user.skype = null)
+            age != null && ((age !== 'delete') ? user.age = age : user.age = null)
+            gender != null && ((gender !== 'delete') ? user.gender = gender : user.gender = null)
+            height != null && ((height !== 'delete') ? user.height = height : user.height = null)
+            weight != null && ((weight !== 'delete') ? user.weight = weight : user.weight = null)
+            smoker != null && ((smoker !== 'delete') ? user.smoker = smoker : user.smoker = null)
+            description != null &&((description !== 'delete') ? user.description = description : user.description = null)
             receives != null && (user.receives = receives)
             moves != null && (user.moves = moves)
             city != null && (user.city = city)
@@ -228,7 +228,7 @@ const logic = {
 
                     for (off of updating) {
 
-                        const _search = await model.findAll({where:{lenguage:off} ,subQuery: false, attributes: ['id', 'lenguage'], logging: false })
+                        const _search = await model.findAll({ where: { lenguage: off }, subQuery: false, attributes: ['id', 'lenguage'], logging: false })
 
                         debugger
                         if (_search[0]) {

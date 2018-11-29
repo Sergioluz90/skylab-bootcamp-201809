@@ -170,6 +170,10 @@ Specific -----------------------------------------------------------------------
     justify-content: center;
 }
 
+.button__Nav:hover{
+    background:#f0f8ff40;
+}
+
 .profile-image__Nav{
     width: 55px;
     border-radius: 50%;
@@ -198,6 +202,7 @@ Specific -----------------------------------------------------------------------
     overflow: hidden;
     text-indent: -1000px;
     margin: 0px;
+    cursor: pointer;
 }
 .initial{
     margin-top: 110px;

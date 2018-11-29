@@ -32,12 +32,18 @@ class Profile extends Component {
                             <div>
                                 <img className="profile__cover-image" src="https://image.freepik.com/free-photo/wall-wallpaper-concrete-colored-painted-textured-concept_53876-31799.jpg"></img>
 
-                                <div className='container__image--profile'></div>
+                                <div className='container__image--profile'>
+                                    <div className='profile__image-box'>
+                                        {user_info && <img src={user_info.profileImage ? user_info.profileImage : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg'} alt="Image did not load..."
+                                            className='profile__image'
+                                        />}
+                                    </div>
+                                </div>
                                 <div className='profile__username'>
                                     <h2>{user_info && user_info.username}</h2>
                                     {user_info && !!user_info.city && <div className='profile__data-container'>
-                                    <p>City: {user_info.city}</p>
-                                </div>}
+                                        <p>City: {user_info.city}</p>
+                                    </div>}
                                 </div>
                             </div>
 
@@ -84,7 +90,7 @@ class Profile extends Component {
                             </div>
                             {user_info && !!(user_info.description || user_info.smoker) && <div className="component__profile margin--bottom">
                                 <h2>About me</h2>
-                                {user_info && !!user_info.smoker && <div>
+                                {user_info && !!user_info.description && <div>
 
                                     <h3>Description:</h3>
                                     <p>{user_info.description}</p>
