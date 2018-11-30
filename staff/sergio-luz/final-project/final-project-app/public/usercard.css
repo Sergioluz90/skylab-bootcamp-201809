@@ -1,0 +1,11 @@
+.user-card__link{
+    text-decoration: blink;
+
+}
+
+.search-panel__profile-city{
+    margin-top:2.5vw;
+    color:grey;
+    font-size: 15px;
+}
+

@@ -14,7 +14,8 @@ class App extends Component {
 
   state = {
     error: null,
-    user_info: null
+    user_info: null,
+    my_info: null
   }
 
   handleGoBack = () => this.props.history.push('/')
@@ -22,11 +23,11 @@ class App extends Component {
   handleLoginClick = () => this.props.history.push('/')
   handleRegisterClick = () => this.props.history.push('/register')
 
-  RegisterHandler = (name, username, email, password, city) => {
+  RegisterHandler = (name, username, email, city, password) => {
 
     try {
 
-      logic.registerUser(name, username, password, email, city)
+      logic.registerUser(name, username, email, city, password)
         .then(() => {
           this.setState({ error: null })
           this.handleLoginClick()
@@ -63,6 +64,17 @@ class App extends Component {
       })
   }
 
+  retrieveMyInfo = (id) => {
+    if (!id) id = logic.myId
+
+    logic.retrieveProfile(id)
+      .then(user => {
+
+        this.setState({ my_info: user }, () => {
+        })
+      })
+  }
+
 
   handleAcceptError = () => {
     this.setState({ error: null })
@@ -76,7 +88,11 @@ class App extends Component {
       {/* <Route exact path="/" render={() => !logic.loggedIn && (<section>
         <button onClick={this.handleRegisterClick}>Register</button> or <button onClick={this.handleLoginClick}>Login</button></section>)} /> */}
 
-      {logic.loggedIn && <Header history={this.props.history} user_info={user_info} />}
+      {logic.loggedIn && <Header history={this.props.history}
+        my_info={my_info}
+        retrieveMyInfo={this.retrieveMyInfo}
+        retrieveUserInfo={this.retrieveUserInfo}
+      />}
 
       <Route path="/register" render={() => !logic.loggedIn ? <Register history={this.props.history} RegisterHandler={this.RegisterHandler} /> : <Redirect to="/home" />} />
 
@@ -85,14 +101,17 @@ class App extends Component {
       {error && <Error message={error} handleAcceptError={this.handleAcceptError} />}
       <Switch>
 
-        <Route exact path="/home" render={() => logic.loggedIn ? <Home history={this.props.history} isLoggedIn={this.state.login} /> : <Redirect to="/" />} />
+        <Route exact path="/home" render={() => logic.loggedIn ? <Home
+          history={this.props.history}
+          isLoggedIn={this.state.login}
+        /> : <Redirect to="/" />} />
 
         <Route path="/home/:query" render={(props) => logic.loggedIn ? <Home query={props.match.params.query} history={this.props.history} isLoggedIn={this.state.login} /> : <Redirect to="/" />} />
 
       </Switch>
       <Route exact path="/profile/:id" render={(props) => logic.loggedIn ? <Profile id={props.match.params.id} retrieveUserInfo={this.retrieveUserInfo} user_info={this.state.user_info} /> : <Redirect to="/" />} />
 
-      <Route exact path="/profile/:id/edit" render={(props) => logic.loggedIn ? <EditProfile id={props.match.params.id} retrieveUserInfo={this.retrieveUserInfo} user_info={this.state.user_info} /> : <Redirect to="/" />} />
+      <Route exact path="/profile/:id/edit" render={(props) => logic.loggedIn ? <EditProfile history={this.props.history} id={props.match.params.id} retrieveUserInfo={this.retrieveUserInfo} user_info={this.state.user_info} /> : <Redirect to="/" />} />
 
 
       {/* {userId && <section><button onClick={this.handleLogoutClick}>Logout</button></section>} */}

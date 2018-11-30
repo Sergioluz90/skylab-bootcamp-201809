@@ -4,7 +4,8 @@
     background: #ffffff;
     width: 100px;
     position: absolute;
-    right: 0px;
+    right: -23px;
+    top: 64px;
     border-radius: 13px;
     border: 5px solid #5a8dbf;
 }

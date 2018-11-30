@@ -8,7 +8,7 @@
     overflow: hidden;
 }
 
-.profile__image{
+.edit-profile__image{
     margin: 0;
     padding: 0;
     width: 100%;
@@ -17,4 +17,62 @@
 .description_options{
     display: flex;
     flex-direction: column;
+}
+
+.bttn--save-profile{
+    margin-top: 5vh;
+    background: #6fee6f;
+    border: none;
+    border-radius: 5px;
+    color: green;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.bttn--delete-profile{
+    margin-top: 5vh;
+    background: #c70000;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.bttn--delete-image{
+    margin-top: 5vh;
+    background: #c70000;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.bttn--upload-image{
+    margin-top: 5vh;
+    background: #003d79;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+.label__upload-image{
+    font-weight: bold;
+    /* font-size: 14px; */
+    font: 400 13.3333px Arial;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.input__image{
+    display: none;
+}
+
+.profile__data-container{
+    
 }

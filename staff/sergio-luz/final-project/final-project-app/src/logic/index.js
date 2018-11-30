@@ -16,7 +16,7 @@ const logic = {
         return sessionStorage.getItem('userId')
     },
 
-    registerUser(name, username, city, email, password) {
+    registerUser(name, username, email, city, password) {
 
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
@@ -30,8 +30,6 @@ const logic = {
         if (!email.trim()) throw new Error('email is empty or blank')
         if (!city.trim()) throw new Error('city is empty or blank')
         if (!password.trim()) throw new Error('password is empty or blank')
-
-
 
         return fetch('http://localhost:5000/api/users', {
             method: 'POST',
@@ -241,6 +239,7 @@ const logic = {
     },
 
     uploadImage(file) {
+        debugger
         let avatar = new FormData()
 
         avatar.append('image', file)
@@ -255,6 +254,22 @@ const logic = {
             .catch(err => { debugger })
             .then(res => res.json())
             .then(res => res.data)
+    },
+
+    deleteAccount(){
+        return fetch(`http://localhost:5000/api/users/${this._userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${this._token}`
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+
+                if (res.error) throw Error(res.error)
+
+                return res.data
+            })
     }
 
 

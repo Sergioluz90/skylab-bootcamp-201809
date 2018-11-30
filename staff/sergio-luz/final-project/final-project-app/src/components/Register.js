@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { deflateRaw } from 'zlib';
 // import logic from '../logic'
 
 
@@ -13,7 +14,7 @@ class Register extends Component {
         event.preventDefault()
 
         const { _name, _username, _email, _password, _city } = this.state
-        this.props.RegisterHandler(_name, _username, _email, _password, _city)
+        this.props.RegisterHandler(_name, _username, _email,  _city,_password)
     }
 
     handleInput_Name = event => {
@@ -84,9 +85,9 @@ class Register extends Component {
 
                             <input className='register__input' onChange={this.handleInput_Email} type='text' placeholder='Email'></input>
 
-                            <input className='register__input' onChange={this.handleInput_Password} type='text' placeholder='Your City'></input>
+                            <input className='register__input' onChange={this.handleInput_City} type='text' placeholder='Your City'></input>
 
-                            <input className='register__input' onChange={this.handleInput_City} type='password' placeholder='Password'></input>
+                            <input className='register__input' onChange={this.handleInput_Password} type='password' placeholder='Password'></input>
 
 
                             <button className='btn-send--register' type='submit'> Register </button>

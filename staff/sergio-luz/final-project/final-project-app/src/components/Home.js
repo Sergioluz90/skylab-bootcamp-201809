@@ -43,6 +43,15 @@ class Home extends Component {
     this.handleConstructQuery(true)
   }
 
+  componentWillReceiveProps(props) {
+
+    let new_query=(props.query ? '/home/'+props.query : '/home/')
+    if (this.state.query !== new_query)
+      this.setState({ query: (new_query) }, () => {
+        this.handleSearch()
+      })
+  }
+
   setupDefaultOptions = () => {
     let default_info = this.state.default_info
     let list = []
@@ -102,7 +111,7 @@ class Home extends Component {
   }
 
   handleConstructQuery = (search) => {
-    let query = '/home/search?'
+    let query = '/home/'
 
     if (this.state.username !== null && this.state.username.length > 2) {
       query += '&' + 'username' + '=' + this.state.username
@@ -155,7 +164,9 @@ class Home extends Component {
   handleSearch = () => {
     let query = this.state.query
 
-    let _query = query.match(/[?](.*)/)[1]
+    
+    let _query = query.match(/[/](.*)/)[1]
+    _query = _query.match(/[/](.*)/)[1]
     if (_query === '') _query = 'all'
 
     logic.search(_query)
@@ -251,7 +262,7 @@ class Home extends Component {
       <section className='container--row'>
         <div className='searcher component'>
           <div className='component searcher__header'>
-            {(search_show_options) && <h3 className='margin--left'>Búsqueda</h3>}
+            {(search_show_options) && <h3 className='margin--left'>Search</h3>}
             <a href='#'>
               <i className='fas fa-grip-horizontal' onClick={this.handleShowSearchOptions}></i>
             </a>
@@ -288,7 +299,7 @@ class Home extends Component {
               <div className='center component'>
                 <input
                   type='text'
-                  placeholder='Buscar usuario'
+                  placeholder='Search user'
                   className=' search-bar component'
                   onChange={this.handleUsernameChange}
                 />
@@ -388,14 +399,14 @@ class Home extends Component {
 
         <div className='results component'>
           <div className='component'>
-            <h3 className='center'>Resultados</h3>
+            <h3 className='center'>Results</h3>
           </div>
 
           <div className='wrapper__images center'>
 
             {users && users.map((elem, index) => {
               return <div key={index} className='search-panel__profile'>
-                <UserCard elem={elem}></UserCard>
+                <UserCard elem={elem} ></UserCard>
               </div>
             })}
           </div>

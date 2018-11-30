@@ -47,14 +47,15 @@ const logic = {
 
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
-
+        
         if (!username.trim()) throw new ValueError('username is empty or blank')
         if (!password.trim()) throw new ValueError('password is empty or blank')
-
+        
         return (async () => {
             const users = await User.findAll({ where: { username: username }, logging: false })
-
+            
             const user = users[0]
+            debugger
 
             if (!user || user.password !== password) throw new AuthError('invalid username or password')
 
@@ -168,7 +169,7 @@ const logic = {
 
     updateProfile(id, name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
 
-        debugger
+        // debugger
 
         if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
         if (id != null && !id.trim().length) throw new ValueError('id is empty or blank')
@@ -219,7 +220,6 @@ const logic = {
             moves != null && (user.moves = moves)
             city != null && (user.city = city)
 
-            debugger
             await user.save({ logging: false })
 
             async function f_updating(updating, model) {
@@ -228,15 +228,16 @@ const logic = {
 
                     for (off of updating) {
 
-                        const _search = await model.findAll({ where: { lenguage: off }, subQuery: false, attributes: ['id', 'lenguage'], logging: false })
+                        const _search = await model.findAll({ where: { lenguage: off, user_id:id }, subQuery: false, attributes: ['id', 'lenguage'], logging: false })
 
-                        debugger
                         if (_search[0]) {
-
+                            
                             await _search[0].destroy({ force: true, logging: false })
                         } else {
-
+                            
+                            debugger
                             await model.create({ user_id: id, lenguage: off }, { logging: false })
+
                         }
                     }
                 }
@@ -262,7 +263,7 @@ const logic = {
             }
         })
 
-        let username = '', offer, searching, minAge = 0, maxAge = 100, gender, smoker
+        let username = '', offer, searching, minAge = 0, maxAge = 100, gender, smoker, city
 
         objects.forEach(obj => {
             if (obj.type === 'username') username = obj.src
@@ -283,6 +284,7 @@ const logic = {
         let obj = {
             where: {
                 username: { like: '%' + username + '%' },
+                city: { like: '%' + city + '%' },
                 id: { [Sequelize.Op.not]: [sub] },
                 age: {
                     [Sequelize.Op.or]: [
@@ -292,7 +294,6 @@ const logic = {
                 },
                 gender: gender,
                 smoker: smoker,
-                city: { like: '%' + city + '%' }
             },
             include: [{
                 model: Offer,
@@ -330,6 +331,7 @@ const logic = {
             if (gender == null) delete obj.where.gender
             if (smoker == null) delete obj.where.smoker
             if (minAge === 0 && maxAge === 100) delete obj.where.age
+            if(city==null) delete obj.where.city
 
             debugger
 
@@ -339,12 +341,12 @@ const logic = {
             let user_list = []
 
             for (user of users) {
-                let { id, username, age, gender, description, userOffers, userSearchings } = user
+                let { id, username, age, gender, description, userOffers, userSearchings, city, profileImage } = user
 
                 if (userOffers == undefined) userOffers = []
                 if (userSearchings == undefined) userSearchings = []
 
-                const _user = { id, username, age, gender, description, userOffers, userSearchings }
+                const _user = { id, username, age, gender, description, userOffers, userSearchings, city, profileImage }
 
                 user_list.push(_user)
             }
@@ -356,7 +358,7 @@ const logic = {
 
 
         return (async () => {
-            let user = await User.find({ id: user_id })
+            let user = await User.find({where:{ id: user_id }})
 
             if (!user) throw new NotFoundError(`User does not exist`)
 
@@ -376,6 +378,23 @@ const logic = {
 
         })()
     },
+
+    deleteAccount(id){
+
+        if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
+        if (id != null && !id.trim().length) throw new ValueError('id is empty or blank')
+
+        return (async () => {
+            debugger
+            let user = await User.find({where:{ id: id }})
+            
+
+            if (!user) throw new NotFoundError(`User does not exist`)
+
+            user.destroy()
+
+        })()
+    }
 }
 
 module.exports = logic

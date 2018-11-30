@@ -9,9 +9,14 @@ class Header extends Component {
         opened_collapsible: false
     }
 
+    componentDidMount=()=>{
+        this.props.retrieveMyInfo()
+    }
+
     handleViewProfileClick = () => {
         this.props.history.push(`/profile/${logic.myId}`)
         this.handleCollapsible()
+        this.props.retrieveUserInfo(logic.myId)
     }
     handleEditProfileClick = () => {
         this.props.history.push(`/profile/${logic.myId}/edit`)
@@ -22,7 +27,8 @@ class Header extends Component {
         if (!(this.props.history.location.pathname === '/home/search'))
             this.props.history.push('/home/search')
     }
-    handleLogoutSession=()=>{
+
+    handleLogoutSession = () => {
         logic.logout()
         this.props.history.push(`/`)
     }
@@ -33,7 +39,7 @@ class Header extends Component {
 
 
     render() {
-        const { user_info } = this.props
+        const { my_info } = this.props
         const { opened_collapsible } = this.state
 
         return (<header className="headerPage">
@@ -47,11 +53,17 @@ class Header extends Component {
                     </ul>
                 </div>
 
-                <div>
-                    <img onClick={this.handleCollapsible} className="profile-image__Nav" src="./nobody_m.original.jpg" alt="" />
-
+                
+                <div className='container-image__Nav'>
+                    <div className='profile__image-box--Nav'>
+                        <img onClick={this.handleCollapsible}
+                            className="profile-image__Nav"
+                            src={my_info ? (my_info.profileImage ? my_info.profileImage : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg') : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg'}
+                            alt="profile_image_in_navbar"
+                        />
+                    </div>
                     {opened_collapsible && <CollapsibleProfile
-                        user_info={user_info}
+                        my_info={my_info}
                         handleCollapsible={this.handleCollapsible}
                         handleViewProfileClick={this.handleViewProfileClick}
                         handleEditProfileClick={this.handleEditProfileClick}
@@ -63,7 +75,7 @@ class Header extends Component {
             <aside className="head__Notify">
                 <div className="container">
                     <ul className="ul__Nav">
-                        <li className="li__Nav"><a className="button__Nav" href="#">Buscar</a></li>
+                        <li className="li__Nav"><a className="button__Nav" href="#">Search</a></li>
                         <li className="li__Nav"><a className="button__Nav" href="#"></a></li>
                         <li className="li__Nav"><a className="button__Nav" href="#"></a></li>
                     </ul>

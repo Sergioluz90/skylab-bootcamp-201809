@@ -206,5 +206,21 @@ router.post('/users/:id/profile/image', [bearerTokenParser, jwtVerifier], (req, 
     }, res)
 })
 
+router.delete('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
+
+    routeHandler(() => {
+        const { params: { id }, sub } = req
+
+        if (id !== sub.toString()) throw Error('token sub does not match user id')
+
+        return logic.deleteAccount(id)
+            .then(user =>
+                res.json({
+                    data: user
+                })
+            )
+    }, res)
+})
+
 
 module.exports = router

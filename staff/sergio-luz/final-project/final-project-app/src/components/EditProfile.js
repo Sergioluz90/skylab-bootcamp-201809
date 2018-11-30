@@ -163,7 +163,7 @@ class EditProfile extends Component {
 
   handleUploadImage = event => {
     let image
-    event? image=event.target.files[0] : image=this.state.user_info.profileImage
+    event ? image = event.target.files[0] : image = this.state.user_info.profileImage
     logic.uploadImage(image)
       .then(() => {
 
@@ -174,7 +174,7 @@ class EditProfile extends Component {
   handleDeleteImage = () => {
     let user = this.state.user_info
     user.profileImage = null
-    this.setState({ user_info: user }, ()=>{
+    this.setState({ user_info: user }, () => {
       this.handleUploadImage()
     })
   }
@@ -186,6 +186,25 @@ class EditProfile extends Component {
     logic.updateProfile(user_info.id, new_info.name, new_info.email, new_info.skype, new_info.age, new_info.gender, new_info.height, new_info.weight, new_info.smoker, new_info.description, new_info.receives, new_info.moves, new_info.city, new_info.offer, new_info.searching)
       .then(() => {
 
+        let new_info = {
+          name: null,
+          email: null,
+          skype: null,
+          gender: null,
+          age: null,
+          height: null,
+          weight: null,
+          smoker: null,
+          description: null,
+          receives: null,
+          moves: null,
+          searching: [
+
+          ],
+          offer: [
+          ]
+        }
+        this.setState({ new_info })
         this.props.retrieveUserInfo()
       })
   }
@@ -200,10 +219,10 @@ class EditProfile extends Component {
     }
   }
 
-  handleDeleteDescription=event=>{
+  handleDeleteDescription = event => {
     event.preventDefault()
 
-    let info=this.state.new_info
+    let info = this.state.new_info
     if (event.target.checked) {
       info.description = 'delete'
       this.setState({ new_info: info })
@@ -253,21 +272,35 @@ class EditProfile extends Component {
     this.setState({ new_info: _new_info })
   }
 
-  componentWillReceiveProps(props) {
-
-    this.setState({ user_info: props.user_info })
-
+  handleDeleteAccount = event => {
+    console.log('delete account')
+    logic.deleteAccount()
+      .then(() => logic.logout())
+      .then(() => this.props.history.push(`/`))
   }
 
 
   render() {
 
+    console.log('render edit profile')
     const { user_info, default_info, listAges, listHeight, listWeight, new_info } = this.state
 
     if (this.props.user_info) {
-      return <main className='initial'>
+      return <main className='initial__profile'>
 
         <section className='container__profile'>
+          <div>
+            <form className='bttn bttn--upload-image' encType="multipart/form-data">
+              <label className='label__upload-image'>
+                <input className='input__image' type="file" name="avatar" onChange={this.handleUploadImage} />
+                Upload image
+              </label>
+            </form>
+            
+            <button className='bttn bttn--delete-image' onClick={this.handleDeleteImage} >Delete image</button>
+
+          </div>
+
           <div className='container'>
             <div className='container--column '>
 
@@ -280,7 +313,7 @@ class EditProfile extends Component {
                 <div className='container__image--profile'>
                   <div className='profile__image-box'>
                     {user_info && <img src={user_info.profileImage ? user_info.profileImage : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg'} alt="Image did not load..."
-                      className='profile__image'
+                      className='edit-profile__image'
                     />}
                   </div>
                 </div>
@@ -294,7 +327,7 @@ class EditProfile extends Component {
               </section>
 
 
-              {user_info && <div className='component__profile margin--bottom'>
+              {user_info && <div className='component__profile profile__margin--bottom'>
                 <h2>Looking for..</h2>
                 <div className='profile__data-container'>
                   {
@@ -325,7 +358,7 @@ class EditProfile extends Component {
 
 
 
-              <div className='component__profile margin--bottom'>
+              <div className='component__profile profile__margin--bottom'>
 
                 <h2>Profile</h2>
 
@@ -348,7 +381,7 @@ class EditProfile extends Component {
                 {user_info && <div className='profile__data-container'>
                   <h3>Gender:</h3>
                   <select className='profile__select' onChange={this.handleGenderChange}>
-                  {user_info.gender ? <option value={user_info.gender}>{user_info.gender}</option> : <option value={null}>Select your gender:</option>}
+                    {user_info.gender ? <option value={user_info.gender}>{user_info.gender}</option> : <option value={null}>Select your gender:</option>}
                     {user_info.gender && <option value={'delete'}>Don't show gender</option>}
 
                     <option key={0} value='Male'>Male</option>
@@ -383,11 +416,11 @@ class EditProfile extends Component {
                 {user_info && <div className='profile__data-container'>
                   <h3>Weight:</h3>
                   <select className='profile__select' onChange={this.handleWeightChange}>
-                  {user_info.weight ? <option value={user_info.weight}>{user_info.weight} kg</option> : <option value={null}>Select your weight:</option>}
+                    {user_info.weight ? <option value={user_info.weight}>{user_info.weight} kg</option> : <option value={null}>Select your weight:</option>}
                     {user_info.weight && <option value={'delete'}>Don't show weight</option>}
                     {listWeight && listWeight.map((weight, index) => {
-                        return <option key={index} value={weight}>{weight} kg</option>
-                      })
+                      return <option key={index} value={weight}>{weight} kg</option>
+                    })
                     }
                   </select>
                 </div>}
@@ -395,7 +428,7 @@ class EditProfile extends Component {
                 {user_info && <div className='profile__data-container'>
                   <h3>Smoker:</h3>
                   <select className='profile__select' onChange={this.handleSmokerChange}>
-                    {user_info.smoker ? <option defaultValue={user_info.smoker}>{user_info.smoker ? 'yes':'no'}</option> : <option value='null'>Do you smoke?</option>}
+                    {user_info.smoker ? <option defaultValue={user_info.smoker}>{user_info.smoker ? 'yes' : 'no'}</option> : <option value='null'>Do you smoke?</option>}
                     {user_info.smoker && <option value={'delete'}>Don't show </option>}
 
                     <option key={0} value='true'>yes</option>
@@ -405,16 +438,16 @@ class EditProfile extends Component {
 
               </div>
 
-              {user_info && <div className='component__profile margin--bottom'>
+              {user_info && <div className='component__profile profile__margin--bottom'>
                 <h2>About me</h2>
                 <div className='description__options'>
-                  <textarea className='profile__textarea' onChange={this.handleDescriptionChange} placeholder={user_info.description ? user_info.description:'Write a description to allow other people to know more about you'} className='profile__textArea'></textarea>
+                  <textarea className='profile__textarea' onChange={this.handleDescriptionChange} placeholder={user_info.description ? user_info.description : 'Write a description to allow other people to know more about you'} className='profile__textArea'></textarea>
                   <div><input type='checkbox' value='delete description' onChange={this.handleDeleteDescription} /> Delete description <br /></div>
                 </div>
 
               </div>}
 
-              {user_info && <div className='component__profile margin--bottom'>
+              {user_info && <div className='component__profile profile__margin--bottom'>
                 <h2>My language knowledges</h2>
                 <div className='profile__data-container'>
                   {default_info.offer && user_info.offer &&
@@ -439,18 +472,26 @@ class EditProfile extends Component {
                 </div>
               </div>}
 
-              <form encType="multipart/form-data">
-                <input type="file" name="avatar" onChange={this.handleUploadImage} />
-              </form>
 
-              <button onClick={this.handleDeleteImage} >Delete image</button>
+
 
             </div>
+
           </div>
-          <button
-            className='bttn bttn--save-profile'
-            onClick={this.handleUpdateProfile}
-          >Save</button>
+
+          <div>
+
+            <button
+              className='bttn bttn--save-profile'
+              onClick={this.handleUpdateProfile}
+            >Save</button>
+
+            <button
+              className='bttn bttn--delete-profile'
+              onClick={this.handleDeleteAccount}
+            >Delete account</button>
+          </div>
+
         </section>
       </main>
 

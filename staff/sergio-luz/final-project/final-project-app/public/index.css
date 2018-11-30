@@ -1,13 +1,20 @@
 
 
   /* @import url(http://allfont.es/allfont.css?fonts=chunkfive); */
+  @import url('https://fonts.googleapis.com/css?family=Ubuntu');
+  @import url('https://fonts.googleapis.com/css?family=Vollkorn');
+
+
+
 
 
 body{
-    font-family: 'ChunkFive Roman', arial;
+    /* font-family: 'Ubuntu', sans-serif; */
+    font-family: 'Vollkorn', serif;
+
     font-weight: 400;
     font-style: normal;
-    font-size: 13px;
+    font-size: 16px;
     color: #003d79;
     margin: 0px;
     background: aliceblue;
@@ -174,16 +181,7 @@ Specific -----------------------------------------------------------------------
     background:#f0f8ff40;
 }
 
-.profile-image__Nav{
-    width: 55px;
-    border-radius: 50%;
-    position: absolute;
-    right: 0;
-    top: 0;
-    margin-top: 10px;
-    margin-right: 25px;
-    cursor: pointer;
-}
+
 
 .head__Notify{
     background: #003b75;
@@ -343,7 +341,11 @@ position: absolute;
     height: 5vw;
     display: flex;
     justify-content: center;
+    color: #003b75;
+    font-weight: bold;
+    font-size: 16px;
 }
+
 .container__image--profile{
     margin: 1vw;
     background: #00243f;
@@ -389,14 +391,7 @@ position: absolute;
     height: 30px;
 }
 
-.bttn--save-profile{
-    margin-top: 5vh;
-    background: #6fee6f;
-    border: none;
-    border-radius: 5px;
-    color: green;
-    font-weight: bold;
-}
+
 
 .bttn--block-profile{
     margin-top: 5vh;
@@ -433,6 +428,7 @@ position: absolute;
 .profile__cover-image{
     width: 74vw;
     height: 15vw;
+    max-width: 800px;
 }
 
 /* 

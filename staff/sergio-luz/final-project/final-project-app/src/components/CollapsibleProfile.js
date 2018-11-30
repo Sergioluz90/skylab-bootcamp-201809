@@ -1,4 +1,6 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+
 
 function CollapsibleProfile(props) {
     return <div className='container__collapsible-profile'>
