@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Route, withRouter, Redirect, Switch } from 'react-router-dom'
 import './App.css';
-import Register from './components/Register'
-import Login from './components/Login'
-import Error from './components/Error'
+import Register from './components/Register/Register'
+import Login from './components/Login/Login'
+import Error from './components/Error/Error'
 import logic from './logic'
-import Home from './components/Home'
-import Header from './components/Header'
-import Profile from './components/Profile'
-import EditProfile from './components/EditProfile'
+import Home from './components/Home/Home'
+import Header from './components/Header/Header'
+import Profile from './components/Profile/Profile'
+import EditProfile from './components/EditProfile/EditProfile'
 
 class App extends Component {
 

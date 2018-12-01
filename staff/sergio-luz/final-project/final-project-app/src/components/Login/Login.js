@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Error from './Error'
+import Error from '../Error/Error'
 
 
 class Login extends Component {

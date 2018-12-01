@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import logic from '../logic'
+import logic from '../../logic'
 import { throws } from 'assert';
-import CollapsibleProfile from './CollapsibleProfile';
+import CollapsibleProfile from '../CollapsibleProfile/CollapsibleProfile';
 
 class Header extends Component {
 

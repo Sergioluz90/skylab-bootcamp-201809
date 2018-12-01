@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import logic from '../logic'
-import UserCard from './UserCard';
+import logic from '../../logic'
+import UserCard from '../UserCard/UserCard';
+import SelectorAge from '../SelectorAge/SelectorAge';
 
 class Home extends Component {
 
@@ -33,6 +34,10 @@ class Home extends Component {
         'german',
         'italian',
         'catalan'
+      ],
+      listGender:[
+        'male',
+        'female'
       ]
     },
     users: null
@@ -366,6 +371,15 @@ class Home extends Component {
                       })}
                     </select>
                   </div>
+
+                  <SelectorAge 
+                  title={'Age:'}
+                  onSelectMinAge={this.handleMinAgeChange}
+                  onSelectMaxAge={this.handleMaxAgeChange}
+                  selectedMinAge={min_age}
+                  selectedMaxAge={max_age}
+                  list={listAges}
+                  />
 
                   <h3>Smoker:</h3>
                   <select className='profile__select' onChange={this.handleSmokerChange}>

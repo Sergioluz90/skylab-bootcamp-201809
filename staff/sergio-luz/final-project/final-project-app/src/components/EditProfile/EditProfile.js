@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import logic from '../logic'
+import logic from '../../logic'
 
 class EditProfile extends Component {
 
