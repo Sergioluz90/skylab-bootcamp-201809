@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import logic from '../../logic'
 import Input from '../Input/Input'
-import SelectorAge from '../SelectorAge/SelectorAge';
-import Selector from '../Selector/Selector';
 class EditProfile extends Component {
 
   state = {
@@ -38,14 +36,6 @@ class EditProfile extends Component {
         'german',
         'italian',
         'catalan'
-      ],
-      listGender: [
-        'Male',
-        'Female'
-      ],
-      listSmoker: [
-        'yes',
-        'no'
       ]
     },
     new_info: {
@@ -299,7 +289,7 @@ class EditProfile extends Component {
       return <main className='initial__profile'>
 
         <section className='container__profile'>
-          <div className='profile--column'>
+          <div>
             <form className='bttn bttn--upload-image' encType="multipart/form-data">
               <label className='label__upload-image'>
                 <input className='input__image' type="file" name="avatar" onChange={this.handleUploadImage} />
@@ -363,119 +353,97 @@ class EditProfile extends Component {
                 </div>
               </div>}
 
+
+
+
+
+
               <div className='component__profile profile__margin--bottom'>
 
                 <h2>Profile</h2>
 
-                {user_info &&
-                  <div className='profile__data-container'>
+                {user_info && <div className='profile__data-container'>
+                  <h3>Name:</h3>
+                  <input className='profile__input' onChange={this.handleNameChange} placeholder={user_info.name} />
+                </div> &&
+                <div className='profile__data-container'>
+                  <Input
+                    title={'Name:'}
+                    placeholder={user_info.name}
+                    onChange={this.handleNameChange}
+                    classNameDiv={'profile__data-container'}
+                    classNameTitle={''}
+                    classNameInput={'profile__input'}
+                  /></div>}
 
-                    <Input
-                      title={'Name:'}
-                      placeholder={user_info.name}
-                      onChange={this.handleNameChange}
-                      classNameDiv={'profile__data-container'}
-                      classNameTitle={''}
-                      classNameInput={'profile__input'}
-                    />
-                  </div>}
+                {user_info && <div className='profile__data-container'>
+                  <h3>Email:</h3>
+                  <input className='profile__input' onChange={this.handleEmailChange} placeholder={user_info.email} />
+                </div>}
 
-                {user_info &&
-                  <div className='profile__data-container'>
-                    <Input
-                      title={'Email:'}
-                      placeholder={user_info.email}
-                      onChange={this.handleEmailChange}
-                      classNameDiv={'profile__data-container'}
-                      classNameTitle={''}
-                      classNameInput={'profile__input'}
-                    />
-                  </div>}
+                {user_info && <div className='profile__data-container'>
+                  <h3>Skype:</h3>
+                  <input className='profile__input' onChange={this.handleSkypeChange} placeholder={user_info.skype ? user_info.skype : 'type your skype'} />
+                  <input type='checkbox' value='delete skype' onChange={this.handleDeleteSkype} /> Delete skype <br />
+                </div>}
 
-                {user_info &&
-                  <div className='profile__data-container'>
-                    <Input
-                      title={'Skype:'}
-                      placeholder={user_info.skype}
-                      onChange={this.handleSkypeChange}
-                      classNameDiv={'profile__data-container'}
-                      classNameTitle={''}
-                      classNameInput={'profile__input'}
-                    />
-                    <input type='checkbox' value='delete skype' onChange={this.handleDeleteSkype} /> Delete skype <br />
-                  </div>}
+                {user_info && <div className='profile__data-container'>
+                  <h3>Gender:</h3>
+                  <select className='profile__select' onChange={this.handleGenderChange}>
+                    {user_info.gender ? <option value={user_info.gender}>{user_info.gender}</option> : <option value={null}>Select your gender:</option>}
+                    {user_info.gender && <option value={'delete'}>Don't show gender</option>}
 
-                {user_info &&
-                  <div className='profile__data-container'>
-                    <Selector
-                      title={'Gender:'}
-                      firstOption={'Select your gender:  '}
-                      onSelect={this.handleGenderChange}
-                      selected={user_info.gender}
-                      list={default_info.listGender}
-                      classNameDiv={'profile__data-container'}
-                      classNameTitle={'margin--left'}
-                      classNameSelect={'profile__select'}
-                    />
-                  </div>}
+                    <option key={0} value='Male'>Male</option>
+                    <option key={1} value='Female'>Female</option>
+                  </select>
+                </div>}
 
-                {user_info &&
-                  <div className='profile__data-container'>
-                    <Selector
-                      title={'Age:'}
-                      firstOption={'Select your age:  '}
-                      onSelect={this.handleAgeChange}
-                      selected={user_info.age}
-                      list={listAges}
-                      classNameDiv={'profile__data-container'}
-                      classNameTitle={'margin--left'}
-                      classNameSelect={'profile__select'}
-                    />
-                  </div>}
+                {user_info && <div className='profile__data-container'>
+                  <h3>Age:</h3>
+                  <select className='profile__select' onChange={this.handleAgeChange}>
+                    {user_info.age ? <option value={user_info.age}>{user_info.age}</option> : <option value={null}>Select your age:</option>}
+                    {user_info.age && <option value={'delete'}>Don't show age</option>}
+                    {listAges && listAges.map((age, index) => {
+                      return <option key={index} value={age}>{age}</option>
+                    })
+                    }
+                  </select>
+                </div>}
 
-                {user_info &&
-                  <div className='profile__data-container'>
-                    <Selector
-                      title={'Height:'}
-                      firstOption={'Select your height:  '}
-                      onSelect={this.handleHeightChange}
-                      selected={user_info.height}
-                      list={listHeight}
-                      tag={'cm'}
-                      classNameDiv={'profile__data-container'}
-                      classNameTitle={'margin--left'}
-                      classNameSelect={'profile__select'}
-                    />
-                  </div>}
+                {user_info && <div className='profile__data-container'>
+                  <h3>Height:</h3>
+                  <select className='profile__select' onChange={this.handleHeightChange}>
+                    {user_info.height ? <option value={user_info.height}>{user_info.height} cm</option> : <option value={null}>Select your height:</option>}
+                    {user_info.height && <option value={'delete'}>Don't show height</option>}
+                    {listHeight && listHeight.map((height, index) => {
+                      return <option key={index} value={height}>{height} cm</option>
+                    })
+                    }
+                  </select>
+                </div>}
 
-                {user_info &&
-                  <div className='profile__data-container'>
-                    <Selector
-                      title={'Weight:'}
-                      firstOption={'Select your weight:  '}
-                      onSelect={this.handleWeightChange}
-                      selected={user_info.weight}
-                      list={listWeight}
-                      tag={'kg'}
-                      classNameDiv={'profile__data-container'}
-                      classNameTitle={'margin--left'}
-                      classNameSelect={'profile__select'}
-                    />
-                  </div>}
+                {user_info && <div className='profile__data-container'>
+                  <h3>Weight:</h3>
+                  <select className='profile__select' onChange={this.handleWeightChange}>
+                    {user_info.weight ? <option value={user_info.weight}>{user_info.weight} kg</option> : <option value={null}>Select your weight:</option>}
+                    {user_info.weight && <option value={'delete'}>Don't show weight</option>}
+                    {listWeight && listWeight.map((weight, index) => {
+                      return <option key={index} value={weight}>{weight} kg</option>
+                    })
+                    }
+                  </select>
+                </div>}
 
-                  {user_info &&
-                  <div className='profile__data-container'>
-                    <Selector
-                      title={'Smoker:'}
-                      firstOption={'Do you smoke?  '}
-                      onSelect={this.handleSmokerChange}
-                      selected={user_info.smoker}
-                      list={default_info.listSmoker}
-                      classNameDiv={'profile__data-container'}
-                      classNameTitle={'margin--left'}
-                      classNameSelect={'profile__select'}
-                    />
-                  </div>}
+                {user_info && <div className='profile__data-container'>
+                  <h3>Smoker:</h3>
+                  <select className='profile__select' onChange={this.handleSmokerChange}>
+                    {user_info.smoker ? <option defaultValue={user_info.smoker}>{user_info.smoker ? 'yes' : 'no'}</option> : <option value='null'>Do you smoke?</option>}
+                    {user_info.smoker && <option value={'delete'}>Don't show </option>}
+
+                    <option key={0} value='true'>yes</option>
+                    <option key={1} value='false'>no</option>
+                  </select>
+                </div>}
 
               </div>
 
@@ -513,11 +481,14 @@ class EditProfile extends Component {
                 </div>
               </div>}
 
+
+
+
             </div>
 
           </div>
 
-          <div className='profile--column'>
+          <div>
 
             <button
               className='bttn bttn--save-profile'

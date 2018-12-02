@@ -41,11 +41,11 @@ class Profile extends Component {
                             <div className="spacer--20"></div>
 
                             <div>
-                                <img className="profile__cover-image" src="https://image.freepik.com/free-photo/wall-wallpaper-concrete-colored-painted-textured-concept_53876-31799.jpg"></img>
+                                <img className="profile__cover-image" src="https://image.freepik.com/free-photo/wall-wallpaper-concrete-colored-painted-textured-concept_53876-31799.jpg" alt='It did not load...'></img>
 
                                 <div className='container__image--profile'>
                                     <div className='profile__image-box'>
-                                        {user_info && <img src={user_info.profileImage ? user_info.profileImage : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg'} alt="Image did not load..."
+                                        {user_info && <img src={user_info.profileImage ? user_info.profileImage : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg'} alt="It did not load..."
                                             className='profile__image'
                                             onClick={this.handleShowProfileImageBig}
                                         />}
@@ -131,7 +131,7 @@ class Profile extends Component {
                 {show_big_image && <div className='container__image--big'>
                     <button className='bttn__close-image' onClick={this.handleShowProfileImageBig} >X</button>
                     <div className='profile__image-big'>
-                        {user_info && <img src={user_info.profileImage ? user_info.profileImage : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg'} alt="Image did not load..."
+                        {user_info && <img src={user_info.profileImage ? user_info.profileImage : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg'} alt="It did not load..."
                             className='profile__image'
                         />}
                     </div>
