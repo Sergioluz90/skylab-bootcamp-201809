@@ -298,8 +298,8 @@ class EditProfile extends Component {
     if (this.props.user_info) {
       return <main className='initial__profile'>
 
-        <section className='container__profile'>
-          <div className='profile--column'>
+        <section className='container__edit-profile'>
+          <div className='edit-profile--row'>
             <form className='bttn bttn--upload-image' encType="multipart/form-data">
               <label className='label__upload-image'>
                 <input className='input__image' type="file" name="avatar" onChange={this.handleUploadImage} />
@@ -311,7 +311,7 @@ class EditProfile extends Component {
 
           </div>
 
-          <div className='container'>
+          <div className='edit-profile__container'>
             <div className='container--column '>
 
               <div className='spacer--20'></div>
@@ -327,9 +327,9 @@ class EditProfile extends Component {
                     />}
                   </div>
                 </div>
-                <div className='profile__username'>
+                <div className='edit-profile__username'>
                   <h2>{user_info && user_info.username}</h2>
-                  {user_info && <div className='profile__data-container'>
+                  {user_info && <div className='edit-profile__data-container'>
                     <h3>City:</h3>
                     <input className='profile__input' onChange={this.handleCityChange} placeholder={user_info.city} />
                   </div>}
@@ -337,7 +337,7 @@ class EditProfile extends Component {
               </section>
 
 
-              {user_info && <div className='component__profile profile__margin--bottom'>
+              {user_info && <div className='component__edit-profile--margin-bottom'>
                 <h2>Looking for..</h2>
                 <div className='profile__data-container'>
                   {
@@ -358,12 +358,12 @@ class EditProfile extends Component {
                         active = true
 
 
-                      return active ? <p key={index} className='component__profile language-tags active' onClick={this.onSearchingClickHandler}>{language}</p> : <p key={index} className='component__profile language-tags inactive' onClick={this.onSearchingClickHandler}>{language}</p>
+                      return active ? <p key={index} className='edit-profile__language-tags--active' onClick={this.onSearchingClickHandler}>{language}</p> : <p key={index} className='edit-profile__language-tags--inactive' onClick={this.onSearchingClickHandler}>{language}</p>
                     })}
                 </div>
               </div>}
 
-              <div className='component__profile profile__margin--bottom'>
+              <div className='component__edit-profile--margin-bottom'>
 
                 <h2>Profile</h2>
 
@@ -479,7 +479,7 @@ class EditProfile extends Component {
 
               </div>
 
-              {user_info && <div className='component__profile profile__margin--bottom'>
+              {user_info && <div className='component__edit-profile--margin-bottom'>
                 <h2>About me</h2>
                 <div className='description__options'>
                   <textarea className='profile__textarea' onChange={this.handleDescriptionChange} placeholder={user_info.description ? user_info.description : 'Write a description to allow other people to know more about you'} className='profile__textArea'></textarea>
@@ -488,7 +488,7 @@ class EditProfile extends Component {
 
               </div>}
 
-              {user_info && <div className='component__profile profile__margin--bottom'>
+              {user_info && <div className='component__edit-profile--margin-bottom'>
                 <h2>My language knowledges</h2>
                 <div className='profile__data-container'>
                   {default_info.offer && user_info.offer &&
@@ -508,7 +508,7 @@ class EditProfile extends Component {
                       else
                         active = true
 
-                      return active ? <p key={index} className='component__profile language-tags active' onClick={this.onOfferClickHandler}>{language}</p> : <p key={index} className='component__profile language-tags inactive' onClick={this.onOfferClickHandler}>{language}</p>
+                      return active ? <p key={index} className='edit-profile__language-tags--active' onClick={this.onOfferClickHandler}>{language}</p> : <p key={index} className='edit-profile__language-tags--inactive' onClick={this.onOfferClickHandler}>{language}</p>
                     })}
                 </div>
               </div>}
@@ -517,7 +517,7 @@ class EditProfile extends Component {
 
           </div>
 
-          <div className='profile--column'>
+          <div className='edit-profile--row'>
 
             <button
               className='bttn bttn--save-profile'

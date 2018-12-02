@@ -270,11 +270,11 @@ class Home extends Component {
 
     console.log('render')
 
-    return <main className='container initial'>
+    return <main className='home__main'>
       <div className='spacer--20'></div>
-      <section className='container--row'>
-        <div className='searcher component'>
-          <div className='component searcher__header'>
+      <section className='container__home'>
+        <div className='searcher__component'>
+          <div className='searcher__header'>
             {(search_show_options) && <h3 className='margin--left'>Search</h3>}
             <a href='#'>
               <i className='fas fa-grip-horizontal' onClick={this.handleShowSearchOptions}></i>
@@ -282,32 +282,32 @@ class Home extends Component {
 
           </div>
 
-          <div className='container--row'>
+          <div className='container__searcher'>
 
 
-            <div className='searcher--panel component no-shadow  '>
+            <div className='searcher__options'>
 
               <ul>
                 <li>
                   <a href='#'>
-                    <i className='fas fa-comments' value='lenguages' onClick={this.handleOptionSearch}></i>
+                    <i className='fas fa-comments searcher__option' value='lenguages' onClick={this.handleOptionSearch}></i>
                   </a>
                 </li>
                 <li>
                   <a href='#'>
-                    <i className='fas fa-user' value='people' onClick={this.handleOptionSearch}></i>
+                    <i className='fas fa-user searcher__option' value='people' onClick={this.handleOptionSearch}></i>
                   </a>
                 </li>
                 <li>
                   <a href='#'>
-                    <i className='fas fa-map-marker-alt' value='location' onClick={this.handleOptionSearch}></i>
+                    <i className='fas fa-map-marker-alt searcher__option' value='location' onClick={this.handleOptionSearch}></i>
                   </a>
                 </li>
               </ul>
             </div>
 
 
-            {(search_show_options) && <div className='component searcher--options no-shadow'>
+            {(search_show_options) && <div className='component__searcher-options'>
 
               <Input
                 title={'Username:'}
@@ -315,7 +315,7 @@ class Home extends Component {
                 onChange={this.handleUsernameChange}
               />
 
-              {(search_options === 'lenguages') && <div>
+              {(search_options === 'lenguages') && <div className='component__searcher-options--checkboxes'>
 
                 <CheckBoxes
                   title={'You are looking for...'}
@@ -333,7 +333,7 @@ class Home extends Component {
               </div>}
 
               {(search_options === 'people') && <div>
-                <div className='margin--left'>
+                <div className='options__selectors--margin'>
 
                   <Selector
                     title={'Gender:'}
@@ -372,18 +372,20 @@ class Home extends Component {
                   onChange={this.handleCityChange}
                 />}
 
+                <div className='spacer--20'></div>
+
             </div>}
           </div>
 
         </div>
 
 
-        <div className='results component'>
+        <div className='results__component'>
           <div className='component'>
             <h3 className='center'>Results</h3>
           </div>
 
-          <div className='wrapper__images center'>
+          <div className='wrapper__images'>
 
             {users && users.map((elem, index) => {
               return <div key={index} className='search-panel__profile'>
