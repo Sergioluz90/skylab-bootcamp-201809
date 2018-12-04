@@ -3,49 +3,62 @@ require('dotenv').config()
 // global.Promise = require('bluebird')
 
 const { expect } = require('chai')
-const { Sequelize, models: { User, Offer, Searching, Blocked } } = require('final-data')
+// const {beforeEach}=require('mocha')
+const { Sequelize, models: { User, Offer, Searching, Blocked, Message, Conversation } } = require('final-data')
 const logic = require('../logic')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 
-const flag = true;
-
-const { env: { PORT, TEST_DATABASE_URL, TEST_DATABASE_NAME } } = process
+// const { env: { PORT, TEST_DATABASE_URL, TEST_DATABASE_NAME } } = process
+const TEST_DATABASE_URL = 'mysql://root:26081990@localhost:3306'
+const TEST_DATABASE_NAME = 'test'
+const PORT = 5000
 const { argv: [, , port = PORT || 3306] } = process
 
-const sequelize = new Sequelize(TEST_DATABASE_URL, { logging: false })
+const flag = true;
+
+const sequelize = new Sequelize(TEST_DATABASE_URL, { logging: !false })
 
 describe('logic', () => {
     before(() =>
-        sequelize
-            .authenticate({ logging: false })
+        sequelize.authenticate({ logging: false })
             .then(() => {
+
                 console.log('Connection has been established successfully at port ' + PORT)
 
-
-                return sequelize.query(`DROP DATABASE ${TEST_DATABASE_NAME}`, {logging:false})
+                return sequelize.query(`DROP DATABASE ${TEST_DATABASE_NAME}`, { logging: false })
                     .catch(() => undefined)
                     .finally(() => {
                         console.log('Test database dropped')
 
-                        return sequelize.query(`CREATE DATABASE ${TEST_DATABASE_NAME}`, {logging:false})
+                        return sequelize.query(`CREATE DATABASE ${TEST_DATABASE_NAME}`, { logging: false })
                     })
-                    .then(res => {  })
+                    .then(async () => {
+                        await User.sync({ force: !true, logging: false })
+                        await Offer.sync({ force: !true, logging: false })
+                        await Searching.sync({ force: !true, logging: false })
+                        await Message.sync({ force: !true, logging: false })
+                        await Conversation.sync({ force: !true, logging: false })
+                    })
             })
             .catch(err => {
                 console.error(`Unable to connect to the database: ${TEST_DATABASE_NAME}`);
             })
     )
 
-    beforeEach(async () => {
-        // await User.sync({ force: true, logging: false })
-        await User.destroy({ where: {}, logging: false })
-        await Offer.destroy({ where: {}, logging: false })
-        await Searching.destroy({ where: {}, logging: false })
-    })
-
     // beforeEach(() => Promise.all(User.destroy({ where: {}, logging: false }), Offer.destroy({ where: {}, logging: false }), Searching.destroy({ where: {}, logging: true })))
 
     describe('user', () => {
+        beforeEach(async () => {
+
+            // await User.sync({ force: true, logging: false })
+            await User.destroy({ where: {}, logging: false })
+            await Offer.destroy({ where: {}, logging: false })
+            await Searching.destroy({ where: {}, logging: false })
+            await Message.destroy({ where: {}, logging: false })
+            await Conversation.destroy({ where: {}, logging: false })
+
+        })
+
         !flag && describe('register', () => {
             let name, username, password, email
 
@@ -990,7 +1003,7 @@ describe('logic', () => {
             // TODO other test cases
         })
 
-        flag && describe('search profiles', () => {
+        !flag && describe('search profiles', () => {
 
 
             beforeEach(async () => {
@@ -1012,14 +1025,14 @@ describe('logic', () => {
 
                 const results = await logic.search(username)
 
-                const result=results[0]
+                const result = results[0]
 
                 expect(result).to.exist
 
-                const obj={ where: { username }, logging: false }
+                const obj = { where: { username }, logging: false }
 
                 const users = await User.findAll(obj)
-                
+
                 const user = users[0]
 
                 expect(result).not.to.be.instanceOf(User)
@@ -1036,7 +1049,7 @@ describe('logic', () => {
 
             it('should succed on correct data (when has lenguages): search by username', async () => {
                 await Offer.create({ user_id: user1.id, lenguage: 'spanish' }, { logging: false })
-                
+
                 await Searching.create({ user_id: user1.id, lenguage: 'english' }, { logging: false })
                 await Searching.create({ user_id: user2.id, lenguage: 'english' }, { logging: false })
                 await Searching.create({ user_id: user2.id, lenguage: 'spanish' }, { logging: false })
@@ -1047,12 +1060,12 @@ describe('logic', () => {
 
                 const results = await logic.search(username, offers, searches)
 
-                const result=results[0]
+                const result = results[0]
 
                 expect(result).to.exist
 
-                const obj={
-                    where:{username: { like: '%' + username + '%' }},
+                const obj = {
+                    where: { username: { like: '%' + username + '%' } },
                     include: [{
                         model: Offer,
                         as: 'userOffers',
@@ -1067,14 +1080,15 @@ describe('logic', () => {
                             lenguage: { [Sequelize.Op.or]: searches }
                         }
                     }]
-                ,  logging: false }
+                    , logging: false
+                }
 
                 const users = await User.findAll(obj)
 
 
                 const user = users[0]
-                
-                debugger
+
+
                 expect(result).not.to.be.instanceOf(User)
                 expect(result.username).to.be.equal(user.username)
 
@@ -1088,6 +1102,156 @@ describe('logic', () => {
             })
 
         })
+
+        flag && describe('send message', () => {
+            let name, username, password, email, text
+
+            beforeEach(async () => {
+
+                user = User.build({
+                    name: 'John', username: 'jd', password: '123', email: 'jd@gmail.com'
+                })
+
+                await user.save({ logging: false })
+
+                user2 = User.build({
+                    name: 'John', username: 'jd2', password: '123', email: 'jd@gmail.com'
+                })
+
+                await user2.save({ logging: false })
+
+                text = `text-${Math.random()}`
+
+            })
+
+            it('should succeed on correct data', async () => {
+                const date = new Date()
+
+                await logic.sendMessage(user.id.toString(), user2.id.toString(), text, date.toString())
+
+                const messages = await Message.findAll({ logging: false })
+
+                expect(messages.length).to.be.equal(1)
+                const message = messages[0]
+                expect(message).not.to.be.equal(undefined)
+
+                expect(message.sender_id).to.be.equal(user.id)
+                expect(message.receiver_id).be.equal(user2.id)
+                expect(message.text).to.be.equal(text)
+                expect(message.createdAt.toString()).to.be.equal(date.toString())
+
+                const conversations = await Conversation.findAll({ logging: false })
+                expect(conversations.length).to.be.equal(1)
+
+                const conversation = conversations[0]
+                expect(conversation).not.to.be.equal(undefined)
+                expect(conversation.user1_id).to.be.equal(user.id)
+                expect(conversation.user2_id).to.be.equal(user2.id)
+
+                // debugger
+            })
+
+        })
+
+        flag && describe('retrieve messages', () => {
+            let name, username, password, email, text, message, message2, date
+
+
+            beforeEach(async () => {
+
+                user = User.build({
+                    name: 'John', username: 'jd', password: '123', email: 'jd@gmail.com'
+                })
+
+                await user.save({ logging: false })
+
+                user2 = User.build({
+                    name: 'John', username: 'jd2', password: '123', email: 'jd@gmail.com'
+                })
+
+                await user2.save({ logging: false })
+
+                text = `text-${Math.random()}`
+
+                message = Message.build({
+                    sender_id: user.id, receiver_id: user2.id, text: text
+                })
+
+                date = new Date()
+                message.createdAt = date
+
+                await message.save({ logging: false })
+
+                message2 = Message.build({
+                    sender_id: user2.id, receiver_id: user.id, text: text
+                })
+
+                date = new Date()
+                message2.createdAt = date
+
+                await message2.save({ logging: false })
+            })
+
+            it('should succeed on correct data', async () => {
+
+                const list_messages = await logic.listChats(user.id.toString(), user2.id.toString())
+
+                expect(list_messages.length).to.be.equal(2)
+                const message = list_messages[0]
+                const message2 = list_messages[1]
+
+                expect(message.sender_id).to.be.equal(user.id)
+                expect(message.receiver_id).be.equal(user2.id)
+                expect(message.text).to.be.equal(text)
+
+                expect(message2.sender_id).to.be.equal(user2.id)
+                expect(message2.receiver_id).be.equal(user.id)
+                expect(message2.text).to.be.equal(text)
+
+                // debugger
+
+            })
+
+        })
+
+        flag && describe('list conversations', () => {
+            let name, username, password, email, text, user, user2
+
+            beforeEach(async () => {
+
+                user = User.build({
+                    name: 'John', username: 'jd', password: '123', email: 'jd@gmail.com'
+                })
+
+                await user.save({ logging: false })
+
+                user2 = User.build({
+                    name: 'John', username: 'jd2', password: '123', email: 'jd@gmail.com'
+                })
+
+                await user2.save({ logging: false })
+
+                text = `text-${Math.random()}`
+
+                await Conversation.create({ user1_id: user.id, user2_id: user2.id }, { logging: false })
+
+            })
+
+            it('should succeed on correct data', async () => {
+
+                const conversations = await logic.listConversations(user.id.toString(), user2.id.toString())
+
+                expect(conversations.length).to.be.equal(1)
+                const conversation = conversations[0]
+                
+                expect(conversation.user1_id).to.be.equal(user.id)
+                expect(conversation.user2_id).be.equal(user2.id)
+                expect(conversation.user2_username).be.equal(user2.username)
+                debugger
+            })
+
+        })
+
     })
 
     after(() => sequelize.close().then(process.exit))

@@ -4,7 +4,7 @@ const express = require('express')
 const router = require('./routes')
 const cors = require('./utils/cors')
 const package = require('./package.json')
-const { Sequelize, models: { User, Offer, Searching, Blocked } } = require('final-data')
+const { Sequelize, models: { User, Offer, Searching, Blocked, Message, Conversation } } = require('final-data')
 
 const { env: { PORT, DATABASE_URL, DATABASE_NAME } } = process
 
@@ -13,6 +13,8 @@ const sequelize = new Sequelize(DATABASE_URL)
 sequelize
     .authenticate({ logging: false })
     .then(() => {
+        debugger
+        console.log('DATABASE_URL='+DATABASE_URL)
         console.log('Connection has been established successfully at port ' + PORT)
 
         const app = express()
@@ -48,10 +50,12 @@ sequelize
         console.error(`Unable to connect to the database: ${DATABASE_NAME}`);
     })
     // .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 0"))
-    // .then(() => Searching.sync())
-    // .then(() => Offer.sync({ force: !false, logging: false }))
-    // .then(() => User.sync({ force: !false, logging: false }))
-    // .then(() => Blocked.sync({ force: !false, logging: false }))
+    .then(() => User.sync({ force: false, logging: false }))
+    .then(() => Searching.sync({ force: false, logging: false }))
+    .then(() => Offer.sync({ force: false, logging: false }))
+    .then(() => Blocked.sync({ force: false, logging: false }))
+    .then(() => Message.sync({ force: false, logging: false }))
+    .then(() => Conversation.sync({ force: false, logging: false }))
     // .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 1"))
     // .catch(err => {
     //     console.error('Unable to connect to the database:', err);

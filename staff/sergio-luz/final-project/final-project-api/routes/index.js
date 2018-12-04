@@ -111,20 +111,20 @@ router.patch('/users/:id/profile', [bearerTokenParser, jwtVerifier, jsonBodyPars
         if (id !== sub.toString()) throw Error('token sub does not match user id')
 
         return logic.updateProfile(id,
-            (name!=null) ? name:null,
-            (email!=null) ? email : null,
-            (skype!=null) ? skype : null,
-            (age!=null) ? age : null,
-            (gender!=null) ? gender : null,
-            (height!=null) ? height : null,
-            (weight!=null) ? weight : null,
-            (smoker!=null) ? smoker : null,
-            (description!=null) ? description : null,
-            (receives!=null) ? receives : null,
-            (moves!=null) ? moves : null,
-            (city!=null) ? city : null,
-            (offer!=null) ? offer : null,
-            (searching!=null) ? searching : null)
+            (name != null) ? name : null,
+            (email != null) ? email : null,
+            (skype != null) ? skype : null,
+            (age != null) ? age : null,
+            (gender != null) ? gender : null,
+            (height != null) ? height : null,
+            (weight != null) ? weight : null,
+            (smoker != null) ? smoker : null,
+            (description != null) ? description : null,
+            (receives != null) ? receives : null,
+            (moves != null) ? moves : null,
+            (city != null) ? city : null,
+            (offer != null) ? offer : null,
+            (searching != null) ? searching : null)
             .then(() => {
 
                 res.json({
@@ -177,22 +177,22 @@ router.post('/users/:id/profile/image', [bearerTokenParser, jwtVerifier], (req, 
         return new Promise(async (resolve, reject) => {
             const busboy = new Busboy({ headers: req.headers })
 
-            
+
             await busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
                 debugger
 
                 logic.insertProfileImage(file, id)
-                .then(()=>{
-                    resolve()
-                })
+                    .then(() => {
+                        resolve()
+                    })
 
             })
 
             busboy.on('finish', () => {
-                
+
                 debugger
                 // resolve()
-                
+
             })
 
             busboy.on('error', err => reject(err))
@@ -217,6 +217,54 @@ router.delete('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
             .then(user =>
                 res.json({
                     data: user
+                })
+            )
+    }, res)
+})
+
+router.post('/users/:id/messages/:receiver_id', [bearerTokenParser, jwtVerifier], (req, res) => {
+
+    routeHandler(() => {
+        const { params: { id, receiver_id }, sub, body: { text } } = req
+
+        if (id !== sub.toString()) throw Error('token sub does not match user id')
+
+        return logic.sendMessage(id, receiver_id, text)
+            .then(() =>
+                res.json({
+                    message: 'message sent'
+                })
+            )
+    }, res)
+})
+
+router.get('/users/:id/messages/:receiver_id', [bearerTokenParser, jwtVerifier], (req, res) => {
+
+    routeHandler(() => {
+        const { params: { id, receiver_id }, sub } = req
+
+        if (id !== sub.toString()) throw Error('token sub does not match user id')
+
+        return logic.listChats(id, receiver_id)
+            .then(list =>
+                res.json({
+                    message: list
+                })
+            )
+    }, res)
+})
+
+router.get('/users/:id/conversations', [bearerTokenParser, jwtVerifier], (req, res) => {
+
+    routeHandler(() => {
+        const { params: { id }, sub } = req
+
+        if (id !== sub.toString()) throw Error('token sub does not match user id')
+
+        return logic.listConversations(id)
+            .then(list =>
+                res.json({
+                    message: list
                 })
             )
     }, res)

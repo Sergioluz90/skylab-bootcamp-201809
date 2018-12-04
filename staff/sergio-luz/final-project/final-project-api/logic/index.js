@@ -1,4 +1,4 @@
-const { Sequelize, models: { User, Offer, Searching, Blocked } } = require('final-data')
+const { Sequelize, models: { User, Offer, Searching, Blocked, Message, Conversation } } = require('final-data')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 const { env: { CLOUDINARY_CONFIG_NAME, CLOUDINARY_CONFIG_KEY, CLOUDINARY_CONFIG_API_SECRET } } = process
 
@@ -47,13 +47,13 @@ const logic = {
 
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
-        
+
         if (!username.trim()) throw new ValueError('username is empty or blank')
         if (!password.trim()) throw new ValueError('password is empty or blank')
-        
+
         return (async () => {
             const users = await User.findAll({ where: { username: username }, logging: false })
-            
+
             const user = users[0]
             debugger
 
@@ -228,13 +228,13 @@ const logic = {
 
                     for (off of updating) {
 
-                        const _search = await model.findAll({ where: { lenguage: off, user_id:id }, subQuery: false, attributes: ['id', 'lenguage'], logging: false })
+                        const _search = await model.findAll({ where: { lenguage: off, user_id: id }, subQuery: false, attributes: ['id', 'lenguage'], logging: false })
 
                         if (_search[0]) {
-                            
+
                             await _search[0].destroy({ force: true, logging: false })
                         } else {
-                            
+
                             debugger
                             await model.create({ user_id: id, lenguage: off }, { logging: false })
 
@@ -331,7 +331,7 @@ const logic = {
             if (gender == null) delete obj.where.gender
             if (smoker == null) delete obj.where.smoker
             if (minAge === 0 && maxAge === 100) delete obj.where.age
-            if(city==null) delete obj.where.city
+            if (city == null) delete obj.where.city
 
             debugger
 
@@ -358,7 +358,7 @@ const logic = {
 
 
         return (async () => {
-            let user = await User.find({where:{ id: user_id }})
+            let user = await User.find({ where: { id: user_id } })
 
             if (!user) throw new NotFoundError(`User does not exist`)
 
@@ -379,20 +379,151 @@ const logic = {
         })()
     },
 
-    deleteAccount(id){
+    deleteAccount(id) {
 
         if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
         if (id != null && !id.trim().length) throw new ValueError('id is empty or blank')
 
         return (async () => {
-            debugger
-            let user = await User.find({where:{ id: id }})
-            
+            // debugger
+            let user = await User.find({ where: { id: id } })
+
 
             if (!user) throw new NotFoundError(`User does not exist`)
 
             user.destroy()
 
+        })()
+    },
+
+    sendMessage(sender_id, receiver_id, text, date) {
+        // debugger
+        if (typeof sender_id !== 'string' || sender_id == null || sender_id == undefined) throw TypeError(`${sender_id} is not a string`)
+        if (sender_id != null && !sender_id.trim().length) throw new ValueError('sender_id is empty or blank')
+
+        if (typeof receiver_id !== 'string' || receiver_id == null || receiver_id == undefined) throw TypeError(`${receiver_id} is not a string`)
+        if (receiver_id != null && !receiver_id.trim().length) throw new ValueError('receiver_id is empty or blank')
+
+        if (typeof text !== 'string' || text == null || text == undefined) throw TypeError(`${text} is not a string`)
+        if (text != null && !text.trim().length) throw new ValueError('text is empty or blank')
+
+        return (async () => {
+
+            const message = Message.build({
+                sender_id: sender_id,
+                receiver_id: receiver_id,
+                text: text
+            }, { logging: false })
+
+            if (date) message.createdAt = date
+
+            await message.save({ logging: false })
+
+            const conversations = await Conversation.findAll({
+                where: {
+                    [Sequelize.Op.or]: [{
+                        user1_id: sender_id,
+                        user2_id: receiver_id,
+                    },
+                    {
+                        user2_id: sender_id,
+                        user1_id: receiver_id,
+                    }]
+                }, logging: false
+            })
+
+            const conversation = conversations[0]
+
+            conversation ? null : await Conversation.create({ user1_id: sender_id, user2_id: receiver_id }, { logging: false })
+
+        })()
+    },
+
+    listChats(user1_id, user2_id) {
+        // debugger
+        if (typeof user1_id !== 'string' || user1_id == null || user1_id == undefined) throw TypeError(`${user1_id} is not a string`)
+        if (user1_id != null && !user1_id.trim().length) throw new ValueError('user1_id is empty or blank')
+
+        if (typeof user2_id !== 'string' || user2_id == null || user2_id == undefined) throw TypeError(`${user2_id} is not a string`)
+        if (user2_id != null && !user2_id.trim().length) throw new ValueError('user2_id is empty or blank')
+
+        return (async () => {
+
+
+            let messages = await Message.findAll({
+                where: {
+                    [Sequelize.Op.or]: [{
+                        sender_id: user1_id,
+                        receiver_id: user2_id
+                    },
+                    {
+                        sender_id: user2_id,
+                        receiver_id: user1_id
+                    }]
+                },
+                order: [['createdAt', 'ASC'],],
+                logging: false
+            })
+
+            let list = []
+
+            for (message of messages) {
+
+                message.read = true
+                message.save({ logging: false })
+
+                let { id, sender_id, receiver_id, text, read, createdAt } = message
+
+                const _message = { id, sender_id, receiver_id, text, read, createdAt }
+
+                list.push(_message)
+            }
+
+            debugger
+            return list
+        })()
+    },
+
+    listConversations(user1_id) {
+
+
+        if (typeof user1_id !== 'string' || user1_id == null || user1_id == undefined) throw TypeError(`${user1_id} is not a string`)
+        if (user1_id != null && !user1_id.trim().length) throw new ValueError('user1_id is empty or blank')
+
+        return (async () => {
+
+            const conversations = await Conversation.findAll({
+                where: {
+                    [Sequelize.Op.or]: [{
+                        user1_id: user1_id,
+                        // user2_id: user2_id,
+                    },
+                    {
+                        user2_id: user1_id,
+                        // user1_id: user2_id,
+                    }],
+                },
+                attributes: ['user1_id', 'user2_id'],
+                include: [{
+                    model: User,
+                    attributes: ['username']
+                }],
+                logging: false
+            })
+
+            let list = []
+
+            for (conversation of conversations) {
+                let { user1_id, user2_id } = conversation
+                let { username } = conversation.user
+
+                const convers = { user1_id, user2_id, user2_username: username }
+
+                list.push(convers)
+            }
+
+            debugger
+            return list
         })()
     }
 }
