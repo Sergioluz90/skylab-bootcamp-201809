@@ -1,40 +1,46 @@
 import React, { Component } from 'react'
 import logic from '../../logic'
+import './message.css'
 
 
 class Message extends Component {
 
-    state={
-        message_text:null
+    state = {
+        message_text: null
     }
 
-    hanldeText=event=>{
+    hanldeText = event => {
         event.preventDefault()
 
-        this.setState({message_text:event.target.value})
+        this.setState({ message_text: event.target.value })
     }
 
-    sendFirstMessage=event=>{
+    handleClose = () => {
+        this.setState({ message_text: null }, () => {
+            this.props.handleHiddeSendMessage()
+        })
+    }
+    sendFirstMessage = event => {
         event.preventDefault()
 
         logic.sendMessage(this.props.id, this.state.message_text)
-        .then(res=>{
-            
-            this.props.history.push(`/conversations/${this.props.my_info.id}/${this.props.id}`)
-        })
+            .then(res => {
 
+                this.props.history.push(`/conversations/${this.props.my_info.id}/${this.props.id}`)
+            })
     }
 
     render() {
 
-        const {username}=this.props
+        const { username } = this.props
 
         return <div className='form__error'>
-            <div className='error__container'>
-                <p className='error__text'>Send your first message to {username}</p>
-                <input onChange={this.hanldeText} placeholder='write your message here..'></input>
-                <button className='error__accept-bttn' onClick={this.sendFirstMessage} >Send</button>
-            </div>
+            <form onSubmit={this.sendFirstMessage} className='error__container'>
+                <button onClick={this.handleClose} className='close-bttn'>X</button>
+                <p className='message__text'>Send your first message to {username}</p>
+                <input className='message__input' onChange={this.hanldeText} placeholder='write your message here..'></input>
+                <button className='message__send-bttn' onClick={this.sendFirstMessage} >Send</button>
+            </form>
         </div>
     }
 }

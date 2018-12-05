@@ -11,26 +11,27 @@ cloudinary.config({
 
 const logic = {
     registerUser(name, username, password, email, city) {
+
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
         if (typeof email !== 'string') throw TypeError(`${email} is not a string`)
         if (typeof city !== 'string') throw TypeError(`${city} is not a string`)
-
-
+        
+        
         if (!name.trim()) throw new ValueError('name is empty or blank')
         if (!username.trim()) throw new ValueError('username is empty or blank')
         if (!password.trim()) throw new ValueError('password is empty or blank')
         if (!email.trim()) throw new ValueError('email is empty or blank')
         if (!city.trim()) throw new ValueError('city is empty or blank')
-
-
+        
+        
         return (async () => {
-
+            
             const _user = await User.find({ where: { username: username } })
-
+            
             if (_user) throw new AlreadyExistsError('This username already exists')
-
+            
             const user = User.build({
                 username: username,
                 name: name,
@@ -38,8 +39,9 @@ const logic = {
                 email: email,
                 city: city
             }, { logging: false })
-
+            
             await user.save()
+            
         })()
     },
 
@@ -55,7 +57,7 @@ const logic = {
             const users = await User.findAll({ where: { username: username }, logging: false })
 
             const user = users[0]
-            debugger
+            
 
             if (!user || user.password !== password) throw new AuthError('invalid username or password')
 
@@ -235,7 +237,7 @@ const logic = {
                             await _search[0].destroy({ force: true, logging: false })
                         } else {
 
-                            debugger
+                            
                             await model.create({ user_id: id, lenguage: off }, { logging: false })
 
                         }
@@ -279,7 +281,7 @@ const logic = {
             }
         })
 
-        debugger
+        
 
         let obj = {
             where: {
@@ -312,7 +314,7 @@ const logic = {
             , logging: false
         }
 
-        debugger
+        
 
         return (async () => {
 
@@ -333,11 +335,11 @@ const logic = {
             if (minAge === 0 && maxAge === 100) delete obj.where.age
             if (city == null) delete obj.where.city
 
-            debugger
+            
 
             const users = await User.findAll(obj)
 
-            debugger
+            
             let user_list = []
 
             for (user of users) {
@@ -391,7 +393,30 @@ const logic = {
 
             if (!user) throw new NotFoundError(`User does not exist`)
 
-            user.destroy()
+            
+            let conversations= await Conversation.findAll({where:{
+                [Sequelize.Op.or]:[{user1_id:id},{user2_id:id}]
+            }})
+            let messages=await Message.findAll({where:{
+                [Sequelize.Op.or]:[{sender_id:id},{receiver_id:id}]
+            }})
+
+            for(let i=0; i<conversations.length; i++){
+                await conversations[i].destroy()
+            }
+
+            for(let i=0; i<messages.length; i++){
+                await messages[i].destroy()
+            }
+            
+            const conversations2= await Conversation.findAll({where:{
+                [Sequelize.Op.or]:[{user1_id:id},{user2_id:id}]
+            }})
+            const messages2=await Message.findAll({where:{
+                [Sequelize.Op.or]:[{sender_id:id},{receiver_id:id}]
+            }})
+            
+            await user.destroy()
 
         })()
     },
@@ -497,7 +522,7 @@ const logic = {
                 list.push(_message)
             }
 
-            debugger
+            
             return list
         })()
     },

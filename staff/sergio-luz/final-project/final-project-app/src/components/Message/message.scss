@@ -1,0 +1,60 @@
+.form__error{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    margin: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2d2a3aa6;
+}
+
+.error__container{
+    background: white;
+    width: 50vw;
+    height: 25vh;
+    border-radius: 3vw 3vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    flex-direction: column;
+}
+
+.message__send-bttn{
+    background: #64b2e6;
+    border: none;
+    border-radius: 5px;
+    color: #003b75;
+    font-weight: bold;
+    height: 3.5vw;
+    width: 18vw;
+    cursor: pointer;
+}
+
+.message__text{
+    font-size: larger;
+    font-weight: bold;
+    color:#003b75;
+    margin: 0px;
+}
+
+.message__input{
+    border-radius: 10px;
+    width: 350px;
+    height: 50px;
+    text-align: center;
+}
+
+.close-bttn{
+    display: flex;
+    align-self: flex-end;
+    margin-right: 20px;
+    border-radius: 50%;
+    border-style: none;
+    height: 20px;
+    background: #c70000;
+    color: white;
+    cursor:pointer;
+}

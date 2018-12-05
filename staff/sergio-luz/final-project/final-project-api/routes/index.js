@@ -56,7 +56,7 @@ router.post('/auth', jsonBodyParser, (req, res) => {
 })
 
 router.get('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
-    debugger
+    
     routeHandler(() => {
         const { params: { id }, sub } = req
 
@@ -107,7 +107,7 @@ router.patch('/users/:id/profile', [bearerTokenParser, jwtVerifier, jsonBodyPars
     routeHandler(() => {
         const { params: { id }, sub, body: { name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching } } = req
 
-        debugger
+        
         if (id !== sub.toString()) throw Error('token sub does not match user id')
 
         return logic.updateProfile(id,
@@ -172,14 +172,14 @@ router.post('/users/:id/profile/image', [bearerTokenParser, jwtVerifier], (req, 
 
         if (id !== sub.toString()) throw Error('token sub does not match user id')
 
-        debugger
+        
 
         return new Promise(async (resolve, reject) => {
             const busboy = new Busboy({ headers: req.headers })
 
 
             await busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-                debugger
+                
 
                 logic.insertProfileImage(file, id)
                     .then(() => {
@@ -190,7 +190,7 @@ router.post('/users/:id/profile/image', [bearerTokenParser, jwtVerifier], (req, 
 
             busboy.on('finish', () => {
 
-                debugger
+                
                 // resolve()
 
             })
@@ -225,9 +225,9 @@ router.delete('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
 router.post('/users/:id/messages/:receiver_id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
 
     routeHandler(() => {
-        debugger
+        
         const { params: { id, receiver_id }, sub, body: { text } } = req
-        debugger
+        
 
         if (id !== sub.toString()) throw Error('token sub does not match user id')
 
@@ -250,7 +250,7 @@ router.get('/users/:id/messages/:receiver_id', [bearerTokenParser, jwtVerifier],
 
         return logic.listChats(id, receiver_id)
             .then(list =>{
-                debugger
+                
                 res.json({
                     data: list
                 })}

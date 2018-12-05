@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 
+
 const sequelize = new Sequelize('mysql://root:26081990@localhost:3306/mysql')
 
 
@@ -20,7 +21,8 @@ const User = sequelize.define('user', {
     },
     email: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        isUnique: true
     },
     skype: {
         type: Sequelize.STRING,

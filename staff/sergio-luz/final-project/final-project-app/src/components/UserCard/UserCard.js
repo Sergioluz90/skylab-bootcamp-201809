@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 class UserCard extends Component {
     render() {
-        const {user_info}=this.props
+        // const {user_info}=this.props
 
         return <Link className='user-card__link' to={`/profile/${this.props.elem.id}`}>
             <div className='container__image'>

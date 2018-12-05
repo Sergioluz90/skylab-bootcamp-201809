@@ -24,6 +24,7 @@ const logic = {
         if (typeof city !== 'string') throw TypeError(`${city} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
 
+        if (email.match(/^(([^<>()\[\]\\.,;:\s@“]+(\.[^<>()\[\]\\.,;:\s@“]+)*)|(“.+“))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) === null) throw Error(`${email} is an invalid email`)
 
         if (!name.trim()) throw new Error('name is empty or blank')
         if (!username.trim()) throw new Error('username is empty or blank')

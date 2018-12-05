@@ -37,22 +37,26 @@ Message.belongsTo(User, {
     as: 'sender',
     foreignKey: 'sender_id',
     constraints: false,
+    onDelete: 'CASCADE',
 });
 
 Message.belongsTo(User, {
     as: 'receiver',
     foreignKey: 'receiver_id',
     constraints: false,
+    onDelete: 'CASCADE',
 })
 
 Conversation.belongsTo(User, {
     foreignKey: 'user1_id',
     constraints: false,
+    onDelete: 'CASCADE',
 });
 
 Conversation.belongsTo(User, {
     foreignKey: 'user2_id',
     constraints: false,
+    onDelete: 'CASCADE',
 })
 
 

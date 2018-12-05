@@ -37,7 +37,7 @@ class Profile extends Component {
     handleChatClick = this.handleChatClick.bind(this)
     handleChatClick(event) {
         event.preventDefault()
-        
+
         logic.checkExisitingConversation(this.props.user_info.id)
             .then(res => {
 
@@ -47,6 +47,10 @@ class Profile extends Component {
                     this.props.history.push(`/conversations/${this.props.my_info.id}/${this.props.user_info.id}`)
             })
 
+    }
+
+    handleHiddeSendMessage = () => {
+        this.setState({ show_send_message: false })
     }
 
 
@@ -146,7 +150,7 @@ class Profile extends Component {
                         </div>
                     </div>
 
-                    {(this.props.id!==this.props.my_info.id.toString()) && <button
+                    {(this.props.id !== this.props.my_info.id.toString()) && <button
                         className='bttn bttn--chat-profile'
                         onClick={this.handleChatClick}
                     >Chat</button>}
@@ -164,6 +168,7 @@ class Profile extends Component {
                 </div>}
 
                 {show_send_message && <Message
+                    handleHiddeSendMessage={this.handleHiddeSendMessage}
                     id={user_info.id}
                     username={user_info.username}
                     history={this.props.history}

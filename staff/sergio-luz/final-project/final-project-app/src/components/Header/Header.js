@@ -79,7 +79,7 @@ class Header extends Component {
                     <ul className="ul__Nav">
                         <li className="li__Nav"><a className="button__Nav" href="#">Search</a></li>
                         
-                        <li className="li__Nav">{my_info && <Link to={`/conversations/${my_info.id}`}>Chats</Link>}</li>
+                        <li className="li__Nav">{my_info && <Link className="button__Nav" to={`/conversations/${my_info.id}`}>Chats</Link>}</li>
                         <li className="li__Nav"><a className="button__Nav" href="#"></a></li>
                     </ul>
                 </div>

@@ -172,11 +172,13 @@ class EditProfile extends Component {
   }
 
   handleUploadImage = event => {
+    const {profileImage}=this.refs
+    profileImage.src='https://blog.teamtreehouse.com/wp-content/uploads/2015/05/InternetSlowdown_Day.gif'
     let image
     event ? image = event.target.files[0] : image = this.state.user_info.profileImage
     logic.uploadImage(image)
       .then(() => {
-
+        
         this.props.retrieveUserInfo()
       })
   }
@@ -322,7 +324,7 @@ class EditProfile extends Component {
 
                 <div className='container__image--profile'>
                   <div className='profile__image-box'>
-                    {user_info && <img src={user_info.profileImage ? user_info.profileImage : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg'} alt='It did not load...'
+                    {user_info && <img ref='profileImage' src={user_info.profileImage ? user_info.profileImage : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg'} alt='It did not load...'
                       className='edit-profile__image'
                     />}
                   </div>

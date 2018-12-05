@@ -18,7 +18,7 @@ class Conversations extends Component {
 
         logic.listConversations()
             .then(res => {
-
+debugger
                 if (res.length) this.setState({ conversations_list: res }, () => {
                     if (this.props.receiver_id) {
                         logic.listChats(this.props.receiver_id)
@@ -130,6 +130,7 @@ class Conversations extends Component {
                 <div className='chat-block'>
 
                     <div className='conversation-space' ref='conversationSpace'>
+                    
                         {conversations_list && conversations_list.map((elem, index) => {
 
                             if (elem.user2_id.toString() === receiver_id) {
