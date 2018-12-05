@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { deflateRaw } from 'zlib';
 // import logic from '../logic'
+import './register.css'
 
 
 class Register extends Component {

@@ -3,6 +3,8 @@ import logic from '../../logic'
 import Input from '../Input/Input'
 import SelectorAge from '../SelectorAge/SelectorAge';
 import Selector from '../Selector/Selector';
+import './editProfile.css'
+
 class EditProfile extends Component {
 
   state = {

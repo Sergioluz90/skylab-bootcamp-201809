@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Message from '../Message/Message'
 import logic from '../../logic'
 import { Link } from 'react-router-dom'
+import './profile.css'
 
 
 

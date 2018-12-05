@@ -1,4 +1,5 @@
 import React from 'react'
+import './error.css'
 
 function Error(props) {
     return <div className='form__error'>

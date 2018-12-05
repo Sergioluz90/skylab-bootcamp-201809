@@ -5,6 +5,7 @@ import SelectorAge from '../SelectorAge/SelectorAge';
 import Selector from '../Selector/Selector';
 import Input from '../Input/Input';
 import CheckBoxes from '../CheckBoxes/CheckBoxes';
+import './home.css'
 
 
 class Home extends Component {

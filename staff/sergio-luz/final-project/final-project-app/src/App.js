@@ -14,7 +14,7 @@ import Conversations from './components/Conversations/Conversatons'
 class App extends Component {
 
   state = {
-    error: null,
+    error: 'null',
     user_info: null,
     my_info: null
   }
@@ -87,6 +87,8 @@ class App extends Component {
     return <div>
 
       {logic.loggedIn && <Header history={this.props.history}
+        error={error}
+        handleAcceptError={this.handleAcceptError}
         my_info={my_info}
         retrieveMyInfo={this.retrieveMyInfo}
         retrieveUserInfo={this.retrieveUserInfo}
@@ -104,7 +106,7 @@ class App extends Component {
             LoginHandler={this.LoginHandler} />
           : <Redirect to="/home" />} />
 
-      {error && <Error message={error}
+      {error && !logic.loggedIn && <Error message={error}
         handleAcceptError={this.handleAcceptError}
       />}
 

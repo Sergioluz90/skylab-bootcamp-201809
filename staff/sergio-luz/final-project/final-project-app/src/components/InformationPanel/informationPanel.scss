@@ -1,0 +1,43 @@
+.wrapper-panel{
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    display: flex;
+}
+
+.panel{
+    width: auto;
+    height: auto;
+    padding: 0px 20px;
+    background: #969696;
+    border-radius: 10px;
+    min-width: 40vw;
+    max-width: 80vw;
+    display: flex;
+
+}
+
+.panel__content{
+    width: 100%;
+}
+
+.content__text{
+    width: auto;
+    color: #2d2a3a;
+    text-align: center;
+}
+
+.panel__bttn-ok{
+    height: 35px;
+    width: 35px;
+    display: flex;
+    justify-self: center;
+    align-self: center;
+    border-radius: 22px;
+    background-color: white;
+    cursor: pointer;
+    border: none;
+    background: #b3b3b3;
+}
