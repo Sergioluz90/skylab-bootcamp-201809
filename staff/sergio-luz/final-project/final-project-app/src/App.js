@@ -14,7 +14,7 @@ import Conversations from './components/Conversations/Conversatons'
 class App extends Component {
 
   state = {
-    error: 'null',
+    error: null,
     user_info: null,
     my_info: null
   }

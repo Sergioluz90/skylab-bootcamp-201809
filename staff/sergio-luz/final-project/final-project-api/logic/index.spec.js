@@ -1,12 +1,12 @@
 require('dotenv').config()
+"use strict"
 
-// global.Promise = require('bluebird')
 
 const { expect } = require('chai')
-// const {beforeEach}=require('mocha')
 const { Sequelize, models: { User, Offer, Searching, Blocked, Message, Conversation } } = require('final-data')
 const logic = require('../logic')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
+
 
 // const { env: { PORT, TEST_DATABASE_URL, TEST_DATABASE_NAME } } = process
 const TEST_DATABASE_URL = 'mysql://root:26081990@localhost:3306/test'
@@ -14,30 +14,37 @@ const TEST_DATABASE_NAME = 'test'
 const PORT = 5000
 const { argv: [, , port = PORT || 3306] } = process
 
+
 const flag = true;
 
 const sequelize = new Sequelize(TEST_DATABASE_URL, { logging: !false })
 
+
+
 describe('logic', () => {
+
+    /**
+     * Before start tests prepare Sequelize and the database
+     */
     before(() =>
         sequelize.authenticate({ logging: false })
             .then(() => {
 
                 console.log('Connection has been established successfully at port ' + PORT)
 
-                return sequelize.query(`DROP DATABASE ${TEST_DATABASE_NAME}`, { logging: false })
+                return sequelize.query(`DROP DATABASE ${TEST_DATABASE_NAME}`, { logging: !false })
                     .catch(() => undefined)
                     .finally(() => {
                         console.log('Test database dropped')
 
-                        return sequelize.query(`CREATE DATABASE ${TEST_DATABASE_NAME}`, { logging: false })
+                        return sequelize.query(`CREATE DATABASE ${TEST_DATABASE_NAME}`, { logging: !false })
                     })
                     .then(async () => {
-                        // await User.sync({ force: !true, logging: false })
-                        // await Offer.sync({ force: !true, logging: false })
-                        // await Searching.sync({ force: !true, logging: false })
-                        // await Message.sync({ force: !true, logging: false })
-                        // await Conversation.sync({ force: !true, logging: false })
+                        await User.sync({ force: !true, logging: false })
+                        await Offer.sync({ force: !true, logging: false })
+                        await Searching.sync({ force: !true, logging: false })
+                        await Message.sync({ force: !true, logging: false })
+                        await Conversation.sync({ force: !true, logging: false })
                     })
             })
             .catch(err => {
@@ -45,19 +52,24 @@ describe('logic', () => {
             })
     )
 
-    // beforeEach(() => Promise.all(User.destroy({ where: {}, logging: false }), Offer.destroy({ where: {}, logging: false }), Searching.destroy({ where: {}, logging: true })))
+    /**
+     * Before each test in User destroy al the data in database
+     */
+    beforeEach(async () => {
 
+        await User.destroy({ where: {}, logging: false })
+        await Offer.destroy({ where: {}, logging: false })
+        await Searching.destroy({ where: {}, logging: false })
+        await Message.destroy({ where: {}, logging: false })
+        await Conversation.destroy({ where: {}, logging: false })
+    })
+
+
+    /**
+     * All the test for 'User' model
+     */
     describe('user', () => {
-        beforeEach(async () => {
 
-            // await User.sync({ force: true, logging: false })
-            await User.destroy({ where: {}, logging: false })
-            await Offer.destroy({ where: {}, logging: false })
-            await Searching.destroy({ where: {}, logging: false })
-            await Message.destroy({ where: {}, logging: false })
-            await Conversation.destroy({ where: {}, logging: false })
-
-        })
 
         !flag && describe('register', () => {
             let name, username, password, email
@@ -66,12 +78,13 @@ describe('logic', () => {
                 name = `name-${Math.random()}`
                 username = `username-${Math.random()}`
                 password = `password-${Math.random()}`
-                email = `email-${Math.random()}`
+                email = `email-${Math.random()}@gmail.com`
+                city = `city-${Math.random()}`
             })
 
             it('should succeed on correct data', async () => {
 
-                const res = await logic.registerUser(name, username, password, email)
+                const res = await logic.registerUser(name, username, password, email, city)
 
                 expect(res).to.be.undefined
 
@@ -90,118 +103,118 @@ describe('logic', () => {
 
 
             it('should fail on undefined name', () => {
-                expect(() => logic.registerUser(undefined, username, password, email)).to.throw(TypeError, 'undefined is not a string')
+                expect(() => logic.registerUser(undefined, username, password, email, city)).to.throw(TypeError, 'undefined is not a string')
             })
 
             it('should fail on null name', () => {
-                expect(() => logic.registerUser(null, username, password, email)).to.throw(TypeError, 'null is not a string')
+                expect(() => logic.registerUser(null, username, password, email, city)).to.throw(TypeError, 'null is not a string')
             })
 
             it('should fail on blank name', () => {
-                expect(() => logic.registerUser('           \n', username, password, email)).to.throw(ValueError, 'name is empty or blank')
+                expect(() => logic.registerUser('           \n', username, password, email, city)).to.throw(ValueError, 'name is empty or blank')
             })
 
             it('should fail on number name', () => {
-                expect(() => logic.registerUser(123, username, password, email)).to.throw(TypeError, '123 is not a string')
+                expect(() => logic.registerUser(123, username, password, email, city)).to.throw(TypeError, '123 is not a string')
             })
 
             it('should fail on boolean name', () => {
-                expect(() => logic.registerUser(true, username, password, email)).to.throw(TypeError, 'true is not a string')
+                expect(() => logic.registerUser(true, username, password, email, city)).to.throw(TypeError, 'true is not a string')
             })
 
             it('should fail on array name', () => {
-                expect(() => logic.registerUser(['true', 'false'], username, password, email)).to.throw(TypeError, 'true,false is not a string')
+                expect(() => logic.registerUser(['true', 'false'], username, password, email, city)).to.throw(TypeError, 'true,false is not a string')
             })
 
             it('should fail on object name', () => {
-                expect(() => logic.registerUser({ o: 'bj' }, username, password, email)).to.throw(TypeError, '[object Object] is not a string')
+                expect(() => logic.registerUser({ o: 'bj' }, username, password, email, city)).to.throw(TypeError, '[object Object] is not a string')
             })
 
 
             it('should fail on undefined username', () => {
-                expect(() => logic.registerUser(name, undefined, password, email)).to.throw(TypeError, 'undefined is not a string')
+                expect(() => logic.registerUser(name, undefined, password, email, city)).to.throw(TypeError, 'undefined is not a string')
             })
 
             it('should fail on null username', () => {
-                expect(() => logic.registerUser(name, null, password, email)).to.throw(TypeError, 'null is not a string')
+                expect(() => logic.registerUser(name, null, password, email, city)).to.throw(TypeError, 'null is not a string')
             })
 
             it('should fail on blank username', () => {
-                expect(() => logic.registerUser(name, '           \n', password, email)).to.throw(ValueError, 'username is empty or blank')
+                expect(() => logic.registerUser(name, '           \n', password, email, city)).to.throw(ValueError, 'username is empty or blank')
             })
 
             it('should fail on number username', () => {
-                expect(() => logic.registerUser(name, 123, password, email)).to.throw(TypeError, '123 is not a string')
+                expect(() => logic.registerUser(name, 123, password, email, city)).to.throw(TypeError, '123 is not a string')
             })
 
             it('should fail on boolean username', () => {
-                expect(() => logic.registerUser(name, true, password, email)).to.throw(TypeError, 'true is not a string')
+                expect(() => logic.registerUser(name, true, password, email, city)).to.throw(TypeError, 'true is not a string')
             })
 
             it('should fail on array username', () => {
-                expect(() => logic.registerUser(name, ['true', 'false'], password, email)).to.throw(TypeError, 'true,false is not a string')
+                expect(() => logic.registerUser(name, ['true', 'false'], password, email, city)).to.throw(TypeError, 'true,false is not a string')
             })
 
             it('should fail on object username', () => {
-                expect(() => logic.registerUser(name, { o: 'bj' }, password, email)).to.throw(TypeError, '[object Object] is not a string')
+                expect(() => logic.registerUser(name, { o: 'bj' }, password, email, city)).to.throw(TypeError, '[object Object] is not a string')
             })
 
 
             it('should fail on undefined password', () => {
-                expect(() => logic.registerUser(name, username, undefined, email)).to.throw(TypeError, 'undefined is not a string')
+                expect(() => logic.registerUser(name, username, undefined, email, city)).to.throw(TypeError, 'undefined is not a string')
             })
 
             it('should fail on null password', () => {
-                expect(() => logic.registerUser(name, username, null, email)).to.throw(TypeError, 'null is not a string')
+                expect(() => logic.registerUser(name, username, null, email, city)).to.throw(TypeError, 'null is not a string')
             })
 
             it('should fail on blank password', () => {
-                expect(() => logic.registerUser(name, username, '           \n', email)).to.throw(ValueError, 'password is empty or blank')
+                expect(() => logic.registerUser(name, username, '           \n', email, city)).to.throw(ValueError, 'password is empty or blank')
             })
 
             it('should fail on number password', () => {
-                expect(() => logic.registerUser(name, username, 123, email)).to.throw(TypeError, '123 is not a string')
+                expect(() => logic.registerUser(name, username, 123, email, city)).to.throw(TypeError, '123 is not a string')
             })
 
             it('should fail on boolean password', () => {
-                expect(() => logic.registerUser(name, username, true, email)).to.throw(TypeError, 'true is not a string')
+                expect(() => logic.registerUser(name, username, true, email, city)).to.throw(TypeError, 'true is not a string')
             })
 
             it('should fail on array password', () => {
-                expect(() => logic.registerUser(name, username, ['true', 'false'], email)).to.throw(TypeError, 'true,false is not a string')
+                expect(() => logic.registerUser(name, username, ['true', 'false'], email, city)).to.throw(TypeError, 'true,false is not a string')
             })
 
             it('should fail on object password', () => {
-                expect(() => logic.registerUser(name, username, { o: 'bj' }, email)).to.throw(TypeError, '[object Object] is not a string')
+                expect(() => logic.registerUser(name, username, { o: 'bj' }, email, city)).to.throw(TypeError, '[object Object] is not a string')
             })
 
 
             it('should fail on undefined email', () => {
-                expect(() => logic.registerUser(name, username, password, undefined)).to.throw(TypeError, 'undefined is not a string')
+                expect(() => logic.registerUser(name, username, password, undefined, city)).to.throw(TypeError, 'undefined is not a string')
             })
 
             it('should fail on null email', () => {
-                expect(() => logic.registerUser(name, username, password, null)).to.throw(TypeError, 'null is not a string')
+                expect(() => logic.registerUser(name, username, password, null, city)).to.throw(TypeError, 'null is not a string')
             })
 
             it('should fail on blank email', () => {
-                expect(() => logic.registerUser(name, username, password, '           \n')).to.throw(ValueError, 'email is empty or blank')
+                expect(() => logic.registerUser(name, username, password, '           \n', city)).to.throw(ValueError, 'email is empty or blank')
             })
 
             it('should fail on number email', () => {
-                expect(() => logic.registerUser(name, username, password, 123)).to.throw(TypeError, '123 is not a string')
+                expect(() => logic.registerUser(name, username, password, 123, city)).to.throw(TypeError, '123 is not a string')
             })
 
             it('should fail on boolean email', () => {
-                expect(() => logic.registerUser(name, username, password, true)).to.throw(TypeError, 'true is not a string')
+                expect(() => logic.registerUser(name, username, password, true, city)).to.throw(TypeError, 'true is not a string')
             })
 
             it('should fail on array email', () => {
-                expect(() => logic.registerUser(name, username, password, ['true', 'false'])).to.throw(TypeError, 'true,false is not a string')
+                expect(() => logic.registerUser(name, username, password, ['true', 'false'], city)).to.throw(TypeError, 'true,false is not a string')
             })
 
             it('should fail on object email', () => {
-                expect(() => logic.registerUser(name, username, password, { o: 'bj' })).to.throw(TypeError, '[object Object] is not a string')
+                expect(() => logic.registerUser(name, username, password, { o: 'bj' }, city)).to.throw(TypeError, '[object Object] is not a string')
             })
 
         })
@@ -829,6 +842,7 @@ describe('logic', () => {
                 let { id, name, username, password, email, skype, available, age, gender, city } = user
 
                 newEmail = `${'newEmail'}-${Math.random()}`
+                newName = `newName-${Math.random()}`
                 newSkype = `${'newSkype'}-${Math.random()}`
                 newAge = Math.floor(Math.random() * 10)
                 newGender = `${'newGender'}-${Math.random()}`
@@ -844,7 +858,7 @@ describe('logic', () => {
                 newOffers = ['portuguese', "italian"]
                 newSearching = ['portuguese', "italian", 'chinese', 'spanish']
 
-                await logic.updateProfile(id, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity, newOffers, newSearching)
+                await logic.updateProfile(id.toString(), newName, newEmail, newSkype, newAge, newGender, newHeight, newWeight, newSmoker, newDescription, newReceives, newMoves, newCity, newOffers, newSearching)
 
                 const users = await User.findAll({ where: {}, logging: false })
 
@@ -852,11 +866,12 @@ describe('logic', () => {
 
                 const demands = await Searching.findAll({ where: { user_id: id }, logging: false })
 
+                expect(users.length).to.equal(1)
                 const _user = users[0]
 
                 expect(_user.dataValues.id).to.equal(id)
 
-                expect(_user.name).to.equal(name)
+                expect(_user.name).to.equal(newName)
                 expect(_user.email).to.equal(newEmail)
                 expect(_user.username).to.equal(username)
                 expect(_user.password).to.equal(password)
@@ -872,35 +887,15 @@ describe('logic', () => {
                 expect(_user.moves).to.equal(newMoves)
                 expect(_user.city).to.equal(newCity)
 
-
-
                 offers.forEach((offer, index) => {
                     expect(offer.user_id).to.be.equal(id)
                     expect(offer.lenguage).to.be.equal(newOffers[index])
                 })
 
-
                 demands.forEach((demand, index) => {
                     expect(demand.user_id).to.be.equal(id)
                     expect(demand.lenguage).to.be.equal(newSearching[index])
                 })
-
-
-
-
-
-                //  where: {where: Sequelize.and(
-                //             {technician_id: resultsFromAuthentication.technician_id},
-                //             {is_confirmed_by_user: 1},
-                //             Sequelize.or({
-                //                     service_start_time: {
-                //                         gte: curLocalDate
-                //                     }},
-                //             {service_running_status: 1} )
-                //             )
-                //         }
-
-
             })
 
             it('should update on correct id, username and email (other fields null)', async () => {
@@ -908,7 +903,8 @@ describe('logic', () => {
 
                 newEmail = `${'newEmail'}-${Math.random()}`
 
-                await logic.updateProfile(id, newEmail, null, null, null, null, null, null, null, null, null, null, newOffers, newSearching)
+                debugger
+                await logic.updateProfile(id.toString(), null, newEmail, null, null, null, null, null, null, null, null, null, null, newOffers, newSearching)
 
                 const users = await User.findAll({ logging: false })
 
@@ -952,7 +948,7 @@ describe('logic', () => {
 
                 newSkype = `${'newSkype'}-${Math.random()}`
 
-                await logic.updateProfile(id, null, newSkype, null, null, null, null, null, null, null, null, null, newOffers, newSearching)
+                await logic.updateProfile(id.toString(), null, null, newSkype, null, null, null, null, null, null, null, null, null, newOffers, newSearching)
 
                 const users = await User.findAll({ logging: false })
 
@@ -997,14 +993,14 @@ describe('logic', () => {
             it('should fail on undefined id', () => {
                 const { id, name, email, username, password } = user
 
-                expect(() => logic.updateProfile(undefined, username, email)).to.throw(TypeError, 'undefined is not a number')
+                expect(() => logic.updateProfile(undefined, name, email)).to.throw(TypeError, 'undefined is not a string')
             })
 
             // TODO other test cases
         })
 
-        !flag && describe('search profiles', () => {
-
+        flag && describe('search profiles', () => {
+            let user1, user2, user3
 
             beforeEach(async () => {
                 user1 = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
@@ -1021,15 +1017,14 @@ describe('logic', () => {
             })
 
             it('should succed on correct data: search by username', async () => {
-                const username = 'jd2'
+                const query = 'username=jd2'
 
-                const results = await logic.search(username)
-
+                const results = await logic.search(query, user1.id.toString())
                 const result = results[0]
 
                 expect(result).to.exist
 
-                const obj = { where: { username }, logging: false }
+                const obj = { where: { username: 'jd2' }, logging: false }
 
                 const users = await User.findAll(obj)
 
@@ -1050,15 +1045,16 @@ describe('logic', () => {
             it('should succed on correct data (when has lenguages): search by username', async () => {
                 await Offer.create({ user_id: user1.id, lenguage: 'spanish' }, { logging: false })
 
-                await Searching.create({ user_id: user1.id, lenguage: 'english' }, { logging: false })
+                await Offer.create({ user_id: user2.id, lenguage: 'english' }, { logging: false })
                 await Searching.create({ user_id: user2.id, lenguage: 'english' }, { logging: false })
                 await Searching.create({ user_id: user2.id, lenguage: 'spanish' }, { logging: false })
-                const offers = ['spanish', 'chinese']
+                const offers = ['english', 'hindi']
                 const searches = ['english', 'spanish']
+                const query = 'username=jd2&offer=english+hindi&searching=english+spanish'
                 const username = 'jd'
 
 
-                const results = await logic.search(username, offers, searches)
+                const results = await logic.search(query, user1.id.toString())
 
                 const result = results[0]
 
@@ -1085,9 +1081,7 @@ describe('logic', () => {
 
                 const users = await User.findAll(obj)
 
-
                 const user = users[0]
-
 
                 expect(result).not.to.be.instanceOf(User)
                 expect(result.username).to.be.equal(user.username)
@@ -1099,9 +1093,65 @@ describe('logic', () => {
 
                 expect(result.userOffers.length).to.be.equal(user.userOffers.length)
                 expect(JSON.stringify(result.userOffers)).to.be.equal(JSON.stringify(user.userOffers))
+
+                expect(result.userSearchings.length).to.be.equal(user.userSearchings.length)
+                expect(JSON.stringify(result.userSearchings)).to.be.equal(JSON.stringify(user.userSearchings))
             })
 
         })
+
+        flag && describe('delete account', () => {
+            let user, user2, text, message
+
+            beforeEach(async () => {
+                user = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
+
+                await user.save({ logging: false })
+
+                user2 = User.build({ name: 'John', username: 'jd2', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
+
+                await user2.save({ logging: false })
+
+                text = `text-${Math.random()}`
+
+                message = Message.build({
+                    sender_id: user.id, receiver_id: user2.id, text: text
+                })
+
+                await message.save({ logging: false })
+
+                await Conversation.create({ user1_id: user.id, user2_id: user2.id }, { logging: false })
+
+                await Offer.create({user_id:user.id, lenguage:'spanish'}, {logging:false})
+                await Searching.create({user_id:user.id, lenguage:'spanish'}, {logging:false})
+
+            })
+
+            it('should succed on correct data', async () => {
+                
+                await logic.deleteAccount(user.id.toString())
+
+                debugger
+
+                const _user= await User.findByPk(user.id.toString(), {logging:false})
+                expect(_user).to.not.exist
+
+                const offers=await Offer.findAll({where:{}, logging:false})
+                const searchings=await Searching.findAll({where:{}, logging:false})
+
+                const conversations=await Conversation.findAll({where:{}, logging:false})
+                const messages=await Message.findAll({where:{}, logging:false})
+
+                expect(offers.length).to.be.equal(0)
+                expect(searchings.length).to.be.equal(0)
+                expect(conversations.length).to.be.equal(0)
+                expect(messages.length).to.be.equal(0)
+            })
+        })
+
+    })
+
+    describe('conversations', () => {
 
         flag && describe('send message', () => {
             let name, username, password, email, text
@@ -1243,11 +1293,50 @@ describe('logic', () => {
 
                 expect(conversations.length).to.be.equal(1)
                 const conversation = conversations[0]
-                
+
                 expect(conversation.user1_id).to.be.equal(user.id)
                 expect(conversation.user2_id).be.equal(user2.id)
                 expect(conversation.user2_username).be.equal(user2.username)
+
+            })
+
+        })
+
+        flag && describe('check if exists Conversations with one user', () => {
+            let name, username, password, email, text, user, user2
+
+            beforeEach(async () => {
+
+                user = User.build({
+                    name: 'John', username: 'jd', password: '123', email: 'jd@gmail.com'
+                })
+
+                await user.save({ logging: false })
+
+                user2 = User.build({
+                    name: 'John', username: 'jd2', password: '123', email: 'jd@gmail.com'
+                })
+
+                await user2.save({ logging: false })
+
+                text = `text-${Math.random()}`
+
+                message = Message.build({
+                    sender_id: user.id, receiver_id: user2.id, text: text
+                })
+
+                await message.save({ logging: false })
+
+                await Conversation.create({ user1_id: user.id, user2_id: user2.id }, { logging: false })
+
+            })
+
+            it('should succeed on correct data', async () => {
+
+                const result = await logic.checkExistingConversation(user.id.toString(), user2.id.toString())
                 debugger
+
+                expect(result).to.be.equal(true)
             })
 
         })

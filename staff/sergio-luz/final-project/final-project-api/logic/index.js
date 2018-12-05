@@ -1,6 +1,7 @@
 const { Sequelize, models: { User, Offer, Searching, Blocked, Message, Conversation } } = require('final-data')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 const { env: { CLOUDINARY_CONFIG_NAME, CLOUDINARY_CONFIG_KEY, CLOUDINARY_CONFIG_API_SECRET } } = process
+"use strict"
 
 const cloudinary = require('cloudinary')
 cloudinary.config({
@@ -17,21 +18,22 @@ const logic = {
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
         if (typeof email !== 'string') throw TypeError(`${email} is not a string`)
         if (typeof city !== 'string') throw TypeError(`${city} is not a string`)
-        
-        
+
         if (!name.trim()) throw new ValueError('name is empty or blank')
         if (!username.trim()) throw new ValueError('username is empty or blank')
         if (!password.trim()) throw new ValueError('password is empty or blank')
         if (!email.trim()) throw new ValueError('email is empty or blank')
         if (!city.trim()) throw new ValueError('city is empty or blank')
-        
-        
+
+        if (email.match(/^(([^<>()\[\]\\.,;:\s@“]+(\.[^<>()\[\]\\.,;:\s@“]+)*)|(“.+“))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) === null) throw Error(`${email} is an invalid email`)
+
+
         return (async () => {
-            
+
             const _user = await User.find({ where: { username: username } })
-            
+
             if (_user) throw new AlreadyExistsError('This username already exists')
-            
+
             const user = User.build({
                 username: username,
                 name: name,
@@ -39,9 +41,9 @@ const logic = {
                 email: email,
                 city: city
             }, { logging: false })
-            
+
             await user.save()
-            
+
         })()
     },
 
@@ -54,10 +56,7 @@ const logic = {
         if (!password.trim()) throw new ValueError('password is empty or blank')
 
         return (async () => {
-            const users = await User.findAll({ where: { username: username }, logging: false })
-
-            const user = users[0]
-            
+            const user = await User.find({ where: { username: username }, logging: false })
 
             if (!user || user.password !== password) throw new AuthError('invalid username or password')
 
@@ -67,21 +66,19 @@ const logic = {
     },
 
     retrieveUser(_id) {
-        const ID = _id
-        let _user
 
         if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
         if (!_id.trim().length) throw new ValueError('id is empty or blank')
 
         return (async () => {
 
-            const user = await User.findById(ID)
+            const user = await User.findByPk(_id, { logging: false })
 
             const { id, name, username, email } = user
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            _user = ({ id, name, username, email })
+            const _user = ({ id, name, username, email })
 
             return _user
         })()
@@ -106,16 +103,15 @@ const logic = {
 
         return (async () => {
 
-            const user = await User.findById(id, { logging: false })
+            const user = await User.findByPk(id, { logging: false })
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
-
             if (user.password !== password) throw new AuthError('invalid password')
 
             if (username) {
-                const _user = await User.findAll({ where: { username: username }, logging: false })
+                const _user = await User.find({ where: { username: username }, logging: false })
 
-                if (_user[0] && _user[0].username !== user.username) throw new AlreadyExistsError(`username ${username} already exists`)
+                if (_user && _user.username !== user.username) throw new AlreadyExistsError(`username ${username} already exists`)
 
                 name != null && (user.name = name)
                 email != null && (user.email = email)
@@ -135,28 +131,29 @@ const logic = {
     },
 
     retrieveProfile(_id) {
-        const ID = _id
+
         let _user
 
         if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
         if (!_id.trim().length) throw new ValueError('id is empty or blank')
 
+
         return (async () => {
 
-            const user = await User.findByPk(ID, { logging: false })
+            const user = await User.findByPk(_id, { logging: false })
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
             const { id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, profileImage } = user
 
-            const offers = await Offer.findAll({ where: { user_id: ID }, logging: false })
+            const offers = await Offer.findAll({ where: { user_id: _id }, logging: false })
             let offer = []
 
             offers.forEach(off => {
                 offer.push(off.lenguage)
             })
 
-            const searchings = await Searching.findAll({ where: { user_id: ID }, logging: false })
+            const searchings = await Searching.findAll({ where: { user_id: _id }, logging: false })
             let searching = []
 
             searchings.forEach(search => {
@@ -170,8 +167,6 @@ const logic = {
     },
 
     updateProfile(id, name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
-
-        // debugger
 
         if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
         if (id != null && !id.trim().length) throw new ValueError('id is empty or blank')
@@ -231,15 +226,10 @@ const logic = {
                     for (off of updating) {
 
                         const _search = await model.findAll({ where: { lenguage: off, user_id: id }, subQuery: false, attributes: ['id', 'lenguage'], logging: false })
-
                         if (_search[0]) {
-
                             await _search[0].destroy({ force: true, logging: false })
                         } else {
-
-                            
                             await model.create({ user_id: id, lenguage: off }, { logging: false })
-
                         }
                     }
                 }
@@ -252,6 +242,12 @@ const logic = {
 
     search(query, sub) {
 
+        if (typeof query !== 'string' || query == null || query == undefined) throw TypeError(`${query} is not a string`)
+        if (query != null && !query.trim().length) throw new ValueError('query is empty or blank')
+
+        if (typeof sub !== 'string' || sub == null || sub == undefined) throw TypeError(`${sub} is not a string`)
+        if (sub != null && !sub.trim().length) throw new ValueError('sub is empty or blank')
+        
         let objects = []
         const res = query.split('&')
 
@@ -281,7 +277,6 @@ const logic = {
             }
         })
 
-        
 
         let obj = {
             where: {
@@ -314,42 +309,38 @@ const logic = {
             , logging: false
         }
 
-        
 
         return (async () => {
-
+            
             let query
             if (offer == null) {
                 query = obj.include.filter(item => item.model !== Offer)
                 obj.include = query
             }
-
+            
             if (searching == null) {
                 query = obj.include.filter(item => item.model !== Searching)
                 obj.include = query
             }
-
+            
             if (username === '') delete obj.where.username
             if (gender == null) delete obj.where.gender
             if (smoker == null) delete obj.where.smoker
             if (minAge === 0 && maxAge === 100) delete obj.where.age
             if (city == null) delete obj.where.city
-
             
-
             const users = await User.findAll(obj)
-
             
             let user_list = []
-
+            
             for (user of users) {
                 let { id, username, age, gender, description, userOffers, userSearchings, city, profileImage } = user
-
+                
                 if (userOffers == undefined) userOffers = []
                 if (userSearchings == undefined) userSearchings = []
-
+                
                 const _user = { id, username, age, gender, description, userOffers, userSearchings, city, profileImage }
-
+                
                 user_list.push(_user)
             }
             return user_list
@@ -388,35 +379,34 @@ const logic = {
 
         return (async () => {
             // debugger
-            let user = await User.find({ where: { id: id } })
+            let user = await User.findOne({ where: { id: id }, logging:false })
 
 
             if (!user) throw new NotFoundError(`User does not exist`)
 
-            
-            let conversations= await Conversation.findAll({where:{
-                [Sequelize.Op.or]:[{user1_id:id},{user2_id:id}]
-            }})
-            let messages=await Message.findAll({where:{
-                [Sequelize.Op.or]:[{sender_id:id},{receiver_id:id}]
-            }})
 
-            for(let i=0; i<conversations.length; i++){
-                await conversations[i].destroy()
+            let conversations = await Conversation.findAll({
+                where: {
+                    [Sequelize.Op.or]: [{ user1_id: id }, { user2_id: id }]
+                },
+                logging:false
+            })
+            let messages = await Message.findAll({
+                where: {
+                    [Sequelize.Op.or]: [{ sender_id: id }, { receiver_id: id }]
+                },
+                logging:false
+            })
+
+            for (let i = 0; i < conversations.length; i++) {
+                await conversations[i].destroy({where:{},logging:false})
             }
 
-            for(let i=0; i<messages.length; i++){
-                await messages[i].destroy()
+            for (let i = 0; i < messages.length; i++) {
+                await messages[i].destroy({where:{},logging:false})
             }
-            
-            const conversations2= await Conversation.findAll({where:{
-                [Sequelize.Op.or]:[{user1_id:id},{user2_id:id}]
-            }})
-            const messages2=await Message.findAll({where:{
-                [Sequelize.Op.or]:[{sender_id:id},{receiver_id:id}]
-            }})
-            
-            await user.destroy()
+
+            await user.destroy({where:{},logging:false})
 
         })()
     },
@@ -522,7 +512,7 @@ const logic = {
                 list.push(_message)
             }
 
-            
+
             return list
         })()
     },
@@ -593,8 +583,8 @@ const logic = {
                 logging: false
             })
 
-            let response= false
-            if(conversations.length>0) response=true
+            let response = false
+            if (conversations.length > 0) response = true
             return response
         })()
     }
