@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import logic from '../../logic'
 import { throws } from 'assert';
 import CollapsibleProfile from '../CollapsibleProfile/CollapsibleProfile';
+import { Link } from 'react-router-dom'
+
 
 class Header extends Component {
 
@@ -76,7 +78,8 @@ class Header extends Component {
                 <div className="container">
                     <ul className="ul__Nav">
                         <li className="li__Nav"><a className="button__Nav" href="#">Search</a></li>
-                        <li className="li__Nav"><a className="button__Nav" href="#"></a></li>
+                        
+                        <li className="li__Nav">{my_info && <Link to={`/conversations/${my_info.id}`}>Chats</Link>}</li>
                         <li className="li__Nav"><a className="button__Nav" href="#"></a></li>
                     </ul>
                 </div>

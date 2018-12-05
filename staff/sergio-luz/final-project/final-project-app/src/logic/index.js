@@ -1,4 +1,4 @@
-// const { AlreadyExistsError, AuthError, NotFoundError, Error } = require('../errors')
+const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 global.sessionStorage = require('sessionstorage')
 
 
@@ -222,7 +222,7 @@ const logic = {
         return fetch(`http://localhost:5000/api/users/${this._userId}/search/${query}`, {
             method: 'GET',
             headers: {
-                "Content-Type": "application/json; charset=utf-8",
+                // "Content-Type": "application/json; charset=utf-8",
                 'Authorization': `Bearer ${this._token}`
             }
         })
@@ -256,7 +256,7 @@ const logic = {
             .then(res => res.data)
     },
 
-    deleteAccount(){
+    deleteAccount() {
         return fetch(`http://localhost:5000/api/users/${this._userId}`, {
             method: 'DELETE',
             headers: {
@@ -270,9 +270,88 @@ const logic = {
 
                 return res.data
             })
+    },
+
+    listConversations() {
+        return fetch(`http://localhost:5000/api/users/${this._userId}/conversations`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${this._token}`
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+
+                if (res.error) throw Error(res.error)
+
+                return res.data
+            })
+            .catch(err => {
+                return err.message
+            })
+    },
+
+    listChats(user2_id) {
+
+        return fetch(`http://localhost:5000/api/users/${this._userId}/messages/${user2_id}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${this._token}`
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+
+                if (res.error) throw Error(res.error)
+
+                return res.data
+            })
+            .catch(err => {
+                return err.message
+            })
+    },
+
+    sendMessage(user2_id, text) {
+
+        return fetch(`http://localhost:5000/api/users/${this._userId}/messages/${user2_id}`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                'Authorization': `Bearer ${this._token}`,
+            },
+            body: JSON.stringify({ text })
+        })
+            .then(res => res.json())
+            .then(res => {
+
+                if (res.error) throw Error(res.error)
+
+                return res.data
+            })
+            .catch(err => {
+                return err.message
+            })
+    },
+
+    checkExisitingConversation(user2_id){
+
+        return fetch(`http://localhost:5000/api/users/${user2_id}/profile/chat/${this._userId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${this._token}`
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+
+                if (res.error) throw Error(res.error)
+
+                return res.data
+            })
+            .catch(err => {
+                return err.message
+            })
     }
-
-
 }
 
 

@@ -222,10 +222,12 @@ router.delete('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
     }, res)
 })
 
-router.post('/users/:id/messages/:receiver_id', [bearerTokenParser, jwtVerifier], (req, res) => {
+router.post('/users/:id/messages/:receiver_id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
 
     routeHandler(() => {
+        debugger
         const { params: { id, receiver_id }, sub, body: { text } } = req
+        debugger
 
         if (id !== sub.toString()) throw Error('token sub does not match user id')
 
@@ -241,15 +243,17 @@ router.post('/users/:id/messages/:receiver_id', [bearerTokenParser, jwtVerifier]
 router.get('/users/:id/messages/:receiver_id', [bearerTokenParser, jwtVerifier], (req, res) => {
 
     routeHandler(() => {
+        
         const { params: { id, receiver_id }, sub } = req
 
         if (id !== sub.toString()) throw Error('token sub does not match user id')
 
         return logic.listChats(id, receiver_id)
-            .then(list =>
+            .then(list =>{
+                debugger
                 res.json({
-                    message: list
-                })
+                    data: list
+                })}
             )
     }, res)
 })
@@ -264,7 +268,23 @@ router.get('/users/:id/conversations', [bearerTokenParser, jwtVerifier], (req, r
         return logic.listConversations(id)
             .then(list =>
                 res.json({
-                    message: list
+                    data: list
+                })
+            )
+    }, res)
+})
+
+router.get('/users/:id/profile/chat/:myId', [bearerTokenParser, jwtVerifier], (req, res) => {
+
+    routeHandler(() => {
+        const { params: { id , myId}, sub } = req
+
+        if (myId !== sub.toString()) throw Error('token sub does not match user id')
+
+        return logic.checkExistingConversation(myId, id)
+            .then(info =>
+                res.json({
+                    data: info
                 })
             )
     }, res)

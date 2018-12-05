@@ -32,9 +32,6 @@ sequelize
         return app.listen(PORT, () => console.log(`${package.name} ${package.version} up and running on port ${PORT}`))
 
     })
-
-
-
     // .then(()=>{
 
     //     return sequelize.query(`DROP DATABASE ${DATABASE_NAME}`, { logging: false })
@@ -44,18 +41,18 @@ sequelize
 
     //             return sequelize.query(`CREATE DATABASE ${DATABASE_NAME}`, { logging: false })
     //         })
-    //         .then(res => { })
+    //         .then(res => { console.log('Database created')})
     // })
     .catch(err => {
         console.error(`Unable to connect to the database: ${DATABASE_NAME}`);
     })
     // .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 0"))
-    .then(() => User.sync({ force: false, logging: false }))
-    .then(() => Searching.sync({ force: false, logging: false }))
-    .then(() => Offer.sync({ force: false, logging: false }))
-    .then(() => Blocked.sync({ force: false, logging: false }))
-    .then(() => Message.sync({ force: false, logging: false }))
-    .then(() => Conversation.sync({ force: false, logging: false }))
+    // .then(() => User.sync({ force: false, logging: false }))
+    // .then(() => Searching.sync({ force: false, logging: false }))
+    // .then(() => Offer.sync({ force: false, logging: false }))
+    // .then(() => Blocked.sync({ force: false, logging: false }))
+    // .then(() => Message.sync({ force: false, logging: false }))
+    // .then(() => Conversation.sync({ force: false, logging: false }))
     // .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 1"))
     // .catch(err => {
     //     console.error('Unable to connect to the database:', err);

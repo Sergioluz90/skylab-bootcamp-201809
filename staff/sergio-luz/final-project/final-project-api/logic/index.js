@@ -449,7 +449,6 @@ const logic = {
 
         return (async () => {
 
-
             let messages = await Message.findAll({
                 where: {
                     [Sequelize.Op.or]: [{
@@ -467,12 +466,31 @@ const logic = {
 
             let list = []
 
+            function returnTime(date) {
+                function zeroFill(i) {
+                    return (i < 10 ? '0' : '') + i
+                }
+                let time = ''
+                time += zeroFill(date.getFullYear()) + '-'
+                time += zeroFill(date.getMonth() + 1) + '-'
+                time += zeroFill(date.getDate()) + ' '
+                time += zeroFill(date.getHours()) + ':'
+                time += zeroFill(date.getMinutes()) + '\n'
+
+                return time
+            }
+
+
             for (message of messages) {
 
-                message.read = true
-                message.save({ logging: false })
+                if (message.read === false && message.sender_id.toString() !== user1_id) {
+                    message.read = true
+                    message.save({ logging: false })
+                }
 
                 let { id, sender_id, receiver_id, text, read, createdAt } = message
+
+                createdAt = returnTime(createdAt)
 
                 const _message = { id, sender_id, receiver_id, text, read, createdAt }
 
@@ -484,29 +502,26 @@ const logic = {
         })()
     },
 
-    listConversations(user1_id) {
+    listConversations(user1__id) {
 
-
-        if (typeof user1_id !== 'string' || user1_id == null || user1_id == undefined) throw TypeError(`${user1_id} is not a string`)
-        if (user1_id != null && !user1_id.trim().length) throw new ValueError('user1_id is empty or blank')
+        if (typeof user1__id !== 'string' || user1__id == null || user1__id == undefined) throw TypeError(`${user1__id} is not a string`)
+        if (user1__id != null && !user1__id.trim().length) throw new ValueError('user1_id is empty or blank')
 
         return (async () => {
 
             const conversations = await Conversation.findAll({
                 where: {
                     [Sequelize.Op.or]: [{
-                        user1_id: user1_id,
-                        // user2_id: user2_id,
+                        user1_id: user1__id,
                     },
                     {
-                        user2_id: user1_id,
-                        // user1_id: user2_id,
+                        user2_id: user1__id,
                     }],
                 },
                 attributes: ['user1_id', 'user2_id'],
                 include: [{
                     model: User,
-                    attributes: ['username']
+                    attributes: ['id', 'username', 'profileImage']
                 }],
                 logging: false
             })
@@ -515,15 +530,47 @@ const logic = {
 
             for (conversation of conversations) {
                 let { user1_id, user2_id } = conversation
-                let { username } = conversation.user
+                let { username, profileImage, id } = conversation.user
 
-                const convers = { user1_id, user2_id, user2_username: username }
-
+                if (id.toString() === user1__id) {
+                    const user2 = await User.findOne({ where: { id: user1_id }, attributes: ['username', 'profileImage'], logging: false })
+                    username = user2.username
+                    profileImage = user2.profileImage
+                }
+                const convers = { user1_id, user2_id, user2_username: username, profileImage }
                 list.push(convers)
             }
-
-            debugger
             return list
+        })()
+    },
+
+    checkExistingConversation(user1__id, user2__id) {
+
+        if (typeof user1__id !== 'string' || user1__id == null || user1__id == undefined) throw TypeError(`${user1__id} is not a string`)
+        if (user1__id != null && !user1__id.trim().length) throw new ValueError('user1_id is empty or blank')
+
+        if (typeof user2__id !== 'string' || user2__id == null || user2__id == undefined) throw TypeError(`${user2__id} is not a string`)
+        if (user2__id != null && !user2__id.trim().length) throw new ValueError('user2__id is empty or blank')
+
+        return (async () => {
+
+            const conversations = await Conversation.findAll({
+                where: {
+                    [Sequelize.Op.or]: [{
+                        user1_id: user1__id,
+                        user2_id: user2__id,
+                    },
+                    {
+                        user2_id: user1__id,
+                        user1_id: user2__id,
+                    }],
+                },
+                logging: false
+            })
+
+            let response= false
+            if(conversations.length>0) response=true
+            return response
         })()
     }
 }

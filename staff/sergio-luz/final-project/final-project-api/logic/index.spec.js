@@ -9,7 +9,7 @@ const logic = require('../logic')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 
 // const { env: { PORT, TEST_DATABASE_URL, TEST_DATABASE_NAME } } = process
-const TEST_DATABASE_URL = 'mysql://root:26081990@localhost:3306'
+const TEST_DATABASE_URL = 'mysql://root:26081990@localhost:3306/test'
 const TEST_DATABASE_NAME = 'test'
 const PORT = 5000
 const { argv: [, , port = PORT || 3306] } = process
@@ -33,11 +33,11 @@ describe('logic', () => {
                         return sequelize.query(`CREATE DATABASE ${TEST_DATABASE_NAME}`, { logging: false })
                     })
                     .then(async () => {
-                        await User.sync({ force: !true, logging: false })
-                        await Offer.sync({ force: !true, logging: false })
-                        await Searching.sync({ force: !true, logging: false })
-                        await Message.sync({ force: !true, logging: false })
-                        await Conversation.sync({ force: !true, logging: false })
+                        // await User.sync({ force: !true, logging: false })
+                        // await Offer.sync({ force: !true, logging: false })
+                        // await Searching.sync({ force: !true, logging: false })
+                        // await Message.sync({ force: !true, logging: false })
+                        // await Conversation.sync({ force: !true, logging: false })
                     })
             })
             .catch(err => {

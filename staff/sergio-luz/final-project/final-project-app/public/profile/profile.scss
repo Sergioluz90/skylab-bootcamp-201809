@@ -188,11 +188,20 @@ $break-desktop: 1024px;
 .bttn{
     width: 100px;
     height: 30px;
+    cursor: pointer;
 }
 
 .bttn--block-profile{
     margin-top: 5vh;
     background: #b70000;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+}
+
+.bttn--chat-profile{
+    margin-top: 5vh;
+    background: #64b2e6;
     border: none;
     border-radius: 5px;
     color: #ffffff;

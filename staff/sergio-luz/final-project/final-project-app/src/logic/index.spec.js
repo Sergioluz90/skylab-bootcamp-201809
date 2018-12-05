@@ -3,9 +3,9 @@ require('isomorphic-fetch')
 global.sessionStorage = require('sessionstorage')
 const logic = require('.')
 // import {Sequelize ,models:{ User }} from 'final-data'
-const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
+const { ValueError } = require('../errors')
 const { expect } = require('chai')
-const { Sequelize, models: { User, Offer, Searching } } = require('final-data')
+const { Sequelize, models: { User, Offer, Searching , Conversation, Message} } = require('final-data')
 const { before, after } = require('mocha')
 
 // import logic from './logic'
@@ -992,6 +992,44 @@ describe('logic', () => {
             })
 
             // TODO other test cases
+        })
+
+        flag && describe('list conversations', () => {
+            let name, username, password, email, text, user, user2
+
+            beforeEach(async () => {
+
+                user = User.build({
+                    name: 'John', username: 'jd', password: '123', email: 'jd@gmail.com'
+                })
+
+                await user.save({ logging: false })
+
+                user2 = User.build({
+                    name: 'John', username: 'jd2', password: '123', email: 'jd@gmail.com'
+                })
+
+                await user2.save({ logging: false })
+
+                text = `text-${Math.random()}`
+
+                await Conversation.create({ user1_id: user.id, user2_id: user2.id }, { logging: false })
+
+            })
+
+            it('should succeed on correct data', async () => {
+
+                const conversations = await logic.listConversations(user.id.toString(), user2.id.toString())
+
+                expect(conversations.length).to.be.equal(1)
+                const conversation = conversations[0]
+                
+                expect(conversation.user1_id).to.be.equal(user.id)
+                expect(conversation.user2_id).be.equal(user2.id)
+                expect(conversation.user2_username).be.equal(user2.username)
+                debugger
+            })
+
         })
 
     })

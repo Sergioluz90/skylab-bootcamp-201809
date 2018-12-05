@@ -1,10 +1,16 @@
 import React, { Component } from 'react'
+import Message from '../Message/Message'
+import logic from '../../logic'
+import { Link } from 'react-router-dom'
+
+
 
 class Profile extends Component {
 
     state = {
         user_info: null,
-        show_big_image: false
+        show_big_image: false,
+        show_send_message: false
     }
 
     componentDidMount() {
@@ -14,11 +20,11 @@ class Profile extends Component {
     }
 
     componentWillReceiveProps(props) {
-// debugger
+        // 
         if (this.user_info != props.user_info)
             this.setState({ user_info: props.user_info }, () => {
                 console.log(this.state.user_info.toString(), this.props.id)
-                // debugger
+                // 
                 if (this.state.user_info.id.toString() !== this.props.id) this.props.retrieveUserInfo(this.props.id)
             })
     }
@@ -28,9 +34,24 @@ class Profile extends Component {
         this.setState({ show_big_image: flag })
     }
 
+    handleChatClick = this.handleChatClick.bind(this)
+    handleChatClick(event) {
+        event.preventDefault()
+        
+        logic.checkExisitingConversation(this.props.user_info.id)
+            .then(res => {
+
+                if (!res)
+                    this.setState({ show_send_message: true })
+                else
+                    this.props.history.push(`/conversations/${this.props.my_info.id}/${this.props.user_info.id}`)
+            })
+
+    }
+
+
     render() {
-        console.log('render profile')
-        const { user_info, show_big_image } = this.state
+        const { user_info, show_big_image, show_send_message } = this.state
 
         if (this.props.user_info) {
             return <main className="initial__profile">
@@ -124,7 +145,12 @@ class Profile extends Component {
 
                         </div>
                     </div>
-                    <button className='bttn bttn--block-profile'>Block</button>
+
+                    {(this.props.id!==this.props.my_info.id.toString()) && <button
+                        className='bttn bttn--chat-profile'
+                        onClick={this.handleChatClick}
+                    >Chat</button>}
+
                 </section>}
 
 
@@ -137,6 +163,12 @@ class Profile extends Component {
                     </div>
                 </div>}
 
+                {show_send_message && <Message
+                    id={user_info.id}
+                    username={user_info.username}
+                    history={this.props.history}
+                    my_info={this.props.my_info}
+                />}
 
 
 

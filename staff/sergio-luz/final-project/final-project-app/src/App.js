@@ -9,6 +9,7 @@ import Home from './components/Home/Home'
 import Header from './components/Header/Header'
 import Profile from './components/Profile/Profile'
 import EditProfile from './components/EditProfile/EditProfile'
+import Conversations from './components/Conversations/Conversatons'
 
 class App extends Component {
 
@@ -85,39 +86,77 @@ class App extends Component {
 
     return <div>
 
-      {/* <Route exact path="/" render={() => !logic.loggedIn && (<section>
-        <button onClick={this.handleRegisterClick}>Register</button> or <button onClick={this.handleLoginClick}>Login</button></section>)} /> */}
-
       {logic.loggedIn && <Header history={this.props.history}
         my_info={my_info}
         retrieveMyInfo={this.retrieveMyInfo}
         retrieveUserInfo={this.retrieveUserInfo}
       />}
 
-      <Route path="/register" render={() => !logic.loggedIn ? <Register history={this.props.history} RegisterHandler={this.RegisterHandler} /> : <Redirect to="/home" />} />
+      <Route path="/register"
+        render={() => !logic.loggedIn
+          ? <Register history={this.props.history}
+            RegisterHandler={this.RegisterHandler} />
+          : <Redirect to="/home" />} />
 
-      <Route exact path="/" render={() => !logic.loggedIn ? <Login history={this.props.history} LoginHandler={this.LoginHandler} /> : <Redirect to="/home" />} />
+      <Route exact path="/"
+        render={() => !logic.loggedIn
+          ? <Login history={this.props.history}
+            LoginHandler={this.LoginHandler} />
+          : <Redirect to="/home" />} />
 
-      {error && <Error message={error} handleAcceptError={this.handleAcceptError} />}
+      {error && <Error message={error}
+        handleAcceptError={this.handleAcceptError}
+      />}
+
+
       <Switch>
+        <Route exact path="/home"
+          render={() => logic.loggedIn ? <Home
+            history={this.props.history}
+            isLoggedIn={this.state.login}
+          /> : <Redirect to="/" />} />
 
-        <Route exact path="/home" render={() => logic.loggedIn ? <Home
-          history={this.props.history}
-          isLoggedIn={this.state.login}
-        /> : <Redirect to="/" />} />
-
-        <Route path="/home/:query" render={(props) => logic.loggedIn ? <Home query={props.match.params.query} history={this.props.history} isLoggedIn={this.state.login} /> : <Redirect to="/" />} />
-
+        <Route path="/home/:query"
+          render={(props) => logic.loggedIn
+            ? <Home query={props.match.params.query}
+              history={this.props.history}
+              isLoggedIn={this.state.login} />
+            : <Redirect to="/" />} />
       </Switch>
-      <Route exact path="/profile/:id" render={(props) => logic.loggedIn ? <Profile id={props.match.params.id} retrieveUserInfo={this.retrieveUserInfo} user_info={this.state.user_info} /> : <Redirect to="/" />} />
-
-      <Route exact path="/profile/:id/edit" render={(props) => logic.loggedIn ? <EditProfile history={this.props.history} id={props.match.params.id} retrieveUserInfo={this.retrieveUserInfo} user_info={this.state.user_info} /> : <Redirect to="/" />} />
 
 
-      {/* {userId && <section><button onClick={this.handleLogoutClick}>Logout</button></section>} */}
+      <Switch>
+        <Route exact path="/conversations/:id"
+          render={(props) => logic.loggedIn
+            ? <Conversations id={props.match.params.id}
+              history={this.props.history} />
+            : <Redirect to="/" />} />
 
-      {/* TODO show Home on successful login */}
-      {/* {userId && <Home texts={this.state.texts} handleDelete={this.handleDelete} handleEditPost={this.handleEditPost} handleSubmit={this.handleSubmit} userId={userId} />} } */}
+        <Route exact path="/conversations/:id/:receiver_id"
+          render={(props) => logic.loggedIn
+            ? <Conversations id={props.match.params.id}
+              receiver_id={props.match.params.receiver_id}
+              history={this.props.history} />
+            : <Redirect to="/" />} />
+      </Switch>
+
+      <Route exact path="/profile/:id"
+        render={(props) => logic.loggedIn
+          ? <Profile history={this.props.history}
+            my_info={this.state.my_info}
+            id={props.match.params.id}
+            retrieveUserInfo={this.retrieveUserInfo}
+            user_info={this.state.user_info} />
+          : <Redirect to="/" />} />
+
+      <Route exact path="/profile/:id/edit"
+        render={(props) => logic.loggedIn
+          ? <EditProfile history={this.props.history}
+            id={props.match.params.id}
+            retrieveUserInfo={this.retrieveUserInfo}
+            user_info={this.state.user_info} />
+          : <Redirect to="/" />} />
+
     </div>
   }
 }
