@@ -183,11 +183,18 @@ class Home extends Component {
     _query = _query.match(/[/](.*)/)[1]
     if (_query === '') _query = 'all'
 
-    logic.search(_query)
-      .then((res) => {
-        this.setState({ users: res })
-      })
-      .catch(err => { })
+    try {
+      logic.search(_query)
+        .then((res) => {
+          
+          this.setState({ users: res })
+        })
+        .catch(err => {
+          this.props.handleSetError(err.message)
+        })
+    } catch (err) {
+      this.props.handleSetError(err.message)
+    }
   }
 
   handleRenderFilterType = (type, filters) => {
@@ -268,8 +275,6 @@ class Home extends Component {
 
     const { users, offer_checkboxes, searching_checkboxes, search_options, search_show_options, selected_gender, min_age, max_age, smoker } = this.state
     const { listAges, languages, listGender, listSmoker } = this.state.default_info
-
-    console.log('render')
 
     return <main className='home__main'>
       <div className='spacer--20'></div>
@@ -373,7 +378,7 @@ class Home extends Component {
                   onChange={this.handleCityChange}
                 />}
 
-                <div className='spacer--20'></div>
+              <div className='spacer--20'></div>
 
             </div>}
           </div>
@@ -388,7 +393,7 @@ class Home extends Component {
 
           <div className='wrapper__images'>
 
-            {users && users.map((elem, index) => {
+            {users && users.length && users.map((elem, index) => {
               return <div key={index} className='search-panel__profile'>
                 <UserCard elem={elem} ></UserCard>
               </div>

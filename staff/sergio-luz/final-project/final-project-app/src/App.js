@@ -43,42 +43,64 @@ class App extends Component {
 
   LoginHandler = (username, password) => {
 
-    logic.loginUser(username, password)
-      .then(() => {
-        this.setState({ error: null, login: true })
-        this.handleHomeClick()
-      })
-      .catch(err => {
-        this.setState({ error: err.message })
-      })
+    try {
+      logic.loginUser(username, password)
+        .then(() => {
+          this.setState({ error: null, login: true })
+          this.handleHomeClick()
+        })
+        .catch(err => {
+          this.setState({ error: err.message })
+        })
+    } catch (err) {
+      this.setState({ error: err.message })
+    }
   }
 
   retrieveUserInfo = (id) => {
 
     if (!id) id = logic.myId
 
-    logic.retrieveProfile(id)
-      .then(user => {
+    try {
+      logic.retrieveProfile(id)
+        .then(user => {
 
-        this.setState({ user_info: user }, () => {
+          this.setState({ user_info: user }, () => {
+          })
         })
-      })
+        .catch(err => {
+          this.setState({ error: err.message })
+        })
+    } catch (err) {
+      this.setState({ error: err.message })
+    }
   }
 
   retrieveMyInfo = (id) => {
     if (!id) id = logic.myId
 
-    logic.retrieveProfile(id)
-      .then(user => {
+    try {
+      logic.retrieveProfile(id)
+        .then(user => {
 
-        this.setState({ my_info: user }, () => {
+          this.setState({ my_info: user }, () => {
+          })
         })
-      })
+        .catch(err => {
+          this.setState({ error: err.message })
+        })
+    } catch (err) {
+      this.setState({ error: err.message })
+    }
   }
 
 
   handleAcceptError = () => {
     this.setState({ error: null })
+  }
+
+  handleSetError = (error) => {
+    this.setState({ error })
   }
 
   render() {
@@ -114,6 +136,7 @@ class App extends Component {
       <Switch>
         <Route exact path="/home"
           render={() => logic.loggedIn ? <Home
+            handleSetError={this.handleSetError}
             history={this.props.history}
             isLoggedIn={this.state.login}
           /> : <Redirect to="/" />} />
@@ -121,6 +144,7 @@ class App extends Component {
         <Route path="/home/:query"
           render={(props) => logic.loggedIn
             ? <Home query={props.match.params.query}
+              handleSetError={this.handleSetError}
               history={this.props.history}
               isLoggedIn={this.state.login} />
             : <Redirect to="/" />} />
@@ -131,12 +155,14 @@ class App extends Component {
         <Route exact path="/conversations/:id"
           render={(props) => logic.loggedIn
             ? <Conversations id={props.match.params.id}
+              handleSetError={this.handleSetError}
               history={this.props.history} />
             : <Redirect to="/" />} />
 
         <Route exact path="/conversations/:id/:receiver_id"
           render={(props) => logic.loggedIn
             ? <Conversations id={props.match.params.id}
+              handleSetError={this.handleSetError}
               receiver_id={props.match.params.receiver_id}
               history={this.props.history} />
             : <Redirect to="/" />} />
@@ -145,6 +171,7 @@ class App extends Component {
       <Route exact path="/profile/:id"
         render={(props) => logic.loggedIn
           ? <Profile history={this.props.history}
+            handleSetError={this.handleSetError}
             my_info={this.state.my_info}
             id={props.match.params.id}
             retrieveUserInfo={this.retrieveUserInfo}
@@ -154,6 +181,7 @@ class App extends Component {
       <Route exact path="/profile/:id/edit"
         render={(props) => logic.loggedIn
           ? <EditProfile history={this.props.history}
+            handleSetError={this.handleSetError}
             id={props.match.params.id}
             retrieveUserInfo={this.retrieveUserInfo}
             user_info={this.state.user_info} />

@@ -8,14 +8,31 @@ const logic = {
     _userId: sessionStorage.getItem('userId') || null,
     _token: sessionStorage.getItem('token') || null,
 
+    /**
+     * Returns true if user is logged in
+     * @returns {boolean}
+     */
     get loggedIn() {
         return !!sessionStorage.getItem('userId')
     },
 
+    /**
+     * Returns the id of the user if is logged in
+     * @returns {string}
+     */
     get myId() {
         return sessionStorage.getItem('userId')
     },
 
+    /**
+     * Register a user
+     * @param {string} name 
+     * @param {string} username 
+     * @param {string} password 
+     * @param {string} email 
+     * @param {string} city 
+     * @returns {string} API message
+     */
     registerUser(name, username, email, city, password) {
 
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
@@ -50,6 +67,13 @@ const logic = {
 
     },
 
+    /**
+     * Checks if user exists and returns its id
+     * @param {string} username 
+     * @param {string} password 
+     * @returns {string} id of the user
+     * @returns {string} token of the session
+     */
     loginUser(username, password) {
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
@@ -80,6 +104,9 @@ const logic = {
             })
     },
 
+    /**
+     * Removes all the information of sessionStorage
+     */
     logout() {
         this._user = ''
         this._userId = ''
@@ -89,6 +116,10 @@ const logic = {
         sessionStorage.removeItem('token')
     },
 
+    /**
+     * Find a user and return its id, name, username and email
+     * @returns {object} object with all the information
+     */
     retrieveUser() {
 
         return fetch(`http://localhost:5000/api/users/${this._userId}`, {
@@ -106,6 +137,17 @@ const logic = {
             })
     },
 
+    /**
+     * Find a user by id and overwrite its name, username, emai and password. 
+     * It will only overwrite params that are not null
+     * @param {string} id 
+     * @param {string} name (optional)
+     * @param {string} username (optional)
+     * @param {string} email (optional)
+     * @param {string} newPassword (optional)
+     * @param {string} password 
+     * @returns {string} Api message
+     */
     updateUser(id, name, username, email, newPassword, password) {
 
         if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
@@ -140,6 +182,11 @@ const logic = {
             })
     },
 
+    /**
+     * It find a user by id and returns its id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching and profileImage
+     * @param {string} _id 
+     * @returns {object} object with all the information of the user
+     */
     retrieveProfile(_id) {
 
         if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
@@ -160,6 +207,26 @@ const logic = {
             })
     },
 
+    /**
+     * It find a user by id and overwrite name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer and searching params.
+     * It will overwrite params that are not null
+     * @param {string} id 
+     * @param {string} name (optional)
+     * @param {string} email (optional)
+     * @param {string} skype (optional)
+     * @param {number} age (optional)
+     * @param {string} gender (optional)
+     * @param {number} height (optional)
+     * @param {number} weight (optional)
+     * @param {boolean} smoker (optional)
+     * @param {string} description (optional)
+     * @param {boolean} receives (optional)
+     * @param {boolean} moves (optional)
+     * @param {string} city (optional)
+     * @param {Array} offer (optional)
+     * @param {Array} searching (optional)
+     * @returns {string} API message
+     */
     updateProfile(id, name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
 
         if (age != null && age != 'delete') age = Number(age)
@@ -217,6 +284,13 @@ const logic = {
 
     },
 
+    /**
+     * It search users by query received
+     * It will exclude the user that has 'sub' id
+     * @param {string} query 
+     * @param {string} sub 
+     * @returns {Array} list of users
+     */
     search(query) {
         if (typeof query !== 'string') throw TypeError(`${query} is not a string`)
 
@@ -239,6 +313,12 @@ const logic = {
 
     },
 
+    /**
+     * Uploads a image in Cloudinary server and saves in a user (profileImage) the url
+     * User is found by id 
+     * @param {object} file 
+     * @returns {string} Api message
+     */
     uploadImage(file) {
         debugger
         let avatar = new FormData()
@@ -257,6 +337,10 @@ const logic = {
             .then(res => res.data)
     },
 
+    /**
+     * Delete a user and all the information that has associated in other models
+     * @returns {string} API message
+     */
     deleteAccount() {
         return fetch(`http://localhost:5000/api/users/${this._userId}`, {
             method: 'DELETE',
@@ -273,6 +357,10 @@ const logic = {
             })
     },
 
+    /**
+     * List the conversations of a user
+     * @returns {Array} list of conversations
+     */
     listConversations() {
         return fetch(`http://localhost:5000/api/users/${this._userId}/conversations`, {
             method: 'GET',
@@ -292,6 +380,11 @@ const logic = {
             })
     },
 
+    /**
+     * Search all the messages between two users and returns them
+     * @param {string} user2_id 
+     * @returns {Array} list of messages
+     */
     listChats(user2_id) {
 
         return fetch(`http://localhost:5000/api/users/${this._userId}/messages/${user2_id}`, {
@@ -312,6 +405,14 @@ const logic = {
             })
     },
 
+    /**
+     * Search if exist a conversation between two users.
+     * If not exists it creates one.
+     * Then creates a message between the two users
+     * @param {string} user2_id 
+     * @param {string} text 
+     * @returns {string} API message
+     */
     sendMessage(user2_id, text) {
 
         return fetch(`http://localhost:5000/api/users/${this._userId}/messages/${user2_id}`, {
@@ -334,6 +435,11 @@ const logic = {
             })
     },
 
+    /**
+     * Checks if a user has a conversation with an other user
+     * @param {string} user2_id 
+     * @returns {Boolean} true if it exists
+     */
     checkExisitingConversation(user2_id){
 
         return fetch(`http://localhost:5000/api/users/${user2_id}/profile/chat/${this._userId}`, {

@@ -16,9 +16,10 @@ class Conversations extends Component {
 
     componentDidMount = () => {
 
+        try{
         logic.listConversations()
             .then(res => {
-debugger
+
                 if (res.length) this.setState({ conversations_list: res }, () => {
                     if (this.props.receiver_id) {
                         logic.listChats(this.props.receiver_id)
@@ -32,6 +33,12 @@ debugger
                     }
                 })
             })
+            .catch(err => {
+                this.props.handleSetError(err.message)
+              })
+        } catch (err) {
+            this.props.handleSetError(err.message)
+          }
     }
 
     scrollChat = () => {
@@ -63,13 +70,20 @@ debugger
     }
 
     refreshChat = () => {
-        // 
+        
+        try{
         logic.listChats(this.props.receiver_id)
             .then(list => {
                 if (list !== this.state.list_messages)
                     this.setState({ list_messages: list })
             })
             .then(() => setTimeout(this.refreshChat, 2000))
+            .catch(err => {
+                this.props.handleSetError(err.message)
+              })
+        } catch (err) {
+            this.props.handleSetError(err.message)
+          }
     }
 
     onSendMessage = this.onSendMessage.bind(this)
@@ -77,6 +91,7 @@ debugger
         event.preventDefault()
 
         this.refs.textInput.value = ""
+        try{
         logic.sendMessage(this.props.receiver_id, this.state.text)
             .then(res => {
                 logic.listChats(this.props.receiver_id)
@@ -86,6 +101,12 @@ debugger
 
                     })
             })
+            .catch(err => {
+                this.props.handleSetError(err.message)
+              })
+        } catch (err) {
+            this.props.handleSetError(err.message)
+          }
     }
 
     handleTextChange = event => {
@@ -97,7 +118,6 @@ debugger
     handleOpenChat = (event) => {
         event.preventDefault()
 
-
         this.props.history.push(`/conversations/${this.props.id}/${event.target.id}`)
     }
 
@@ -105,8 +125,6 @@ debugger
 
         const { id, receiver_id } = this.props
         const { conversations_list, list_messages } = this.state
-
-        console.log(list_messages)
 
         return <div className='conversation-block'>
             <div className='conversation-block__structure'>

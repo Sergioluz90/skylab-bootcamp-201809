@@ -60,7 +60,7 @@ const logic = {
      * Checks if user exists and returns its id
      * @param {string} username 
      * @param {string} password 
-     * @returns {number}
+     * @returns {number} id of the user
      */
     authenticateUser(username, password) {
 
@@ -83,7 +83,7 @@ const logic = {
     /**
      * Find a user and return its id, name, username and email
      * @param {string} _id 
-     * @returns {object}
+     * @returns {object} object with all the information
      */
     retrieveUser(_id) {
 
@@ -107,12 +107,12 @@ const logic = {
     /**
      * Find a user by id and overwrite its name, username, emai and password. 
      * It will only overwrite params that are not null
-     * @param {*} id 
-     * @param {*} name 
-     * @param {*} username 
-     * @param {*} email 
-     * @param {*} newPassword 
-     * @param {*} password 
+     * @param {string} id 
+     * @param {string} name (optional)
+     * @param {string} username (optional)
+     * @param {string} email (optional)
+     * @param {string} newPassword (optional)
+     * @param {string} password 
      */
     updateUser(id, name, username, email, newPassword, password) {
 
@@ -163,7 +163,7 @@ const logic = {
     /**
      * It find a user by id and returns its id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching and profileImage
      * @param {string} _id 
-     * @returns {object}
+     * @returns {object} object with all the information of the user
      */
     retrieveProfile(_id) {
 
@@ -205,20 +205,20 @@ const logic = {
      * It find a user by id and overwrite name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer and searching params.
      * It will overwrite params that are not null
      * @param {string} id 
-     * @param {string} name 
-     * @param {string} email 
-     * @param {string} skype 
-     * @param {number} age 
-     * @param {string} gender 
-     * @param {number} height 
-     * @param {number} weight 
-     * @param {boolean} smoker 
-     * @param {string} description 
-     * @param {boolean} receives 
-     * @param {boolean} moves 
-     * @param {string} city 
-     * @param {Array} offer 
-     * @param {Array} searching 
+     * @param {string} name (optional)
+     * @param {string} email (optional)
+     * @param {string} skype (optional)
+     * @param {number} age (optional)
+     * @param {string} gender (optional)
+     * @param {number} height (optional)
+     * @param {number} weight (optional)
+     * @param {boolean} smoker (optional)
+     * @param {string} description (optional)
+     * @param {boolean} receives (optional)
+     * @param {boolean} moves (optional)
+     * @param {string} city (optional)
+     * @param {Array} offer (optional)
+     * @param {Array} searching (optional)
      */
     updateProfile(id, name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
 
@@ -299,10 +299,10 @@ const logic = {
      * It will exclude the user that has 'sub' id
      * @param {string} query 
      * @param {string} sub 
+     * @returns {Array} list of users
      */
     search(query, sub) {
 
-        
         if (typeof query !== 'string' || query == null || query == undefined) throw TypeError(`${query} is not a string`)
         if (query != null && !query.trim().length) throw new ValueError('query is empty or blank')
 
@@ -338,9 +338,6 @@ const logic = {
             }
         })
 
-        
-
-
         let obj = {
             where: {
                 username: { like: '%' + username + '%' },
@@ -371,7 +368,6 @@ const logic = {
             }]
             , logging: false
         }
-
 
         return (async () => {
             
@@ -411,8 +407,13 @@ const logic = {
         })()
     },
 
+    /**
+     * Uploads a image in Cloudinary server and saves in a user (profileImage) the url
+     * User is found by id 
+     * @param {object} file 
+     * @param {string} user_id 
+     */
     insertProfileImage(file, user_id) {
-
 
         return (async () => {
             let user = await User.findOne({ where: { id: user_id } })
@@ -436,18 +437,19 @@ const logic = {
         })()
     },
 
+    /**
+     * Delete a user and all the information that has associated in other models
+     * @param {string} id 
+     */
     deleteAccount(id) {
 
         if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
         if (id != null && !id.trim().length) throw new ValueError('id is empty or blank')
 
         return (async () => {
-            // debugger
+
             let user = await User.findOne({ where: { id: id }, logging:false })
-
-
             if (!user) throw new NotFoundError(`User does not exist`)
-
 
             let conversations = await Conversation.findAll({
                 where: {
@@ -475,8 +477,17 @@ const logic = {
         })()
     },
 
+    /**
+     * Search if exist a conversation between two users.
+     * If not exists it creates one.
+     * Then creates a message between the two users
+     * @param {string} sender_id 
+     * @param {string} receiver_id 
+     * @param {string} text 
+     * @param {object} date (optional)
+     */
     sendMessage(sender_id, receiver_id, text, date) {
-        // debugger
+
         if (typeof sender_id !== 'string' || sender_id == null || sender_id == undefined) throw TypeError(`${sender_id} is not a string`)
         if (sender_id != null && !sender_id.trim().length) throw new ValueError('sender_id is empty or blank')
 
@@ -518,8 +529,14 @@ const logic = {
         })()
     },
 
+    /**
+     * Search all the messages between two users and returns them
+     * @param {string} user1_id 
+     * @param {string} user2_id 
+     * @returns {Array} list of messages
+     */
     listChats(user1_id, user2_id) {
-        // debugger
+        
         if (typeof user1_id !== 'string' || user1_id == null || user1_id == undefined) throw TypeError(`${user1_id} is not a string`)
         if (user1_id != null && !user1_id.trim().length) throw new ValueError('user1_id is empty or blank')
 
@@ -559,7 +576,6 @@ const logic = {
                 return time
             }
 
-
             for (message of messages) {
 
                 if (message.read === false && message.sender_id.toString() !== user1_id) {
@@ -575,12 +591,15 @@ const logic = {
 
                 list.push(_message)
             }
-
-
             return list
         })()
     },
 
+    /**
+     * List the conversations of a user
+     * @param {string} user1__id 
+     * @returns {Array} list of conversations
+     */
     listConversations(user1__id) {
 
         if (typeof user1__id !== 'string' || user1__id == null || user1__id == undefined) throw TypeError(`${user1__id} is not a string`)
@@ -623,6 +642,12 @@ const logic = {
         })()
     },
 
+    /**
+     * Checks if a user has a conversation with an other user
+     * @param {string} user1__id 
+     * @param {string} user2__id 
+     * @returns {Boolean} true if it exists
+     */
     checkExistingConversation(user1__id, user2__id) {
 
         if (typeof user1__id !== 'string' || user1__id == null || user1__id == undefined) throw TypeError(`${user1__id} is not a string`)

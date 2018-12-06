@@ -21,11 +21,10 @@ class Profile extends Component {
     }
 
     componentWillReceiveProps(props) {
-        // 
+
         if (this.user_info != props.user_info)
             this.setState({ user_info: props.user_info }, () => {
-                console.log(this.state.user_info.toString(), this.props.id)
-                // 
+
                 if (this.state.user_info.id.toString() !== this.props.id) this.props.retrieveUserInfo(this.props.id)
             })
     }
@@ -39,14 +38,21 @@ class Profile extends Component {
     handleChatClick(event) {
         event.preventDefault()
 
-        logic.checkExisitingConversation(this.props.user_info.id)
-            .then(res => {
+        try {
+            logic.checkExisitingConversation(this.props.user_info.id)
+                .then(res => {
 
-                if (!res)
-                    this.setState({ show_send_message: true })
-                else
-                    this.props.history.push(`/conversations/${this.props.my_info.id}/${this.props.user_info.id}`)
-            })
+                    if (!res)
+                        this.setState({ show_send_message: true })
+                    else
+                        this.props.history.push(`/conversations/${this.props.my_info.id}/${this.props.user_info.id}`)
+                })
+                .catch(err => {
+                    this.props.handleSetError(err.message)
+                })
+        } catch (err) {
+            this.props.handleSetError(err.message)
+        }
 
     }
 
@@ -169,6 +175,7 @@ class Profile extends Component {
                 </div>}
 
                 {show_send_message && <Message
+                    handleSetError={this.props.handleSetError}
                     handleHiddeSendMessage={this.handleHiddeSendMessage}
                     id={user_info.id}
                     username={user_info.username}

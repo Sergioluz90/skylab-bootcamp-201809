@@ -92,8 +92,6 @@ router.get('/users/:id/profile', [bearerTokenParser, jwtVerifier], (req, res) =>
     routeHandler(() => {
         const { params: { id }, sub } = req
 
-        // if (id !== sub.toString()) throw Error('token sub does not match user id')
-
         return logic.retrieveProfile(id)
             .then(user =>
                 res.json({
@@ -148,7 +146,7 @@ router.get('/users/:id/search/:query', [bearerTokenParser, jwtVerifier, jsonBody
 
         if (id !== sub.toString()) throw Error('token sub does not match user id')
 
-        return logic.search(query, sub)
+        return logic.search(query, sub.toString())
             .then((info) => {
 
                 res.json({

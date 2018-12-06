@@ -49,12 +49,13 @@
 
 .close-bttn{
     display: flex;
-    align-self: flex-end;
+    /* align-self: flex-end; */
     margin-right: 20px;
     border-radius: 50%;
     border-style: none;
     height: 20px;
     background: #c70000;
     color: white;
-    cursor:pointer;
+    cursor: pointer;
+    margin-bottom: 151px;
 }

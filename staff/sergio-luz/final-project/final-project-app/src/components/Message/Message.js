@@ -16,6 +16,7 @@ class Message extends Component {
     }
 
     handleClose = () => {
+        debugger
         this.setState({ message_text: null }, () => {
             this.props.handleHiddeSendMessage()
         })
@@ -23,11 +24,23 @@ class Message extends Component {
     sendFirstMessage = event => {
         event.preventDefault()
 
-        logic.sendMessage(this.props.id, this.state.message_text)
-            .then(res => {
+        debugger
+        try {
+            debugger
+            logic.sendMessage(this.props.id, this.state.message_text)
+                .then(res => {
 
-                this.props.history.push(`/conversations/${this.props.my_info.id}/${this.props.id}`)
-            })
+                    debugger
+                    this.props.history.push(`/conversations/${this.props.my_info.id}/${this.props.id}`)
+                })
+                .catch(err => {
+                    debugger
+                    this.props.handleSetError(err.message)
+                })
+        } catch (err) {
+            debugger
+            this.props.handleSetError(err.message)
+        }
     }
 
     render() {
@@ -36,11 +49,11 @@ class Message extends Component {
 
         return <div className='form__error'>
             <form onSubmit={this.sendFirstMessage} className='error__container'>
-                <button onClick={this.handleClose} className='close-bttn'>X</button>
                 <p className='message__text'>Send your first message to {username}</p>
                 <input className='message__input' onChange={this.hanldeText} placeholder='write your message here..'></input>
                 <button className='message__send-bttn' onClick={this.sendFirstMessage} >Send</button>
             </form>
+            <button onClick={this.handleClose} className='close-bttn'>X</button>
         </div>
     }
 }

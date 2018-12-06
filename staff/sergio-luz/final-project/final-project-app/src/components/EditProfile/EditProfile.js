@@ -174,15 +174,22 @@ class EditProfile extends Component {
   }
 
   handleUploadImage = event => {
-    const {profileImage}=this.refs
-    profileImage.src='https://blog.teamtreehouse.com/wp-content/uploads/2015/05/InternetSlowdown_Day.gif'
+    const { profileImage } = this.refs
+    profileImage.src = 'https://blog.teamtreehouse.com/wp-content/uploads/2015/05/InternetSlowdown_Day.gif'
     let image
     event ? image = event.target.files[0] : image = this.state.user_info.profileImage
-    logic.uploadImage(image)
-      .then(() => {
-        
-        this.props.retrieveUserInfo()
-      })
+    try {
+      logic.uploadImage(image)
+        .then(() => {
+
+          this.props.retrieveUserInfo()
+        })
+        .catch(err => {
+          this.props.handleSetError(err.message)
+        })
+    } catch (err) {
+      this.props.handleSetError(err.message)
+    }
   }
 
   handleDeleteImage = () => {
@@ -197,30 +204,37 @@ class EditProfile extends Component {
     event.preventDefault()
     const { new_info, user_info } = this.state
 
-    logic.updateProfile(user_info.id, new_info.name, new_info.email, new_info.skype, new_info.age, new_info.gender, new_info.height, new_info.weight, new_info.smoker, new_info.description, new_info.receives, new_info.moves, new_info.city, new_info.offer, new_info.searching)
-      .then(() => {
+    try {
+      logic.updateProfile(user_info.id, new_info.name, new_info.email, new_info.skype, new_info.age, new_info.gender, new_info.height, new_info.weight, new_info.smoker, new_info.description, new_info.receives, new_info.moves, new_info.city, new_info.offer, new_info.searching)
+        .then(() => {
 
-        let new_info = {
-          name: null,
-          email: null,
-          skype: null,
-          gender: null,
-          age: null,
-          height: null,
-          weight: null,
-          smoker: null,
-          description: null,
-          receives: null,
-          moves: null,
-          searching: [
+          let new_info = {
+            name: null,
+            email: null,
+            skype: null,
+            gender: null,
+            age: null,
+            height: null,
+            weight: null,
+            smoker: null,
+            description: null,
+            receives: null,
+            moves: null,
+            searching: [
 
-          ],
-          offer: [
-          ]
-        }
-        this.setState({ new_info })
-        this.props.retrieveUserInfo()
-      })
+            ],
+            offer: [
+            ]
+          }
+          this.setState({ new_info })
+          this.props.retrieveUserInfo()
+        })
+        .catch(err => {
+          this.props.handleSetError(err.message)
+        })
+    } catch (err) {
+      this.props.handleSetError(err.message)
+    }
   }
 
   handleDeleteSkype = (event) => {
@@ -287,16 +301,21 @@ class EditProfile extends Component {
   }
 
   handleDeleteAccount = event => {
-    console.log('delete account')
-    logic.deleteAccount()
-      .then(() => logic.logout())
-      .then(() => this.props.history.push(`/`))
+    try {
+      logic.deleteAccount()
+        .then(() => logic.logout())
+        .then(() => this.props.history.push(`/`))
+        .catch(err => {
+          this.props.handleSetError(err.message)
+        })
+    } catch (err) {
+      this.props.handleSetError(err.message)
+    }
   }
 
 
   render() {
 
-    console.log('render edit profile')
     const { user_info, default_info, listAges, listHeight, listWeight, new_info } = this.state
 
     if (this.props.user_info) {
@@ -467,7 +486,7 @@ class EditProfile extends Component {
                     />
                   </div>}
 
-                  {user_info &&
+                {user_info &&
                   <div className='profile__data-container'>
                     <Selector
                       title={'Smoker:'}

@@ -27,13 +27,18 @@ class Header extends Component {
         this.handleCollapsible()
     }
     handleGoHomeClick = () => {
-        console.log(this.props.history)
+
         if (!(this.props.history.location.pathname === '/home/search'))
             this.props.history.push('/home/search')
     }
 
     handleLogoutSession = () => {
-        logic.logout()
+        try {
+            logic.logout()
+                
+        } catch (err) {
+            this.props.handleSetError(err.message)
+        }
         this.props.history.push(`/`)
     }
 
