@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
+    "nyc": "^13.1.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-router-dom": "^4.3.1",
@@ -16,7 +17,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "debug-test": "mocha debug ./src/logic",
-    "spec": "mocha ./src/logic"
+    "spec": "mocha ./src/logic",
+    "coverage": "nyc mocha ./src/logic/index.spec.js --timeout 15000",
+    "coverage-report": "nyc report --reporter=html"
   },
   "eslintConfig": {
     "extends": "react-app"

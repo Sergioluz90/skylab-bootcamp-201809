@@ -8,7 +8,8 @@
     "debug": "node debug .",
     "test": "mocha logic",
     "debug-test": "mocha debug logic",
-    "test-data": "mocha data"
+    "coverage": "nyc mocha ./logic/index.spec.js --timeout 15000",
+    "coverage-report": "nyc report --reporter=html"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,7 @@
     "final-data": "file:../langchange-data",
     "fs": "0.0.1-security",
     "jsonwebtoken": "^8.3.0",
+    "nyc": "^13.1.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
