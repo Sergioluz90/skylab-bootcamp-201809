@@ -34,6 +34,7 @@ const logic = {
         if (!email.trim()) throw new ValueError('email is empty or blank')
         if (!city.trim()) throw new ValueError('city is empty or blank')
 
+        debugger
         if (email.match(/^(([^<>()\[\]\\.,;:\s@“]+(\.[^<>()\[\]\\.,;:\s@“]+)*)|(“.+“))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) === null) throw Error(`${email} is an invalid email`)
 
 

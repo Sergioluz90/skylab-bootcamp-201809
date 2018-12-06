@@ -2,7 +2,6 @@
 const { User } = require('./user-schema')
 const { Offer } = require('./offer-schema')
 const { Searching } = require('./searching-schema')
-const { Blocked } = require('./blocked-schema')
 const { Message } = require('./message-schema')
 const { Conversation } = require('./conversation-schema')
 
@@ -67,7 +66,6 @@ module.exports = {
         User,
         Offer,
         Searching,
-        Blocked,
         Message,
         Conversation
     }
