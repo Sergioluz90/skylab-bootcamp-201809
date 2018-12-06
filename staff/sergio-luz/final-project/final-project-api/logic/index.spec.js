@@ -15,9 +15,9 @@ const PORT = 5000
 const { argv: [, , port = PORT || 3306] } = process
 
 
-const flag = true;
+const flag = false;
 
-const sequelize = new Sequelize(TEST_DATABASE_URL, { logging: !false })
+const sequelize = new Sequelize(TEST_DATABASE_URL)
 
 
 
@@ -32,12 +32,12 @@ describe('logic', () => {
 
                 console.log('Connection has been established successfully at port ' + PORT)
 
-                return sequelize.query(`DROP DATABASE ${TEST_DATABASE_NAME}`, { logging: !false })
+                return sequelize.query(`DROP DATABASE ${TEST_DATABASE_NAME}`)
                     .catch(() => undefined)
                     .finally(() => {
                         console.log('Test database dropped')
 
-                        return sequelize.query(`CREATE DATABASE ${TEST_DATABASE_NAME}`, { logging: !false })
+                        return sequelize.query(`CREATE DATABASE ${TEST_DATABASE_NAME}`)
                     })
                     .then(async () => {
                         await User.sync({ force: !true, logging: false })
@@ -766,7 +766,7 @@ describe('logic', () => {
                         .catch(err => {
                             expect(err).to.be.instanceof(AlreadyExistsError)
 
-                            return User.findById(id, { logging: false })
+                            return User.findByPk(id, { logging: false })
                         })
                         .then(postit => {
                             expect(postit.id).to.equal(id)
@@ -787,6 +787,10 @@ describe('logic', () => {
                 user = User.build({ name: 'John', username: 'jd', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
 
                 await user.save({ logging: false })
+
+                await Offer.create({ user_id: user.id, lenguage: 'spanish' }, { logging: false })
+
+                await Searching.create({ user_id: user.id, lenguage: 'spanish' }, { logging: false })
             })
 
             it('should succeed on valid id', async () => {
@@ -816,16 +820,39 @@ describe('logic', () => {
                 expect(_user.moves).to.equal(user.moves)
                 expect(_user.city).to.equal(user.city)
 
-                expect(_user.offer[0]).to.not.exist
-                expect(_user.offer[0]).to.be.equal(offers[0])
+                expect(_user.offer[0]).to.exist
+                expect(_user.offer[0]).to.be.equal(offers[0].lenguage)
 
-                expect(_user.searching[0]).to.not.exist
-                expect(_user.searching[0]).to.be.equal(searchings[0])
-                // if(_user.offer){
-                //     _user.offer.forEach(offer=>{
+                expect(_user.searching[0]).to.exist
+                expect(_user.searching[0]).to.be.equal(searchings[0].lenguage)
+            })
 
-                //     })
-                // }
+            it('should fail on undefined id', () => {
+                expect(() => logic.retrieveProfile(undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null id', () => {
+                expect(() => logic.retrieveProfile(null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank id', () => {
+                expect(() => logic.retrieveProfile('      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number id', () => {
+                expect(() => logic.retrieveProfile(123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean id', () => {
+                expect(() => logic.retrieveProfile(true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array id', () => {
+                expect(() => logic.retrieveProfile(['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object id', () => {
+                expect(() => logic.retrieveProfile({ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
             })
         })
 
@@ -898,7 +925,7 @@ describe('logic', () => {
                 })
             })
 
-            it('should update on correct id, username and email (other fields null)', async () => {
+            it('should update on correct id and email (other fields null)', async () => {
                 const { id, name, username, password, email, skype, age, available, height, weight, smoker, description, gender, receives, moves, city } = user
 
                 newEmail = `${'newEmail'}-${Math.random()}`
@@ -943,7 +970,7 @@ describe('logic', () => {
                 })
             })
 
-            it('should update on correct id, username and skype (other fields null)', async () => {
+            it('should update on correct id and skype (other fields null, except languages)', async () => {
                 const { id, name, username, password, email, skype, age, available, height, weight, smoker, description, gender, receives, moves, city } = user
 
                 newSkype = `${'newSkype'}-${Math.random()}`
@@ -996,10 +1023,45 @@ describe('logic', () => {
                 expect(() => logic.updateProfile(undefined, name, email)).to.throw(TypeError, 'undefined is not a string')
             })
 
-            // TODO other test cases
+            it('should fail on null id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateProfile(null, name, email)).to.throw(TypeError, 'null is not a string')
+            })
+
+            it('should fail on blank id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateProfile('           \n', name, email)).to.throw(ValueError, 'id is empty or blank')
+            })
+
+            it('should fail on number id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateProfile(123, name, email)).to.throw(TypeError, '123 is not a string')
+            })
+
+            it('should fail on boolean id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateProfile(true, name, email)).to.throw(TypeError, 'true is not a string')
+            })
+
+            it('should fail on array id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateProfile([true, false], name, email)).to.throw(TypeError, 'true,false is not a string')
+            })
+
+            it('should fail on object id', () => {
+                const { id, name, email, username, password } = user
+
+                expect(() => logic.updateProfile({ ob: 'j' }, name, email)).to.throw(TypeError, '[object Object] is not a string')
+            })
+
         })
 
-        flag && describe('search profiles', () => {
+        !flag && describe('search profiles', () => {
             let user1, user2, user3
 
             beforeEach(async () => {
@@ -1007,7 +1069,7 @@ describe('logic', () => {
 
                 await user1.save({ logging: false })
 
-                user2 = User.build({ name: 'John', username: 'jd2', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male', city: 'barcelona' }, { logging: false })
+                user2 = User.build({ name: 'John', username: 'jd2', password: '123', email: 'paco@gmail.com', skype: 'pacusmaximus', available: false, age: 38, gender: 'male',smoker: true , city: 'barcelona'}, { logging: false })
 
                 await user2.save({ logging: false })
 
@@ -1098,9 +1160,148 @@ describe('logic', () => {
                 expect(JSON.stringify(result.userSearchings)).to.be.equal(JSON.stringify(user.userSearchings))
             })
 
+            it('should succed on correct data (when has lenguages): search by username, age, gender, city, smoker', async () => {
+
+
+                await Offer.create({ user_id: user1.id, lenguage: 'spanish' }, { logging: false })
+
+                await Offer.create({ user_id: user2.id, lenguage: 'english' }, { logging: false })
+                await Searching.create({ user_id: user2.id, lenguage: 'english' }, { logging: false })
+                await Searching.create({ user_id: user2.id, lenguage: 'spanish' }, { logging: false })
+
+                const offers = ['english', 'hindi']
+                const searches = ['english', 'spanish']
+
+                const query = `username=jd2&offer=english+hindi&searching=english+spanish&age=38&gender=male&smoker=true&city=barcelona`
+                const username = 'jd'
+
+                const results = await logic.search(query, user1.id.toString())
+
+                const result = results[0]
+
+                expect(result).to.exist
+
+                const obj = {
+                    where: {
+                        username: { like: '%' + username + '%' },
+                        age: 38,
+                        gender: 'male',
+                        smoker: true,
+                        city: 'barcelona'
+                    },
+                    include: [{
+                        model: Offer,
+                        as: 'userOffers',
+                        where: {
+                            lenguage: { [Sequelize.Op.or]: offers }
+                        }
+                    },
+                    {
+                        model: Searching,
+                        as: 'userSearchings',
+                        where: {
+                            lenguage: { [Sequelize.Op.or]: searches }
+                        }
+                    }]
+                    , logging: false
+                }
+
+                const users = await User.findAll(obj)
+
+                const user = users[0]
+
+                expect(result).not.to.be.instanceOf(User)
+                expect(result.username).to.be.equal(user.username)
+
+                expect(result.id).to.be.equal(user.id)
+                expect(result.age).to.be.equal(user.age)
+                expect(result.gender).to.be.equal(user.gender)
+                expect(result.description).to.be.equal(user.description)
+                debugger
+                expect(result.smoker).to.be.equal(user.smoker)
+
+                expect(result.userOffers.length).to.be.equal(user.userOffers.length)
+                expect(JSON.stringify(result.userOffers)).to.be.equal(JSON.stringify(user.userOffers))
+
+                expect(result.userSearchings.length).to.be.equal(user.userSearchings.length)
+                expect(JSON.stringify(result.userSearchings)).to.be.equal(JSON.stringify(user.userSearchings))
+
+            })
+            // when has gender, age, smoke, city, 
+
+            it('should fail on undefined query', () => {
+
+                expect(() => logic.search(undefined, user1.id.toString()).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null query', () => {
+
+                expect(() => logic.search(null, user1.id.toString()).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank query', () => {
+
+                expect(() => logic.search('            \n', user1.id.toString()).to.throw(ValueError, 'id is empty or blank'))
+            })
+
+            it('should fail on number query', () => {
+
+                expect(() => logic.search(123, user1.id.toString()).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean query', () => {
+
+                expect(() => logic.search(true, user1.id.toString()).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array query', () => {
+
+                expect(() => logic.search([true, false], user1.id.toString()).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object query', () => {
+
+                expect(() => logic.search({ o: 'j' }, user1.id.toString()).to.throw(TypeError, '[object Object] is not a string'))
+            })
+
+            it('should fail on undefined id', () => {
+                const query = 'queryExample'
+                expect(() => logic.search(query, undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null id', () => {
+                const query = 'queryExample'
+                expect(() => logic.search(query, null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank id', () => {
+                const query = 'queryExample'
+                expect(() => logic.search(query, '         \n').to.throw(ValueError, 'id is empty or blank'))
+            })
+
+            it('should fail on number id', () => {
+                const query = 'queryExample'
+                expect(() => logic.search(query, 123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean id', () => {
+                const query = 'queryExample'
+                expect(() => logic.search(query, true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array id', () => {
+                const query = 'queryExample'
+                expect(() => logic.search(query, [true, false]).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object id', () => {
+                const query = 'queryExample'
+                expect(() => logic.search(query, { ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
+            })
+
         })
 
-        flag && describe('delete account', () => {
+        !flag && describe('delete account', () => {
             let user, user2, text, message
 
             beforeEach(async () => {
@@ -1122,30 +1323,56 @@ describe('logic', () => {
 
                 await Conversation.create({ user1_id: user.id, user2_id: user2.id }, { logging: false })
 
-                await Offer.create({user_id:user.id, lenguage:'spanish'}, {logging:false})
-                await Searching.create({user_id:user.id, lenguage:'spanish'}, {logging:false})
+                await Offer.create({ user_id: user.id, lenguage: 'spanish' }, { logging: false })
+                await Searching.create({ user_id: user.id, lenguage: 'spanish' }, { logging: false })
 
             })
 
             it('should succed on correct data', async () => {
-                
+
                 await logic.deleteAccount(user.id.toString())
 
-                debugger
-
-                const _user= await User.findByPk(user.id.toString(), {logging:false})
+                const _user = await User.findByPk(user.id.toString(), { logging: false })
                 expect(_user).to.not.exist
 
-                const offers=await Offer.findAll({where:{}, logging:false})
-                const searchings=await Searching.findAll({where:{}, logging:false})
+                const offers = await Offer.findAll({ where: {}, logging: false })
+                const searchings = await Searching.findAll({ where: {}, logging: false })
 
-                const conversations=await Conversation.findAll({where:{}, logging:false})
-                const messages=await Message.findAll({where:{}, logging:false})
+                const conversations = await Conversation.findAll({ where: {}, logging: false })
+                const messages = await Message.findAll({ where: {}, logging: false })
 
                 expect(offers.length).to.be.equal(0)
                 expect(searchings.length).to.be.equal(0)
                 expect(conversations.length).to.be.equal(0)
                 expect(messages.length).to.be.equal(0)
+            })
+
+            it('should fail on undefined id', () => {
+                expect(() => logic.deleteAccount(undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null id', () => {
+                expect(() => logic.deleteAccount(null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank id', () => {
+                expect(() => logic.deleteAccount('      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number id', () => {
+                expect(() => logic.deleteAccount(123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean id', () => {
+                expect(() => logic.deleteAccount(true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array id', () => {
+                expect(() => logic.deleteAccount(['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object id', () => {
+                expect(() => logic.deleteAccount({ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
             })
         })
 
@@ -1153,7 +1380,7 @@ describe('logic', () => {
 
     describe('conversations', () => {
 
-        flag && describe('send message', () => {
+        !flag && describe('send message', () => {
             let name, username, password, email, text
 
             beforeEach(async () => {
@@ -1197,13 +1424,95 @@ describe('logic', () => {
                 expect(conversation).not.to.be.equal(undefined)
                 expect(conversation.user1_id).to.be.equal(user.id)
                 expect(conversation.user2_id).to.be.equal(user2.id)
+            })
 
-                // debugger
+            it('should fail on undefined id', () => {
+                expect(() => logic.sendMessage(undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null id', () => {
+                expect(() => logic.sendMessage(null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank id', () => {
+                expect(() => logic.sendMessage('      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number id', () => {
+                expect(() => logic.sendMessage(123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean id', () => {
+                expect(() => logic.sendMessage(true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array id', () => {
+                expect(() => logic.sendMessage(['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object id', () => {
+                expect(() => logic.sendMessage({ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
+            })
+
+            it('should fail on undefined user2_id', () => {
+                expect(() => logic.sendMessage(user.id.toString(),undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null user2_id', () => {
+                expect(() => logic.sendMessage(user.id.toString(),null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank user2_id', () => {
+                expect(() => logic.sendMessage(user.id.toString(),'      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number user2_id', () => {
+                expect(() => logic.sendMessage(user.id.toString(),123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean user2_id', () => {
+                expect(() => logic.sendMessage(user.id.toString(),true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array user2_id', () => {
+                expect(() => logic.sendMessage(user.id.toString(),['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object user2_id', () => {
+                expect(() => logic.sendMessage(user.id.toString(),{ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
+            })
+
+            it('should fail on undefined text', () => {
+                expect(() => logic.sendMessage(user.id.toString(),user2.id.toString(),undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null text', () => {
+                expect(() => logic.sendMessage(user.id.toString(),user2.id.toString(),null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank text', () => {
+                expect(() => logic.sendMessage(user.id.toString(),user2.id.toString(),'      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number text', () => {
+                expect(() => logic.sendMessage(user.id.toString(),user2.id.toString(),123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean text', () => {
+                expect(() => logic.sendMessage(user.id.toString(),user2.id.toString(),true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array text', () => {
+                expect(() => logic.sendMessage(user.id.toString(),user2.id.toString(),['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object text', () => {
+                expect(() => logic.sendMessage(user.id.toString(),user2.id.toString(),{ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
             })
 
         })
 
-        flag && describe('retrieve messages', () => {
+        !flag && describe('retrieve messages', () => {
             let name, username, password, email, text, message, message2, date
 
 
@@ -1256,15 +1565,67 @@ describe('logic', () => {
 
                 expect(message2.sender_id).to.be.equal(user2.id)
                 expect(message2.receiver_id).be.equal(user.id)
-                expect(message2.text).to.be.equal(text)
+            })
 
-                // debugger
+            it('should fail on undefined id', () => {
+                expect(() => logic.listChats(undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
 
+            it('should fail on null id', () => {
+                expect(() => logic.listChats(null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank id', () => {
+                expect(() => logic.listChats('      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number id', () => {
+                expect(() => logic.listChats(123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean id', () => {
+                expect(() => logic.listChats(true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array id', () => {
+                expect(() => logic.listChats(['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object id', () => {
+                expect(() => logic.listChats({ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
+            })
+
+            it('should fail on undefined user2_id', () => {
+                expect(() => logic.listChats(user.id.toString(),undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null user2_id', () => {
+                expect(() => logic.listChats(user.id.toString(),null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank user2_id', () => {
+                expect(() => logic.listChats(user.id.toString(),'      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number user2_id', () => {
+                expect(() => logic.listChats(user.id.toString(),123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean user2_id', () => {
+                expect(() => logic.listChats(user.id.toString(),true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array user2_id', () => {
+                expect(() => logic.listChats(user.id.toString(),['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object user2_id', () => {
+                expect(() => logic.listChats(user.id.toString(),{ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
             })
 
         })
 
-        flag && describe('list conversations', () => {
+        !flag && describe('list conversations', () => {
             let name, username, password, email, text, user, user2
 
             beforeEach(async () => {
@@ -1300,9 +1661,65 @@ describe('logic', () => {
 
             })
 
+            it('should fail on undefined id', () => {
+                expect(() => logic.listConversations(undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null id', () => {
+                expect(() => logic.listConversations(null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank id', () => {
+                expect(() => logic.listConversations('      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number id', () => {
+                expect(() => logic.listConversations(123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean id', () => {
+                expect(() => logic.listConversations(true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array id', () => {
+                expect(() => logic.listConversations(['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object id', () => {
+                expect(() => logic.listConversations({ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
+            })
+
+            it('should fail on undefined user2_id', () => {
+                expect(() => logic.listConversations(user.id.toString(),undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null user2_id', () => {
+                expect(() => logic.listConversations(user.id.toString(),null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank user2_id', () => {
+                expect(() => logic.listConversations(user.id.toString(),'      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number user2_id', () => {
+                expect(() => logic.listConversations(user.id.toString(),123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean user2_id', () => {
+                expect(() => logic.listConversations(user.id.toString(),true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array user2_id', () => {
+                expect(() => logic.listConversations(user.id.toString(),['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object user2_id', () => {
+                expect(() => logic.listConversations(user.id.toString(),{ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
+            })
+
         })
 
-        flag && describe('check if exists Conversations with one user', () => {
+        !flag && describe('check if exists Conversations with one user', () => {
             let name, username, password, email, text, user, user2
 
             beforeEach(async () => {
@@ -1337,6 +1754,62 @@ describe('logic', () => {
                 debugger
 
                 expect(result).to.be.equal(true)
+            })
+
+            it('should fail on undefined id', () => {
+                expect(() => logic.checkExistingConversation(undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null id', () => {
+                expect(() => logic.checkExistingConversation(null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank id', () => {
+                expect(() => logic.checkExistingConversation('      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number id', () => {
+                expect(() => logic.checkExistingConversation(123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean id', () => {
+                expect(() => logic.checkExistingConversation(true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array id', () => {
+                expect(() => logic.checkExistingConversation(['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object id', () => {
+                expect(() => logic.checkExistingConversation({ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
+            })
+
+            it('should fail on undefined user2_id', () => {
+                expect(() => logic.checkExistingConversation(user.id.toString(),undefined).to.throw(TypeError, 'undefined is not a string'))
+            })
+
+            it('should fail on null user2_id', () => {
+                expect(() => logic.checkExistingConversation(user.id.toString(),null).to.throw(TypeError, 'null is not a string'))
+            })
+
+            it('should fail on blank user2_id', () => {
+                expect(() => logic.checkExistingConversation(user.id.toString(),'      \n').to.throw(ValueError, 'name is empty or blank'))
+            })
+
+            it('should fail on number user2_id', () => {
+                expect(() => logic.checkExistingConversation(user.id.toString(),123).to.throw(TypeError, '123 is not a string'))
+            })
+
+            it('should fail on boolean user2_id', () => {
+                expect(() => logic.checkExistingConversation(user.id.toString(),true).to.throw(TypeError, 'true is not a string'))
+            })
+
+            it('should fail on array user2_id', () => {
+                expect(() => logic.checkExistingConversation(user.id.toString(),['true', 'false']).to.throw(TypeError, 'true,false is not a string'))
+            })
+
+            it('should fail on object user2_id', () => {
+                expect(() => logic.checkExistingConversation(user.id.toString(),{ ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
             })
 
         })

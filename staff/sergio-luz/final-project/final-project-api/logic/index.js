@@ -30,7 +30,7 @@ const logic = {
 
         return (async () => {
 
-            const _user = await User.find({ where: { username: username } })
+            const _user = await User.findOne({ where: { username: username } })
 
             if (_user) throw new AlreadyExistsError('This username already exists')
 
@@ -56,7 +56,7 @@ const logic = {
         if (!password.trim()) throw new ValueError('password is empty or blank')
 
         return (async () => {
-            const user = await User.find({ where: { username: username }, logging: false })
+            const user = await User.findOne({ where: { username: username }, logging: false })
 
             if (!user || user.password !== password) throw new AuthError('invalid username or password')
 
@@ -109,7 +109,7 @@ const logic = {
             if (user.password !== password) throw new AuthError('invalid password')
 
             if (username) {
-                const _user = await User.find({ where: { username: username }, logging: false })
+                const _user = await User.findOne({ where: { username: username }, logging: false })
 
                 if (_user && _user.username !== user.username) throw new AlreadyExistsError(`username ${username} already exists`)
 
@@ -169,7 +169,7 @@ const logic = {
     updateProfile(id, name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
 
         if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
-        if (id != null && !id.trim().length) throw new ValueError('id is empty or blank')
+        if (!id.trim().length) throw new ValueError('id is empty or blank')
 
         if (age != null && age != 'delete' && age != 'delete' && typeof age !== 'number') throw TypeError(`${age} is not a number`)
         if (height != null && height != 'delete' && typeof height !== 'number') throw TypeError(`${height} is not a number`)
@@ -200,7 +200,7 @@ const logic = {
         if (searching != null && !searching.length) searching = null
 
         return (async () => {
-            const user = await User.findById(id, { logging: false })
+            const user = await User.findByPk(id, { logging: false })
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -242,6 +242,7 @@ const logic = {
 
     search(query, sub) {
 
+        
         if (typeof query !== 'string' || query == null || query == undefined) throw TypeError(`${query} is not a string`)
         if (query != null && !query.trim().length) throw new ValueError('query is empty or blank')
 
@@ -276,6 +277,8 @@ const logic = {
                 else smoker = false
             }
         })
+
+        
 
 
         let obj = {
@@ -329,17 +332,18 @@ const logic = {
             if (minAge === 0 && maxAge === 100) delete obj.where.age
             if (city == null) delete obj.where.city
             
+            
             const users = await User.findAll(obj)
             
             let user_list = []
             
             for (user of users) {
-                let { id, username, age, gender, description, userOffers, userSearchings, city, profileImage } = user
+                let { id, username, age, gender, description, userOffers, userSearchings, city, profileImage , smoker} = user
                 
                 if (userOffers == undefined) userOffers = []
                 if (userSearchings == undefined) userSearchings = []
                 
-                const _user = { id, username, age, gender, description, userOffers, userSearchings, city, profileImage }
+                const _user = { id, username, age, gender, description, userOffers, userSearchings, city, profileImage, smoker }
                 
                 user_list.push(_user)
             }
@@ -351,7 +355,7 @@ const logic = {
 
 
         return (async () => {
-            let user = await User.find({ where: { id: user_id } })
+            let user = await User.findOne({ where: { id: user_id } })
 
             if (!user) throw new NotFoundError(`User does not exist`)
 
