@@ -11,6 +11,15 @@ cloudinary.config({
 })
 
 const logic = {
+
+    /**
+     * Register a user
+     * @param {string} name 
+     * @param {string} username 
+     * @param {string} password 
+     * @param {string} email 
+     * @param {string} city 
+     */
     registerUser(name, username, password, email, city) {
 
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
@@ -47,6 +56,12 @@ const logic = {
         })()
     },
 
+    /**
+     * Checks if user exists and returns its id
+     * @param {string} username 
+     * @param {string} password 
+     * @returns {number}
+     */
     authenticateUser(username, password) {
 
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
@@ -65,6 +80,11 @@ const logic = {
 
     },
 
+    /**
+     * Find a user and return its id, name, username and email
+     * @param {string} _id 
+     * @returns {object}
+     */
     retrieveUser(_id) {
 
         if (typeof _id !== 'string') throw TypeError(`${_id} is not a string`)
@@ -84,6 +104,16 @@ const logic = {
         })()
     },
 
+    /**
+     * Find a user by id and overwrite its name, username, emai and password. 
+     * It will only overwrite params that are not null
+     * @param {*} id 
+     * @param {*} name 
+     * @param {*} username 
+     * @param {*} email 
+     * @param {*} newPassword 
+     * @param {*} password 
+     */
     updateUser(id, name, username, email, newPassword, password) {
 
         if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
@@ -130,6 +160,11 @@ const logic = {
         })()
     },
 
+    /**
+     * It find a user by id and returns its id, name, username, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching and profileImage
+     * @param {string} _id 
+     * @returns {object}
+     */
     retrieveProfile(_id) {
 
         let _user
@@ -166,6 +201,25 @@ const logic = {
         })()
     },
 
+    /**
+     * It find a user by id and overwrite name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer and searching params.
+     * It will overwrite params that are not null
+     * @param {string} id 
+     * @param {string} name 
+     * @param {string} email 
+     * @param {string} skype 
+     * @param {number} age 
+     * @param {string} gender 
+     * @param {number} height 
+     * @param {number} weight 
+     * @param {boolean} smoker 
+     * @param {string} description 
+     * @param {boolean} receives 
+     * @param {boolean} moves 
+     * @param {string} city 
+     * @param {Array} offer 
+     * @param {Array} searching 
+     */
     updateProfile(id, name, email, skype, age, gender, height, weight, smoker, description, receives, moves, city, offer, searching) {
 
         if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
@@ -240,6 +294,12 @@ const logic = {
         })()
     },
 
+    /**
+     * It search users by query received
+     * It will exclude the user that has 'sub' id
+     * @param {string} query 
+     * @param {string} sub 
+     */
     search(query, sub) {
 
         
