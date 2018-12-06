@@ -47,7 +47,7 @@ The application is written in ES6 and user data is persistent across page reload
 
 - search
 
-![](images/search-users.jpg)
+![](images/Search-users.jpg)
 
 ## Data Model Diagram
 
