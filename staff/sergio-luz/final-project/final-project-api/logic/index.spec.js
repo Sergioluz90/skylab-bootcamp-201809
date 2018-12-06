@@ -72,7 +72,7 @@ describe('logic', () => {
 
 
         !flag && describe('register', () => {
-            let name, username, password, email
+            let name, username, password, email, city
 
             !false && beforeEach(() => {
                 name = `name-${Math.random()}`
@@ -304,7 +304,6 @@ describe('logic', () => {
                 expect(() => logic.authenticateUser(user.username, { ob: 'j' }).to.throw(TypeError, '[object Object] is not a string'))
             })
 
-            // TODO other test cases
         })
 
         !flag && describe('retrieve user', () => {

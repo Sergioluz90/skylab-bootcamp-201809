@@ -16,7 +16,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "debug-test": "mocha debug ./src/logic",
-    "spec":"mocha ./src/logic"
+    "spec": "mocha ./src/logic"
   },
   "eslintConfig": {
     "extends": "react-app"

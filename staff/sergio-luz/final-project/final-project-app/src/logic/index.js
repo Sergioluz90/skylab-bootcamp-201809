@@ -1,4 +1,3 @@
-const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 global.sessionStorage = require('sessionstorage')
 
 
@@ -33,21 +32,22 @@ const logic = {
      * @param {string} city 
      * @returns {string} API message
      */
-    registerUser(name, username, email, city, password) {
+    registerUser(name, username, password, email, city, ) {
 
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
+        if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
         if (typeof email !== 'string') throw TypeError(`${email} is not a string`)
         if (typeof city !== 'string') throw TypeError(`${city} is not a string`)
-        if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
-
-        if (email.match(/^(([^<>()\[\]\\.,;:\s@“]+(\.[^<>()\[\]\\.,;:\s@“]+)*)|(“.+“))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) === null) throw Error(`${email} is an invalid email`)
 
         if (!name.trim()) throw new Error('name is empty or blank')
         if (!username.trim()) throw new Error('username is empty or blank')
+        if (!password.trim()) throw new Error('password is empty or blank')
         if (!email.trim()) throw new Error('email is empty or blank')
         if (!city.trim()) throw new Error('city is empty or blank')
-        if (!password.trim()) throw new Error('password is empty or blank')
+
+        if (email.match(/^(([^<>()\[\]\\.,;:\s@“]+(\.[^<>()\[\]\\.,;:\s@“]+)*)|(“.+“))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) === null) throw Error(`${email} is an invalid email`)
+
 
         return fetch('http://localhost:5000/api/users', {
             method: 'POST',
@@ -63,8 +63,6 @@ const logic = {
 
                 return res.data
             })
-
-
     },
 
     /**
@@ -75,6 +73,7 @@ const logic = {
      * @returns {string} token of the session
      */
     loginUser(username, password) {
+        
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
 
@@ -218,10 +217,10 @@ const logic = {
      * @param {string} gender (optional)
      * @param {number} height (optional)
      * @param {number} weight (optional)
-     * @param {boolean} smoker (optional)
+     * @param {string} smoker (optional)
      * @param {string} description (optional)
-     * @param {boolean} receives (optional)
-     * @param {boolean} moves (optional)
+     * @param {string} receives (optional)
+     * @param {string} moves (optional)
      * @param {string} city (optional)
      * @param {Array} offer (optional)
      * @param {Array} searching (optional)
@@ -237,7 +236,7 @@ const logic = {
         if (moves != null && moves != 'delete') moves.includes('true') ? moves = true : moves = false
         if (receives != null && receives != 'delete') receives.includes('true') ? receives = true : receives = false
 
-        if (typeof id !== 'number' || id == null || id == undefined) throw TypeError(`${id} is not a number`)
+        if (typeof id !== 'string' || id == null || id == undefined) throw TypeError(`${id} is not a string`)
         if (age != null && age != 'delete' && typeof age !== 'number') throw TypeError(`${age} is not a number`)
         if (height != null && height != 'delete' && typeof height !== 'number') throw TypeError(`${height} is not a number`)
         if (weight != null && weight != 'delete' && typeof weight !== 'number') throw TypeError(`${weight} is not a number`)
@@ -256,12 +255,13 @@ const logic = {
         if (offer != null && !(offer instanceof Array)) throw TypeError(`${moves} is not an Array`)
         if (searching != null && !(searching instanceof Array)) throw TypeError(`${moves} is not an Array`)
 
-        if (name != null && !name.trim().length) throw new Error('surname is empty or blank')
-        if (email != null && !email.trim().length) throw new Error('surname is empty or blank')
-        if (skype != null && !skype.trim().length) throw new Error('surname is empty or blank')
-        if (gender != null && !gender.trim().length) throw new Error('surname is empty or blank')
+        if (id != null && !id.trim().length) throw new Error('id is empty or blank')
+        if (name != null && !name.trim().length) throw new Error('name is empty or blank')
+        if (email != null && !email.trim().length) throw new Error('email is empty or blank')
+        if (skype != null && !skype.trim().length) throw new Error('skype is empty or blank')
+        if (gender != null && !gender.trim().length) throw new Error('gender is empty or blank')
         if (description != null && !description.trim().length) description = null
-        if (city != null && !city.trim().length) throw new Error('surname is empty or blank')
+        if (city != null && !city.trim().length) throw new Error('city is empty or blank')
 
         return fetch(`http://localhost:5000/api/users/${this._userId}/profile`, {
             method: 'PATCH',
@@ -320,7 +320,7 @@ const logic = {
      * @returns {string} Api message
      */
     uploadImage(file) {
-        debugger
+        
         let avatar = new FormData()
 
         avatar.append('image', file)
@@ -332,7 +332,6 @@ const logic = {
             },
             body: avatar
         })
-            .catch(err => { debugger })
             .then(res => res.json())
             .then(res => res.data)
     },
@@ -440,7 +439,7 @@ const logic = {
      * @param {string} user2_id 
      * @returns {Boolean} true if it exists
      */
-    checkExisitingConversation(user2_id){
+    checkExisitingConversation(user2_id) {
 
         return fetch(`http://localhost:5000/api/users/${user2_id}/profile/chat/${this._userId}`, {
             method: 'GET',
