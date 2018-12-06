@@ -23,12 +23,6 @@ sequelize
 
         app.use('/api', router)
 
-        // sequelize.getQueryInterface().showAllSchemas().then((tableObj) => {
-        //     console.log('// Tables in database','==========================');
-        //     console.log(tableObj);
-        // })
-        // debugger
-
         return app.listen(PORT, () => console.log(`${package.name} ${package.version} up and running on port ${PORT}`))
 
     })
@@ -46,39 +40,12 @@ sequelize
     .catch(err => {
         console.error(`Unable to connect to the database: ${DATABASE_NAME}`);
     })
-    // .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 0"))
     // .then(() => User.sync({ force: false, logging: false }))
     // .then(() => Searching.sync({ force: false, logging: false }))
     // .then(() => Offer.sync({ force: false, logging: false }))
     // .then(() => Blocked.sync({ force: false, logging: false }))
     // .then(() => Message.sync({ force: false, logging: false }))
     // .then(() => Conversation.sync({ force: false, logging: false }))
-    // .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 1"))
     // .catch(err => {
     //     console.error('Unable to connect to the database:', err);
     // })
-    // .then(() => {
-    //     // const app = express()
-
-    // })
-
-
-
-// mongoose.connect(MONGO_URL, { useNewUrlParser: true, useCreateIndex: true })
-//     .then(() => {
-//         console.log(`db server running at ${MONGO_URL}`)
-
-//         const { argv: [, , port = PORT || 8080] } = process
-
-//         const app = express()
-
-//         app.use(cors)
-
-//         app.use('/api', router)
-
-//         app.use(multer({ dest: './uploads/' }).any());
-
-
-//         app.listen(port, () => console.log(`${package.name} ${package.version} up and running on port ${port}`))
-//     })
-//     .catch(console.error)

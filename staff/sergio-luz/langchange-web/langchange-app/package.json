@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "final-data": "file:../final-data",
+    "final-data": "file:../langchange-data",
     "mocha": "^5.2.0"
   },
   "browserslist": [
