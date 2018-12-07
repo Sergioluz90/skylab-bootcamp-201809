@@ -16,29 +16,29 @@ class Conversations extends Component {
 
     componentDidMount = () => {
 
-        try{
-        logic.listConversations()
-            .then(res => {
+        try {
+            logic.listConversations()
+                .then(res => {
 
-                if (res.length) this.setState({ conversations_list: res }, () => {
-                    if (this.props.receiver_id) {
-                        logic.listChats(this.props.receiver_id)
-                            .then(list_messages => {
-                                this.setState({ list_messages }, () => {
-                                    this.scrollChat()
+                    if (res.length) this.setState({ conversations_list: res }, () => {
+                        if (this.props.receiver_id) {
+                            logic.listChats(this.props.receiver_id)
+                                .then(list_messages => {
+                                    this.setState({ list_messages }, () => {
+                                        this.scrollChat()
 
-                                    this.refreshChat()
+                                        this.refreshChat()
+                                    })
                                 })
-                            })
-                    }
+                        }
+                    })
                 })
-            })
-            .catch(err => {
-                this.props.handleSetError(err.message)
-              })
+                .catch(err => {
+                    this.props.handleSetError(err.message)
+                })
         } catch (err) {
             this.props.handleSetError(err.message)
-          }
+        }
     }
 
     scrollChat = () => {
@@ -70,20 +70,20 @@ class Conversations extends Component {
     }
 
     refreshChat = () => {
-        
-        try{
-        logic.listChats(this.props.receiver_id)
-            .then(list => {
-                if (list !== this.state.list_messages)
-                    this.setState({ list_messages: list })
-            })
-            .then(() => setTimeout(this.refreshChat, 2000))
-            .catch(err => {
-                this.props.handleSetError(err.message)
-              })
+
+        try {
+            logic.listChats(this.props.receiver_id)
+                .then(list => {
+                    if (list !== this.state.list_messages)
+                        this.setState({ list_messages: list })
+                })
+                .then(() => setTimeout(this.refreshChat, 2000))
+                .catch(err => {
+                    this.props.handleSetError(err.message)
+                })
         } catch (err) {
             this.props.handleSetError(err.message)
-          }
+        }
     }
 
     onSendMessage = this.onSendMessage.bind(this)
@@ -91,22 +91,22 @@ class Conversations extends Component {
         event.preventDefault()
 
         this.refs.textInput.value = ""
-        try{
-        logic.sendMessage(this.props.receiver_id, this.state.text)
-            .then(res => {
-                logic.listChats(this.props.receiver_id)
-                    .then(list_messages => {
+        try {
+            logic.sendMessage(this.props.receiver_id, this.state.text)
+                .then(res => {
+                    logic.listChats(this.props.receiver_id)
+                        .then(list_messages => {
 
-                        this.setState({ list_messages, text: null })
+                            this.setState({ list_messages, text: null })
 
-                    })
-            })
-            .catch(err => {
-                this.props.handleSetError(err.message)
-              })
+                        })
+                })
+                .catch(err => {
+                    this.props.handleSetError(err.message)
+                })
         } catch (err) {
             this.props.handleSetError(err.message)
-          }
+        }
     }
 
     handleTextChange = event => {
@@ -133,14 +133,15 @@ class Conversations extends Component {
                         let key
                         ((elem.user2_id.toString() === id) ? key = elem.user1_id : key = elem.user2_id)
                         return <div className='user-block__user' key={key} id={key} onClick={this.handleOpenChat}>
-                            <div className='image-box'>
+                            <div className='image-box' onClick={this.handleOpenChat} id={key} >
                                 <img
+                                    id={key}
                                     className="profile-image__Nav"
                                     src={elem.profileImage ? elem.profileImage : 'https://res.cloudinary.com/db2aaxmvg/image/upload/v1543488064/nobody_m.original.jpg'}
                                     alt="profile_image_in_navbar"
                                 />
                             </div>
-                            <h3>{elem.user2_username}</h3>
+                            <h3 id={key}  onClick={this.handleOpenChat}>{elem.user2_username} </h3>
                         </div>
                     })}
                 </div>
@@ -148,7 +149,7 @@ class Conversations extends Component {
                 <div className='chat-block'>
 
                     <div className='conversation-space' ref='conversationSpace'>
-                    
+
                         {conversations_list && conversations_list.map((elem, index) => {
 
                             if (elem.user2_id.toString() === receiver_id) {

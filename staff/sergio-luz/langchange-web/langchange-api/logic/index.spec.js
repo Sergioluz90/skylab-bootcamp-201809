@@ -986,7 +986,7 @@ describe('logic', () => {
 
                 newEmail = `${'newEmail'}-${Math.random()}`
 
-                debugger
+                
                 await logic.updateProfile(id.toString(), null, newEmail, null, null, null, null, null, null, null, null, null, null, newOffers, newSearching)
 
                 const users = await User.findAll({ logging: false })
@@ -1494,7 +1494,7 @@ describe('logic', () => {
                 expect(result.age).to.be.equal(user.age)
                 expect(result.gender).to.be.equal(user.gender)
                 expect(result.description).to.be.equal(user.description)
-                debugger
+                
                 expect(result.smoker).to.be.equal(user.smoker)
 
                 expect(result.userOffers.length).to.be.equal(user.userOffers.length)
@@ -2028,7 +2028,7 @@ describe('logic', () => {
             it('should succeed on correct data', async () => {
 
                 const result = await logic.checkExistingConversation(user.id.toString(), user2.id.toString())
-                debugger
+                
 
                 expect(result).to.be.equal(true)
             })

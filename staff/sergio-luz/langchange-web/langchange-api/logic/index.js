@@ -34,15 +34,18 @@ const logic = {
         if (!email.trim()) throw new ValueError('email is empty or blank')
         if (!city.trim()) throw new ValueError('city is empty or blank')
 
-        debugger
         if (email.match(/^(([^<>()\[\]\\.,;:\s@“]+(\.[^<>()\[\]\\.,;:\s@“]+)*)|(“.+“))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) === null) throw Error(`${email} is an invalid email`)
 
 
         return (async () => {
 
-            const _user = await User.findOne({ where: { username: username } })
+            let _user = await User.findOne({ where: { username: username } })
 
             if (_user) throw new AlreadyExistsError('This username already exists')
+
+            _user = await User.findOne({ where: { email: email } })
+
+            if (_user) throw new AlreadyExistsError('This email already exists')
 
             const user = User.build({
                 username: username,

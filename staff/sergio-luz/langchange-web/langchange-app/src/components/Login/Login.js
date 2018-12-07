@@ -27,10 +27,6 @@ class Login extends Component {
         this.props.LoginHandler(username, password)
     }
 
-    verResultados = event => {
-        event.preventDefault()
-    }
-
     render() {
         return <div className='body__login'>
 

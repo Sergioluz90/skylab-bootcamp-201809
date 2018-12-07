@@ -13,7 +13,6 @@ const sequelize = new Sequelize(DATABASE_URL)
 sequelize
     .authenticate({ logging: false })
     .then(() => {
-        debugger
         console.log('DATABASE_URL='+DATABASE_URL)
         console.log('Connection has been established successfully at port ' + PORT)
 

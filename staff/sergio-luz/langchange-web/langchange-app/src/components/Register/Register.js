@@ -19,40 +19,30 @@ class Register extends Component {
     }
 
     handleInput_Name = event => {
-        console.log('esta cambiando el name')
-
         const _name = event.target.value
 
         this.setState({ _name })
     }
 
     handleInput_Email = event => {
-        console.log('esta cambiando el Email')
-
         const _email = event.target.value
 
         this.setState({ _email })
     }
 
     handleInput_Username = event => {
-        console.log('esta cambiando el username')
-
         const _username = event.target.value
 
         this.setState({ _username })
     }
 
     handleInput_Password = event => {
-        console.log('esta cambiando el password')
-
         const _password = event.target.value
 
         this.setState({ _password })
     }
 
     handleInput_City = event => {
-        console.log('esta cambiando el city')
-
         const _city = event.target.value
 
         this.setState({ _city })

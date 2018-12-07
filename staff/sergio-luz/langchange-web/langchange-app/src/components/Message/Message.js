@@ -16,7 +16,7 @@ class Message extends Component {
     }
 
     handleClose = () => {
-        debugger
+        
         this.setState({ message_text: null }, () => {
             this.props.handleHiddeSendMessage()
         })
@@ -24,21 +24,21 @@ class Message extends Component {
     sendFirstMessage = event => {
         event.preventDefault()
 
-        debugger
+        
         try {
-            debugger
+            
             logic.sendMessage(this.props.id, this.state.message_text)
                 .then(res => {
 
-                    debugger
+                    
                     this.props.history.push(`/conversations/${this.props.my_info.id}/${this.props.id}`)
                 })
                 .catch(err => {
-                    debugger
+                    
                     this.props.handleSetError(err.message)
                 })
         } catch (err) {
-            debugger
+            
             this.props.handleSetError(err.message)
         }
     }

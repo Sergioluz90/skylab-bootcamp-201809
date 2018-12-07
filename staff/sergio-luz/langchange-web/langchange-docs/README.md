@@ -10,6 +10,26 @@ This application is a useful tool for people who want to learn languages through
 ![](images/collection-side.png)
 ![](images/spectate-side.png) -->
 
+## Instructions
+
+Server
+
+```bash
+$ cd langchange-api
+$ npm i
+$ npm run build
+$ node .
+```
+
+Frontend
+
+```bash
+$ cd langchange-app
+$ npm i
+$ npm run build
+$ npm start
+```
+
 ## Functional description
 
 Langchange allows its users to search for people in a given area based on the languages they are offering and the languages they are seeking to learn, in addition to other criteria to facilitate the connection between compatible people.
@@ -48,6 +68,14 @@ The application is written in ES6 and user data is persistent across page reload
 - search
 
 ![](images/Search-users.jpg)
+
+## Class Diagram
+
+![](images/class-diagram1.jpg) 
+
+![](images/class-diagram2.jpg) 
+
+![](images/class-diagram3.jpg) 
 
 ## Data Model Diagram
 
