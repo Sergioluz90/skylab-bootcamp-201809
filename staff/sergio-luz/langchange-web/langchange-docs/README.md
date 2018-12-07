@@ -30,6 +30,10 @@ $ npm run build
 $ npm start
 ```
 
+## Technologies
+
+![](images/technologies.jpg)
+
 ## Functional description
 
 Langchange allows its users to search for people in a given area based on the languages they are offering and the languages they are seeking to learn, in addition to other criteria to facilitate the connection between compatible people.
