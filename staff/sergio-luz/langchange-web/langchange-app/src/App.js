@@ -24,11 +24,11 @@ class App extends Component {
   handleLoginClick = () => this.props.history.push('/')
   handleRegisterClick = () => this.props.history.push('/register')
 
-  RegisterHandler = (name, username, email, city, password) => {
+  RegisterHandler = (name, username, email,city,password) => {
 
     try {
 
-      logic.registerUser(name, username, email, city, password)
+      logic.registerUser(name, username, password, email, city)
         .then(() => {
           this.setState({ error: null })
           this.handleLoginClick()

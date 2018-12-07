@@ -32,7 +32,7 @@ const logic = {
      * @param {string} city 
      * @returns {string} API message
      */
-    registerUser(name, username, password, email, city, ) {
+    registerUser(name, username, password, email, city ) {
 
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)

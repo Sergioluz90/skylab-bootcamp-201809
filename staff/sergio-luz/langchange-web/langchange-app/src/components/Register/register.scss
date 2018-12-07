@@ -23,12 +23,12 @@ $break-desktop: 1024px;
 }
 
 .register__logo {
-    background: url(../logo1.png) no-repeat;
+    background: url(../logo.png) no-repeat;
     overflow: hidden;
     text-indent: -1000px;
     margin: 10px;
     height: 10.5vw;
-    width: 47vw;
+    width: 40vw;
     background-color: white;
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
     border-radius: 50px;
@@ -37,7 +37,7 @@ $break-desktop: 1024px;
     background-size: contain;
 
     @media screen and (min-width: $break-tablet) {
-        background: url(../logo1.png) no-repeat;
+        background: url(../logo.png) no-repeat;
         overflow: hidden;
         text-indent: -1000px;
         margin: 0px;
