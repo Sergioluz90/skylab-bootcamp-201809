@@ -72,9 +72,11 @@ The application is written in ES6 and user data is persistent across page reload
 ## Class Diagram
 
 ![](images/class-diagram1.jpg) 
+***
 
 ![](images/class-diagram2.jpg) 
 
+***
 ![](images/class-diagram3.jpg) 
 
 ## Data Model Diagram
