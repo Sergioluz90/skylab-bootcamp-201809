@@ -1,3 +1,4 @@
+debugger
 const { Sequelize, models: { User, Offer, Searching, Blocked, Message, Conversation } } = require('final-data')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
 const { env: { CLOUDINARY_CONFIG_NAME, CLOUDINARY_CONFIG_KEY, CLOUDINARY_CONFIG_API_SECRET } } = process

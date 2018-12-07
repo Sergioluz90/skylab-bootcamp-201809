@@ -6,6 +6,8 @@ const { Message } = require('./message-schema')
 const { Conversation } = require('./conversation-schema')
 
 const Sequelize = require('sequelize');
+const { env: { PORT, DATABASE_URL, DATABASE_NAME } } = process
+const sequelize = new Sequelize(DATABASE_URL)
 
 
 User.hasMany(Offer, {
@@ -61,6 +63,7 @@ Conversation.belongsTo(User, {
 
 
 module.exports = {
+    sequelize,
     Sequelize,
     models: {
         User,

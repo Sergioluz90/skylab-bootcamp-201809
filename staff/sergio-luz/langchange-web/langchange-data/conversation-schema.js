@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
+const { env: { PORT, DATABASE_URL, DATABASE_NAME } } = process
 
-const sequelize = new Sequelize('mysql://root:26081990@localhost:3306/mysql')
+const sequelize = new Sequelize(DATABASE_URL)
 
 
 

@@ -133,6 +133,8 @@
   color: green;
   font-weight: bold;
   height: 5vh;
+  cursor:pointer;
+
 }
 @media screen and (min-width: 767px) {
   .btn-send--register {

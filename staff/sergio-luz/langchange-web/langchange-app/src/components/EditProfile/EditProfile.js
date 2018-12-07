@@ -205,7 +205,7 @@ class EditProfile extends Component {
     const { new_info, user_info } = this.state
 
     try {
-      logic.updateProfile(user_info.id, new_info.name, new_info.email, new_info.skype, new_info.age, new_info.gender, new_info.height, new_info.weight, new_info.smoker, new_info.description, new_info.receives, new_info.moves, new_info.city, new_info.offer, new_info.searching)
+      logic.updateProfile(user_info.id.toString(), new_info.name, new_info.email, new_info.skype, new_info.age, new_info.gender, new_info.height, new_info.weight, new_info.smoker, new_info.description, new_info.receives, new_info.moves, new_info.city, new_info.offer, new_info.searching)
         .then(() => {
 
           let new_info = {

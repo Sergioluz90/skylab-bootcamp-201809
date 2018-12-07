@@ -393,7 +393,7 @@ class Home extends Component {
 
           <div className='wrapper__images'>
 
-            {users && users.length && users.map((elem, index) => {
+            {users && users.map((elem, index) => {
               return <div key={index} className='search-panel__profile'>
                 <UserCard elem={elem} ></UserCard>
               </div>

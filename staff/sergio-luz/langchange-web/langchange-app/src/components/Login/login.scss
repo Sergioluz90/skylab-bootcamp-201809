@@ -123,6 +123,8 @@ $break-desktop: 1024px;
     color: green;
     font-weight: bold;
     height: 5vh;
+    cursor:pointer;
+
 
     @media screen and (min-width: $break-tablet) {
         margin-top: 5vh;

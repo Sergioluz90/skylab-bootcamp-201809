@@ -121,6 +121,7 @@
   color: green;
   font-weight: bold;
   height: 5vh;
+  cursor:pointer;
 }
 @media screen and (min-width: 767px) {
   .btn-send--login {
@@ -144,6 +145,7 @@
 .btn {
   width: 100px;
   height: 30px;
+  cursor:pointer;
 }
 
 .login__options-banner {
